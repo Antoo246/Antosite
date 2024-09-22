@@ -1,0 +1,12 @@
+:root {
+    /* Custom */
+    --anto-primary: #eeeeeeee;
+    --anto-secondary: #000000;
+    --bg-gradient: linear-gradient(#63034efd, #8017d6);
+}
+
+.anto-bg-gradient {
+    height: 100vh;
+    width: 100vw;
+    background: var(--bg-gradient);
+}
