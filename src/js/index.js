@@ -4,7 +4,7 @@ const layoutroot = document.getElementById('layoutroot');
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    textchenger("I'm a high school student who like Information and Communications Technology 💻✨", 'aboutmefild');
+    changertextinterval("I'm a high school student who like Information and Communications Technology 💻✨", 'aboutmefild');
 });
 
 
