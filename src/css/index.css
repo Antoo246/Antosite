@@ -1,12 +1,18 @@
-:root {
-    /* Custom */
-    --anto-primary: #eeeeeeee;
-    --anto-secondary: #000000;
-    --bg-gradient: linear-gradient(#63034efd, #8017d6);
-}
-
 .anto-bg-gradient {
     height: 100vh;
     width: 100vw;
-    background: var(--bg-gradient);
+    border-radius: 50%;
+    background: radial-gradient(circle, #63034efd, #9202d4 , #940b76fd);
+    background-size: 240% 240%;
+    animation: colorSpin 20s alternate-reverse infinite;
+}
+
+@keyframes colorSpin {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
 }
