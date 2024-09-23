@@ -2,11 +2,27 @@ const rootStyles = getComputedStyle(document.documentElement);
 
 const layoutroot = document.getElementById('layoutroot');
 
-function textchenger(text, idtext) {
-    let char = text.split('');
-    for (let i = 0; i < char.length; i++) {
-        
-        char[i] = char[i].charCodeAt(0) + 1;
+
+document.addEventListener("DOMContentLoaded", function () {
+    textchenger("I'm a high school student who like Information and Communications Technology 💻✨", 'aboutmefild');
+});
+
+
+function changetext(text, campo) {
+    for (let i = 0; i < text.length; i++) {
+        setTimeout(() => {
+            campo.innerHTML += text[i];
+        }, 50 * i);
     }
+    setTimeout(() => {
+        campo.innerHTML = "";
+    }, 6000);
 }
 
+function changertextinterval(text, idtext) {
+    let campo = document.getElementById(idtext);
+    changetext(text, campo);
+    setInterval(() => {
+        changetext(text, campo);
+    }, 6000);
+}

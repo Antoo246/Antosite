@@ -1,11 +1,35 @@
-.anto-bg-gradient {
-    height: 100vh;
-    width: 100vw;
-    border-radius: 50%;
-    background: radial-gradient(circle, #63034efd, #9202d4 , #940b76fd);
-    background-size: 240% 240%;
-    animation: colorSpin 20s alternate-reverse infinite;
+:root {
+    --spacer: 1;
 }
+
+* {
+    box-sizing: border-box;
+}
+
+#main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 50rem;
+    width: 90rem;
+    padding: 2rem;
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 1%;
+}
+
+#logoimg {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 100px;
+    border: white 2px solid;
+}
+
+.anto-bg-gradient {
+    background: radial-gradient(circle, #63034efd, #9202d4, #940b76fd);
+    background-size: 240% 240%;
+    animation: colorSpin 20s alternate infinite;
+}
+
 
 @keyframes colorSpin {
     0% {
