@@ -33,7 +33,7 @@ function changertextinterval(text, idtext) {
 
 
 
-
+/*
 const rootStyles = getComputedStyle(document.documentElement);
 
 const layoutroot = document.getElementById('layoutroot');
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-/*
+
 class Textchenger {
 
     constructor() {
