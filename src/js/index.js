@@ -11,7 +11,7 @@ function textWrriter(text, element) {
         for (let i = 0; i < caracther.length; i++) {
             setTimeout(() => {
                 element.innerHTML += `${caracther[i]}`;
-            }, 60* i);
+            }, 60);
         }
     } else {
         console.log("Text is empty");
