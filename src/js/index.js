@@ -1,7 +1,11 @@
+const githubuser = "anto426";   
+
 document.addEventListener("DOMContentLoaded", function () {
     let fild = document.getElementById("anto-About-fild");
     textWrriter("I'm a high school student who likes programming 💻✨", fild);
 });
+
+
 
 
 //  Function for simulate a text writer
@@ -16,4 +20,16 @@ function textWrriter(text, element) {
     } else {
         console.log("Text is empty");
     }
+}
+
+
+
+function fetchLogo() {
+    fetch("https://api.github.com/users/" + githubuser)
+        .then(response => response.json())
+        .then(data => {
+            let logo = document.getElementById("anto-logo");
+            logo.src = data.avatar_url;
+        });
+
 }
