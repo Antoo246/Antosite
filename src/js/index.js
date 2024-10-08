@@ -1,5 +1,5 @@
 const githubuser = "anto426";
-let primaryColor = "";
+let primaryColor;
 
 document.addEventListener("DOMContentLoaded", function () {
     let fild = document.getElementById("anto-About-fild");
@@ -26,9 +26,9 @@ function textWrriter(text, element) {
 // Function for loadpage
 function Load() {
     fetchinfo().then((data) => {
-        EtractPalet(data.logo).then((palette) => {
+        ExtractPalet(data.logo).then((palette) => {
             filterPalet(palette).then((palette) => {
-                updateGradient(palette);
+                UpdateGradient(palette);
             }).catch((error) => {
                 console.error(error);
             });
@@ -39,7 +39,6 @@ function Load() {
         console.error(error);
     });
 }
-
 
 
 
@@ -67,24 +66,29 @@ function fetchinfo() {
 
 
 // Funzione for update the gradient
-function updateGradient(palette) {
+function UpdateGradient(palette) {
     const paletteColors = palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-    console.log(paletteColors);
     const gradient = `linear-gradient(to right, ${paletteColors.join(', ')})`;
+    let oppprimaryColor = getOppositeColor(primaryColor);
+    console.log(oppprimaryColor);
+    document.body.style.color = oppprimaryColor;
     document.body.style.background = gradient;
+
 }
 
 
 // Function for extract the palette
-function EtractPalet(imageElement) {
-    return new Promise((resolve, reject) => {
+function ExtractPalet(imageElement) {
+    return new Promise((resolve) => {
         const colorThief = new ColorThief();
-        console.log(imageElement.complete);
         if (imageElement.complete) {
             const palette = colorThief.getPalette(imageElement, 5);
             resolve(palette);
         } else {
-            reject("Image not loaded");
+            imageElement.addEventListener('load', function () {
+                const palette = colorThief.getPalette(imageElement, 5);
+                resolve(palette);
+            });
         }
     });
 }
@@ -109,14 +113,13 @@ function filterPalet(colors, threshold = 50) {
                 filtered.push(colors[i]);
             }
         }
-
         if (filtered.length === 0) {
             reject("No colors left after filtering");
-        }else{
-            console.log(filtered);
+        } else {
+            primaryColor = colors[0];
             resolve(filtered);
         }
-    
+
         resolve(filtered);
     })
 
@@ -127,4 +130,11 @@ function colorDistance(color1, color2) {
     const gDiff = color1[1] - color2[1];
     const bDiff = color1[2] - color2[2];
     return Math.sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
+}
+
+
+function getOppositeColor(color) {
+    
+    return `rgb(${255 - color[0]}, ${255 - color[1]}, ${255 - color[2]})`
+
 }
