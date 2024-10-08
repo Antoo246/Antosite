@@ -24,11 +24,15 @@ function textWrriter(text, element) {
 
 
 
-function fetchLogo() {
+function fetchinfo() {
     fetch("https://api.github.com/users/" + githubuser)
         .then(response => response.json())
         .then(data => {
             let logo = document.getElementById("anto-logo");
+            let username = document.getElementById("anto-username");
+            let tag = document.getElementById("anto-tag");
+            username.innerHTML = data.login;
+            tag.innerHTML = data.login;
             logo.src = data.avatar_url;
         });
 
