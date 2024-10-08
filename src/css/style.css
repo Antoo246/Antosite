@@ -9,7 +9,6 @@ body {
     color: var(--text-color);
 }
 
-
 .anto-bg-gradient {
     background: var(--bg-gradient);
     background-size: 300% 300%;
