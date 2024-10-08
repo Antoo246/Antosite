@@ -31,7 +31,7 @@ function fetchinfo() {
             let logo = document.getElementById("anto-logo");
             let username = document.getElementById("anto-username");
             let tag = document.getElementById("anto-tag");
-            username.innerHTML = data.login;
+            username.innerHTML = data.name;
             tag.innerHTML = data.login;
             logo.src = data.avatar_url;
         });
