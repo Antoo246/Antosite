@@ -1,16 +1,14 @@
 :root {
-    --text-color: #5f105b;
-    --bg-gradient: linear-gradient(90deg, #5c0749fd, #42075e, #570645fd);
-    --prymarybox-bg: rgb(255, 255, 255, 0.35);
+    --default-text-color: #5f105b;
+    --default-bg-gradient: linear-gradient(90deg, #5c0749fd, #42075e, #570645fd);
+    --default-prymarybox-bg: rgb(255, 255, 255, 0.35);
 }
 
 
-body {
-    color: var(--text-color);
-}
 
 .anto-bg-gradient {
-    background: var(--bg-gradient);
+    color: var(--default-text-color);
+    background: var(--default-bg-gradient);
     background-size: 300% 300%;
     animation: animationbg 20s alternate infinite;
     height: 100vh;
@@ -24,7 +22,7 @@ body {
 }
 
 #anto-prymarybox {
-    background-color: var(--prymarybox-bg);
+    background-color: var(--default-prymarybox-bg);
     height: 740px;
     width: 1000px;
     border-radius: 80px;
