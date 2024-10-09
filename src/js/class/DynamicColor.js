@@ -9,10 +9,20 @@ class DynamicColor {
     }
 
 
+    setImg(img) {
+        this.Img = img;
+    }
+
+    setThreshold(threshold) {
+        this.threshold = threshold;
+    }
+
+
+
     // Function for extract the palette
     ExtractPalet() {
         return new Promise((resolve) => {
-            let Numcolor = 2;
+            let Numcolor = 3;
             const colorThief = new ColorThief();
             if (this.Img.complete) {
                 this.Palette = colorThief.getPalette(this.Img, Numcolor);
@@ -51,7 +61,6 @@ class DynamicColor {
                     filtered.push(this.Palette[i]);
                 }
             }
-
             if (filtered.length === 0) {
                 reject("No colors left after filtering");
             } else {
@@ -90,15 +99,6 @@ class DynamicColor {
         })
 
     }
-
-    setImg(img) {
-        this.Img = img;
-    }
-
-    setThreshold(threshold) {
-        this.threshold = threshold;
-    }
-
 
     applyTheme() {
         this.ExtractPalet().then(() => {
