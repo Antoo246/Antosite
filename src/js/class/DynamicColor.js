@@ -36,9 +36,9 @@ class DynamicColor {
     // Function for filter the palette
     FilterPalet() {
 
-        return new Promise( (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const filtered = [];
-    
+
             for (let i = 0; i < this.Palette.length; i++) {
                 let addColor = true;
                 for (let j = 0; j < filtered.length; j++) {
@@ -62,7 +62,7 @@ class DynamicColor {
 
     }
 
-    
+
 
     // Function for update the gradient and the text color
     UpdateGradient() {
@@ -72,7 +72,7 @@ class DynamicColor {
         console.log("New Text color " + textcolor);
 
         const paletteColors = this.Palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-        document.documentElement.style.setProperty('--default-text-color', this.ColorFunctions.ArrayToRgb(textcolor)); 
+        document.documentElement.style.setProperty('--default-text-color', this.ColorFunctions.ArrayToRgb(textcolor));
         document.documentElement.style.setProperty('--default-bg-gradient', `linear-gradient(to right, ${paletteColors.join(', ')})`);
 
     }
