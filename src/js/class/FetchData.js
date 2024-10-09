@@ -7,7 +7,7 @@ class FetchData {
             fetch("https://api.github.com/users/" + user)
                 .then(response => response.json())
                 .then(data => {
-                    resolve({ data });
+                    resolve( data);
                 })
                 .catch(error => {
                     console.error(error);

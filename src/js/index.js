@@ -37,9 +37,9 @@ function Load() {
         let logo = document.getElementById("anto-logo");
         let username = document.getElementById("anto-username");
         let tag = document.getElementById("anto-tag");
-        logo.src = data.data.avatar_url;
-        username.innerHTML = data.data.name;
-        tag.innerHTML = data.data.login;
+        logo.src = data.avatar_url;
+        username.innerHTML = data.name;
+        tag.innerHTML = data.login;
         DynamicColorIn.setImg(logo);
         DynamicColorIn.applyTheme();
         
