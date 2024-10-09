@@ -60,8 +60,7 @@ class DynamicColor {
         console.log( this.Palette);
         const paletteColors = this.Palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
         const gradient = `linear-gradient(to right, ${paletteColors.join(', ')})`;
-        console.log("TexColor " + this.ColorFunctions.ArrayToRgb(TextColor));
-        document.body.style.color = this.ColorFunctions.ArrayToRgb(TextColor);
+        document.body.style.color = this.ColorFunctions.ArrayToRgb(this.textcolor);
         document.body.style.background = gradient;
 
     }
