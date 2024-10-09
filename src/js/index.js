@@ -152,7 +152,7 @@ function rgbToHsl(r, g, b) {
     let h, s, l = (max + min) / 2;
 
     if (max === min) {
-        h = s = 0; // È un grigio
+        h = s = 0; 
     } else {
         const d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -166,16 +166,14 @@ function rgbToHsl(r, g, b) {
         h /= 6;
     }
 
-    return [h, s, l]; // h è la tonalità (hue)
+    return [h, s, l]; 
 }
 
 
 
 function colorDistance(color1, color2) {
-    const rDiff = color1[0] - color2[0];
-    const gDiff = color1[1] - color2[1];
-    const bDiff = color1[2] - color2[2];
-    return Math.sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
+    let difRgb = diffColor(color1, color2);
+    return Math.sqrt(Math.pow(difRgb[0], 2) + Math.pow(difRgb[1], 2) + Math.pow(difRgb[2], 2));
 }
 
 
@@ -185,11 +183,6 @@ function diffColor(color,color2) {
         const gDiff = color[1] - color2[1];
         const bDiff = color[2] - color2[2];
         return [rDiff, gDiff, bDiff];
-}
-
-function colormedia(color1, color2) {
-    let difRgb = diffColor(color1, color2);
-    return Math.sqrt(Math.pow(difRgb[0], 2) + Math.pow(difRgb[1], 2) + Math.pow(difRgb[2], 2));
 }
 
 function ArrayToRgb(color) {
