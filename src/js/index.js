@@ -1,5 +1,5 @@
 const githubuser = "anto426";
-let primaryColor;
+let TextColor ="rgb(0,0,0)";
 
 document.addEventListener("DOMContentLoaded", function () {
     let fild = document.getElementById("anto-About-fild");
@@ -69,24 +69,25 @@ function fetchinfo() {
 function UpdateGradient(palette) {
     const paletteColors = palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
     const gradient = `linear-gradient(to right, ${paletteColors.join(', ')})`;
-    let oppprimaryColor = getOppositeColor(primaryColor);
-    console.log(oppprimaryColor);
-    document.body.style.color = oppprimaryColor;
+    console.log("TexColor " + ArrayToRgb(TextColor));
+    document.body.style.color = ArrayToRgb( TextColor);
     document.body.style.background = gradient;
 
 }
 
 
+
 // Function for extract the palette
 function ExtractPalet(imageElement) {
     return new Promise((resolve) => {
+        let Numcolor = 2;
         const colorThief = new ColorThief();
         if (imageElement.complete) {
-            const palette = colorThief.getPalette(imageElement, 5);
+            const palette = colorThief.getPalette(imageElement, Numcolor);
             resolve(palette);
         } else {
             imageElement.addEventListener('load', function () {
-                const palette = colorThief.getPalette(imageElement, 5);
+                const palette = colorThief.getPalette(imageElement, Numcolor);
                 resolve(palette);
             });
         }
@@ -116,7 +117,7 @@ function filterPalet(colors, threshold = 50) {
         if (filtered.length === 0) {
             reject("No colors left after filtering");
         } else {
-            primaryColor = colors[0];
+            TextColor = colors[0];
             resolve(SortPalet(filtered));
         }
 
@@ -177,6 +178,23 @@ function colorDistance(color1, color2) {
     return Math.sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
 }
 
+
+function diffColor(color,color2) {
+
+        const rDiff = color[0] - color2[0];
+        const gDiff = color[1] - color2[1];
+        const bDiff = color[2] - color2[2];
+        return [rDiff, gDiff, bDiff];
+}
+
+function colormedia(color1, color2) {
+    let difRgb = diffColor(color1, color2);
+    return Math.sqrt(Math.pow(difRgb[0], 2) + Math.pow(difRgb[1], 2) + Math.pow(difRgb[2], 2));
+}
+
+function ArrayToRgb(color) {
+    return `rgb(${color[0]}, ${color[1]}, ${color[2]})`
+}
 
 function getOppositeColor(color) {
     
