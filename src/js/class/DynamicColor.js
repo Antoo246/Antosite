@@ -2,7 +2,6 @@ class DynamicColor {
 
 
     constructor() {
-        this.textcolor = [0, 0, 0];
         this.Palette = [];
         this.Img;
         this.threshold = 50;
@@ -56,7 +55,6 @@ class DynamicColor {
             if (filtered.length === 0) {
                 reject("No colors left after filtering");
             } else {
-                this.textcolor = filtered[0];
                 this.SortPalet(filtered);
                 resolve(0);
             }
@@ -70,7 +68,7 @@ class DynamicColor {
     UpdateGradient() {
         console.log( this.Palette);
         const paletteColors = this.Palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-        document.documentElement.style.setProperty('--default-text-color', this.ColorFunctions.ArrayToRgb(this.textcolor)); 
+        document.documentElement.style.setProperty('--default-text-color', this.ColorFunctions.ArrayToRgb(this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(this.Palette)))); 
         document.documentElement.style.setProperty('--default-bg-gradient', `linear-gradient(to right, ${paletteColors.join(', ')})`);
 
     }

@@ -29,6 +29,18 @@ class ColorFunctions {
     }
 
 
+    averageColor(color) 
+    {
+        let somme = {r: 0, g: 0, b: 0};
+        color.forEach(element => {
+            somme.r += element[0];
+            somme.g += element[1];
+            somme.b += element[2];
+        });
+        return [somme.r / color.length, somme.g / color.length, somme.b / color.length];
+    }
+
+
 
     // Function for calculate the distance between two colors
     colorDistance(color1, color2) {
