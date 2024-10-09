@@ -66,9 +66,13 @@ class DynamicColor {
 
     // Function for update the gradient and the text color
     UpdateGradient() {
-        console.log( this.Palette);
+        let textcolor = this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(this.Palette));
+        console.log("New Palette color :");
+        console.log(this.Palette);
+        console.log("New Text color " + textcolor);
+
         const paletteColors = this.Palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-        document.documentElement.style.setProperty('--default-text-color', this.ColorFunctions.ArrayToRgb(this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(this.Palette)))); 
+        document.documentElement.style.setProperty('--default-text-color', this.ColorFunctions.ArrayToRgb(textcolor)); 
         document.documentElement.style.setProperty('--default-bg-gradient', `linear-gradient(to right, ${paletteColors.join(', ')})`);
 
     }

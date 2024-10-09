@@ -29,15 +29,21 @@ class ColorFunctions {
     }
 
 
-    averageColor(color) 
-    {
-        let somme = {r: 0, g: 0, b: 0};
+    averageColor(color) {
+        let somme = { r: 0, g: 0, b: 0 };
         color.forEach(element => {
             somme.r += element[0];
             somme.g += element[1];
             somme.b += element[2];
         });
-        return [somme.r / color.length, somme.g / color.length, somme.b / color.length];
+
+        somme.r = Math.round(somme.r / color.length);
+        somme.g = Math.round(somme.g / color.length);
+        somme.b = Math.round(somme.b / color.length);
+
+
+
+        return [somme.r, somme.b, somme.g];
     }
 
 
@@ -66,6 +72,6 @@ class ColorFunctions {
 
     // Function for get the opposite color
     getOppositeColor(color) {
-        return `rgb(${255 - color[0]}, ${255 - color[1]}, ${255 - color[2]})`
+        return [255 - color[0], 255 - color[1], 255 - color[2]];
     }
 }
