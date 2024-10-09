@@ -1,12 +1,17 @@
-const githubuser = "anto426";
-let TextColor ="rgb(0,0,0)";
-
+// import other modules
 const DynamicColorIn= new DynamicColor();
 const FetchDataIn = new FetchData();
 
+
+
+// Variables
+const githubusername = "anto426";
+const AntoAboutFild = "I'm a high school student who likes programming 💻✨"
+
+
 document.addEventListener("DOMContentLoaded", function () {
     let fild = document.getElementById("anto-About-fild");
-    textWrriter("I'm a high school student who likes programming 💻✨", fild);
+    textWrriter(AntoAboutFild, fild);
 });
 
 
@@ -28,7 +33,7 @@ function textWrriter(text, element) {
     
 // Function for loadpage
 function Load() {
-    FetchDataIn.fetchGithubData(githubuser).then(data => {
+    FetchDataIn.fetchGithubData(githubusername).then(data => {
         let logo = document.getElementById("anto-logo");
         let username = document.getElementById("anto-username");
         let tag = document.getElementById("anto-tag");

@@ -1,5 +1,6 @@
 class ColorFunctions {
 
+    // Function for convert RGB to HSL
     rgbToHsl(r, g, b) {
         r /= 255;
         g /= 255;
@@ -28,12 +29,15 @@ class ColorFunctions {
     }
 
 
+
+    // Function for calculate the distance between two colors
     colorDistance(color1, color2) {
         let difRgb = this.diffColor(color1, color2);
         return Math.sqrt(Math.pow(difRgb[0], 2) + Math.pow(difRgb[1], 2) + Math.pow(difRgb[2], 2));
     }
 
 
+    // Function for calculate the difference between two colors
     diffColor(color, color2) {
         const rDiff = color[0] - color2[0];
         const gDiff = color[1] - color2[1];
@@ -41,10 +45,14 @@ class ColorFunctions {
         return [rDiff, gDiff, bDiff];
     }
 
+
+    // Function for convert an array to rgb
     ArrayToRgb(color) {
         return `rgb(${color[0]}, ${color[1]}, ${color[2]})`
     }
 
+
+    // Function for get the opposite color
     getOppositeColor(color) {
         return `rgb(${255 - color[0]}, ${255 - color[1]}, ${255 - color[2]})`
     }

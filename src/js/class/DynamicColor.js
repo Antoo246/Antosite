@@ -9,6 +9,8 @@ class DynamicColor {
         this.ColorFunctions = new ColorFunctions();
     }
 
+
+    // Function for extract the palette
     ExtractPalet() {
         return new Promise((resolve) => {
             let Numcolor = 2;
@@ -31,6 +33,8 @@ class DynamicColor {
         });
     }
 
+
+    // Function for filter the palette
     FilterPalet() {
 
         return new Promise( (resolve, reject) => {
@@ -62,6 +66,7 @@ class DynamicColor {
 
     
 
+    // Function for update the gradient and the text color
     UpdateGradient() {
         console.log( this.Palette);
         const paletteColors = this.Palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
@@ -70,7 +75,7 @@ class DynamicColor {
 
     }
 
-    // Function for optimize the palette
+    // Function for sort the palette in base of the tone
     SortPalet() {
         return new Promise((resolve) => {
             this.Palette = this.Palette.sort((a, b) => {
