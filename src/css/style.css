@@ -21,6 +21,10 @@
     margin: 0, 0, 0, 0;
 }
 
+#anto-About-fild{
+    text-align: center;
+}
+
 #anto-prymarybox {
     background-color: var(--default-prymarybox-bg);
     height: 740px;
