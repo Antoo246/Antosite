@@ -75,10 +75,9 @@ class DynamicColor {
     CalculateTextcolor() {
         let textcolor = this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(this.Palette));
         let hsl = this.ColorFunctions.rgbToHsl(textcolor[0], textcolor[1], textcolor[2]);
+        console.log("HSL :" + hsl);
         if (hsl[2] > 0.5) {
-            textcolor = textcolor.map(color => color - 50);
-        } else {
-            textcolor = textcolor.map(color => color + 50);
+            textcolor = textcolor.map(color => color - 30);
         }
         return textcolor;
     }

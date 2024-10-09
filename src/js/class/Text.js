@@ -18,17 +18,28 @@ class TextClass {
 
 
     // Function for calculate the width of a text
-    setLarghezzaTesto(textFild, testo) {
-        const stile = window.getComputedStyle(textFild);
-        const elemento = document.createElement('span');
-        elemento.style = stile;
-        elemento.style.visibility = 'hidden';
-        elemento.textContent = testo;
-        document.body.appendChild(elemento);
-        const larghezza = elemento.offsetWidth;
-        document.body.removeChild(elemento);
-        textFild.style.width = larghezza;
-    }
+// Function for calculating the width of a text
+setLarghezzaTesto(textFild, testo) {
+    const stile = window.getComputedStyle(textFild);
+    const elemento = document.createElement('span'); 
+    elemento.style.cssText = stile.cssText; 
+
+
+    elemento.style.visibility = 'hidden';
+    elemento.style.whiteSpace = 'nowrap';
+    elemento.style.position = 'absolute';
+    elemento.style.boxSizing = 'border-box';
+
+    elemento.textContent = testo; 
+    document.body.appendChild(elemento);
+    const len = elemento.offsetWidth; 
+    document.body.removeChild(elemento);
+
+    // Applica la larghezza calcolata all'elemento target
+    textFild.style.width = len + 'px'; 
+    console.log('Larghezza calcolata:', len + 'px');
+}
+
 
 
 
