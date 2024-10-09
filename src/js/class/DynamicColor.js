@@ -17,9 +17,15 @@ class DynamicColor {
                 this.Palette = colorThief.getPalette(this.Img, Numcolor);
                 resolve(0);
             } else {
-                this.Img.addEventListener('load', function () {
-                    this.Palette = colorThief.getPalette(this.Img, Numcolor);
-                    resolve(0);
+                this.Img.addEventListener('load', () => {
+                    if (this.Img.naturalWidth > 0 && this.Img.naturalHeight > 0) {
+                        console.log("Image loaded successfully");
+                        this.Palette = colorThief.getPalette(this.Img, Numcolor);
+                        resolve(0);
+                    } else {
+                        console.error("Image not loaded properly.");
+                        reject("Image not loaded properly.");
+                    }
                 });
             }
         });

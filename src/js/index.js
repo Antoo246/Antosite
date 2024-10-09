@@ -38,7 +38,6 @@ function Load() {
         DynamicColorIn.setImg(logo);
         DynamicColorIn.applyTheme();
         
-        
     }).catch(error => {
         console.error(error);
     });
