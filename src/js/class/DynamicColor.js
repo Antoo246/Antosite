@@ -72,10 +72,23 @@ class DynamicColor {
     }
 
 
+    CalculateTextcolor() {
+        let textcolor = this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(this.Palette));
+        let hsl = this.ColorFunctions.rgbToHsl(textcolor[0], textcolor[1], textcolor[2]);
+        if (hsl[2] > 0.5) {
+            textcolor = textcolor.map(color => color - 50);
+        } else {
+            textcolor = textcolor.map(color => color + 50);
+        }
+        return textcolor;
+    }
+
+
+
 
     // Function for update the gradient and the text color
     UpdateGradient() {
-        let textcolor = this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(this.Palette));
+        let textcolor = this.CalculateTextcolor();
         console.log("New Palette color :");
         console.log(this.Palette);
         console.log("New Text color " + textcolor);
