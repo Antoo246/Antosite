@@ -1,5 +1,5 @@
 // import other modules
-const DynamicColorIn= new DynamicColor();
+const DynamicColorIn = new DynamicColor();
 const FetchDataIn = new FetchData();
 
 
@@ -30,7 +30,7 @@ function textWrriter(text, element) {
 }
 
 
-    
+
 // Function for loadpage
 function Load() {
     FetchDataIn.fetchGithubData(githubusername).then(data => {
@@ -42,7 +42,7 @@ function Load() {
         tag.innerHTML = data.login;
         DynamicColorIn.setImg(logo);
         DynamicColorIn.applyTheme();
-        
+
     }).catch(error => {
         console.error(error);
     });
