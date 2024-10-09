@@ -117,13 +117,58 @@ function filterPalet(colors, threshold = 50) {
             reject("No colors left after filtering");
         } else {
             primaryColor = colors[0];
-            resolve(filtered);
+            resolve(SortPalet(filtered));
         }
 
         resolve(filtered);
     })
 
 }
+
+// Function for optimize the palette
+function SortPalet(palette) {
+
+    return new Promise((resolve) => {
+    palette.sort((a, b) => {
+        const hslA = rgbToHsl(a[0], a[1], a[2]);
+        const hslB = rgbToHsl(b[0], b[1], b[2]);
+        return hslA[0] - hslB[0];
+    });
+
+    resolve(palette);
+})
+
+}
+
+
+function rgbToHsl(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+
+    if (max === min) {
+        h = s = 0; // È un grigio
+    } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+
+        h /= 6;
+    }
+
+    return [h, s, l]; // h è la tonalità (hue)
+}
+
+
 
 function colorDistance(color1, color2) {
     const rDiff = color1[0] - color2[0];
