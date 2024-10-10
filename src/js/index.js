@@ -21,6 +21,13 @@ function showSite(loader, prymarybox, textFild) {
 }
 
 
+function seeErrorPage(loader, errmessagebox) {
+    loader.style.display = "none";
+    errmessagebox.classList.add("fade-in");
+    errmessagebox.style.display = "flex";
+
+}
+
 // Function for loadpage
 function Load() {
     let prymarybox = document.getElementById("anto-prymarybox");
@@ -41,13 +48,11 @@ function Load() {
             showSite(loader, prymarybox, textFild);
         }).catch(error => {
             console.error("Color Dynamic error : ", error);
-            loader.style.display = "none";
-            errmessagebox.style.display = "flex";
+            seeErrorPage(loader, errmessagebox);
         });
     }).catch(error => {
         console.error(error);
-        loader.style.display = "none";
-        errmessagebox.style.display = "flex";
+        seeErrorPage(loader, errmessagebox);
     });
 }
 
