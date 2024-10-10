@@ -10,15 +10,25 @@ const Textd = new TextClass();
 const githubusername = "anto426";
 const AntoAboutFild = "I'm a high school student who likes programming 💻✨"
 
+function showSite(loader, prymarybox, textFild) {
+    console.log("Site is ready");
+    setTimeout(() => {
+        loader.style.display = "none";
+        prymarybox.classList.add("fade-in");
+        prymarybox.style.display = "flex";
+        Textd.textWrriter(AntoAboutFild, textFild);
+    }, 1000);
+}
+
 
 // Function for loadpage
 function Load() {
     let prymarybox = document.getElementById("anto-prymarybox");
     let textFild = document.getElementById("anto-About-fild");
     let loader = document.getElementById("anto-loader");
-    Textd.setLarghezzaTesto(textFild, AntoAboutFild);
+    Textd.setlenText(textFild, AntoAboutFild);
 
-    FetchDataIn.fetchGithubData(githubusername).then(data => {
+    FetchDataIn.fetchGithubData(githubusername).then(async data => {
         let logo = document.getElementById("anto-logo");
         let username = document.getElementById("anto-username");
         let tag = document.getElementById("anto-tag");
@@ -26,13 +36,9 @@ function Load() {
         username.innerHTML = data.name;
         tag.innerHTML = data.login;
         DynamicColorIn.setImg(logo);
-        DynamicColorIn.applyTheme();
-        setTimeout(() => {
-            loader.style.display = "none";
-            prymarybox.classList.add("fade-in");
-            prymarybox.style.display = "flex";
-            Textd.textWrriter(AntoAboutFild, textFild);
-        }, 1000);
+        await DynamicColorIn.applyTheme();
+        showSite(loader, prymarybox, textFild);
+
 
 
     }).catch(error => {

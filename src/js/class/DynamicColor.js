@@ -75,7 +75,6 @@ class DynamicColor {
     CalculateTextcolor() {
         let textcolor = this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(this.Palette));
         let hsl = this.ColorFunctions.rgbToHsl(textcolor[0], textcolor[1], textcolor[2]);
-        console.log("HSL :" + hsl);
         if (hsl[2] > 0.5) {
             textcolor = textcolor.map(color => color - 30);
         }
@@ -113,13 +112,17 @@ class DynamicColor {
     }
 
     applyTheme() {
-        this.ExtractPalet().then(() => {
-            this.FilterPalet().then(() => {
-                this.UpdateGradient();
-            }).catch(error => {
-                console.error(error);
-            });
-        })
+        return new Promise((resolve, reject) => {
+            this.ExtractPalet().then(() => {
+                this.FilterPalet().then(() => {
+                    this.UpdateGradient();
+                    resolve(0);
+                }).catch(error => {
+                    console.error(error);
+                });
+            })
+
+        });
 
     }
 
