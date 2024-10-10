@@ -21,7 +21,7 @@ class DynamicColor {
 
     // Function for extract the palette
     ExtractPalet() {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let Numcolor = 3;
             const colorThief = new ColorThief();
             if (this.Img.complete) {
@@ -34,7 +34,6 @@ class DynamicColor {
                         this.Palette = colorThief.getPalette(this.Img, Numcolor);
                         resolve(0);
                     } else {
-                        console.error("Image not loaded properly.");
                         reject("Image not loaded properly.");
                     }
                 });
@@ -86,27 +85,38 @@ class DynamicColor {
 
     // Function for update the gradient and the text color
     UpdateGradient() {
-        let textcolor = this.CalculateTextcolor();
-        console.log("New Palette color :");
-        console.log(this.Palette);
-        console.log("New Text color " + textcolor);
+        return new Promise((resolve, reject) => {
+            try {
+                let textcolor = this.CalculateTextcolor();
+                console.log("New Palette color :");
+                console.log(this.Palette);
+                console.log("New Text color " + textcolor);
 
-        const paletteColors = this.Palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-        document.documentElement.style.setProperty('--default-item-color', this.ColorFunctions.ArrayToRgb(textcolor));
-        document.documentElement.style.setProperty('--default-bg-gradient', `linear-gradient(to right, ${paletteColors.join(', ')})`);
+                const paletteColors = this.Palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
+                document.documentElement.style.setProperty('--default-item-color', this.ColorFunctions.ArrayToRgb(textcolor));
+                document.documentElement.style.setProperty('--default-bg-gradient', `linear-gradient(to right, ${paletteColors.join(', ')})`);
+                resolve(0);
+            } catch (error) {
+                reject(error);
+            }
+
+        });
 
     }
 
     // Function for sort the palette in base of the tone
     SortPalet() {
-        return new Promise((resolve) => {
-            this.Palette = this.Palette.sort((a, b) => {
-                const hslA = this.ColorFunctions.rgbToHsl(a[0], a[1], a[2]);
-                const hslB = this.ColorFunctions.rgbToHsl(b[0], b[1], b[2]);
-                return hslA[0] - hslB[0];
-            });
-
-            resolve(0);
+        return new Promise((resolve, reject) => {
+            try {
+                this.Palette = this.Palette.sort((a, b) => {
+                    const hslA = this.ColorFunctions.rgbToHsl(a[0], a[1], a[2]);
+                    const hslB = this.ColorFunctions.rgbToHsl(b[0], b[1], b[2]);
+                    return hslA[0] - hslB[0];
+                });
+                resolve(0);
+            } catch (error) {
+                reject(error);
+            }
         })
 
     }
@@ -115,12 +125,19 @@ class DynamicColor {
         return new Promise((resolve, reject) => {
             this.ExtractPalet().then(() => {
                 this.FilterPalet().then(() => {
-                    this.UpdateGradient();
-                    resolve(0);
+                    this.UpdateGradient().then(() => {
+                        resolve(0);
+                    }).catch(error => {
+                        reject(error);
+                    });
                 }).catch(error => {
+                    reject(error);
                     console.error(error);
                 });
-            })
+            }).catch(error => {
+                reject(error);
+                console.error(error);
+            });
 
         });
 

@@ -24,6 +24,7 @@ function showSite(loader, prymarybox, textFild) {
 // Function for loadpage
 function Load() {
     let prymarybox = document.getElementById("anto-prymarybox");
+    let errmessagebox = document.getElementById("anto-message-error");
     let textFild = document.getElementById("anto-About-fild");
     let loader = document.getElementById("anto-loader");
     Textd.setlenText(textFild, AntoAboutFild);
@@ -36,13 +37,17 @@ function Load() {
         username.innerHTML = data.name;
         tag.innerHTML = data.login;
         DynamicColorIn.setImg(logo);
-        await DynamicColorIn.applyTheme();
-        showSite(loader, prymarybox, textFild);
-
-
-
+        DynamicColorIn.applyTheme().then(() => {
+            showSite(loader, prymarybox, textFild);
+        }).catch(error => {
+            console.error("Color Dynamic error : ", error);
+            loader.style.display = "none";
+            errmessagebox.style.display = "flex";
+        });
     }).catch(error => {
         console.error(error);
+        loader.style.display = "none";
+        errmessagebox.style.display = "flex";
     });
 }
 
