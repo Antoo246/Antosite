@@ -93,7 +93,7 @@ class DynamicColor {
         console.log("New Text color " + textcolor);
 
         const paletteColors = this.Palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-        document.documentElement.style.setProperty('--default-text-color', this.ColorFunctions.ArrayToRgb(textcolor));
+        document.documentElement.style.setProperty('--default-item-color', this.ColorFunctions.ArrayToRgb(textcolor));
         document.documentElement.style.setProperty('--default-bg-gradient', `linear-gradient(to right, ${paletteColors.join(', ')})`);
 
     }
