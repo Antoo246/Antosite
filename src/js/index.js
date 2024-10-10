@@ -18,19 +18,24 @@ function showSite(loader, prymarybox, textFild) {
 }
 
 
-function seeErrorPage(loader, errmessagebox) {
+function seeErrorPage(loader, errmessagebox, errmessage, textmessage = "An error occurred while loading the page") {
     loader.style.display = "none";
+    errmessage.innerHTML = textmessage;
     errmessagebox.classList.add("fade-in");
     errmessagebox.style.display = "flex";
+    console.error(textmessage);
 
 }
 
 // Function for loadpage
 function Load() {
     let prymarybox = document.getElementById("anto-prymarybox");
-    let errmessagebox = document.getElementById("anto-message-error");
+    let errmessagebox = document.getElementById("anto-container-message-error");
+    let errmessage = document.getElementById("anto-message-error");
     let textFild = document.getElementById("anto-About-fild");
     let loader = document.getElementById("anto-loader");
+    let githublink = document.getElementById("anto-link-github");
+    let twitterlink = document.getElementById("anto-link-twitter");
     Textd.setlenText(textFild, AntoAboutFild);
 
     FetchDataIn.fetchGithubData(githubusername).then(async data => {
@@ -40,15 +45,17 @@ function Load() {
         logo.src = data.avatar_url;
         username.innerHTML = data.name;
         tag.innerHTML = data.login;
+        githublink.href = data.html_url;
+        data.twitter_username ? twitterlink.href = `https://twitter.com/${data.twitter_username}` : twitterlink.style.display = "none";
         DynamicColorIn.setImg(logo);
         DynamicColorIn.applyTheme().then(() => {
             showSite(loader, prymarybox, textFild);
         }).catch(error => {
             console.error("Color Dynamic error : ", error);
-            seeErrorPage(loader, errmessagebox);
+            seeErrorPage(loader, errmessagebox, errmessage);
         });
     }).catch(error => {
         console.error(error);
-        seeErrorPage(loader, errmessagebox);
+            seeErrorPage(loader, errmessagebox, errmessage);
     });
 }
