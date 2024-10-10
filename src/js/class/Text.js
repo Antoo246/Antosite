@@ -19,7 +19,7 @@ class TextClass {
 
     // Function for calculate the width of a text
 // Function for calculating the width of a text
-setLarghezzaTesto(textFild, testo) {
+setlenText(textFild, testo) {
     const stile = window.getComputedStyle(textFild);
     const elemento = document.createElement('span'); 
     elemento.style.cssText = stile.cssText; 
@@ -37,7 +37,7 @@ setLarghezzaTesto(textFild, testo) {
 
     // Applica la larghezza calcolata all'elemento target
     textFild.style.width = len + 'px'; 
-    console.log('Larghezza calcolata:', len + 'px');
+    console.log("calculated length ", len + 'px');
 }
 
 
