@@ -52,10 +52,10 @@ function Load() {
             showSite(loader, prymarybox, textFild);
         }).catch(error => {
             console.error("Color Dynamic error : ", error);
-            seeErrorPage(loader, errmessagebox, errmessage);
+            seeErrorPage(loader, errmessagebox, errmessage, error);
         });
     }).catch(error => {
         console.error(error);
-            seeErrorPage(loader, errmessagebox, errmessage);
+        seeErrorPage(loader, errmessagebox, errmessage, error);
     });
 }
