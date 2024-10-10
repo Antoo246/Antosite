@@ -35,7 +35,7 @@ class TextClass {
         const len = elemento.offsetWidth;
         document.body.removeChild(elemento);
 
-        // Applica la larghezza calcolata all'elemento target
+        // Set the width of the text field
         textFild.style.width = len + 'px';
         console.log("calculated length ", len + 'px');
     }
