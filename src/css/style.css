@@ -15,23 +15,40 @@
     width: 100vw;
 }
 
+
+
 #anto-prymarycontainer {
     height: 100vh;
     width: 100vw;
-    margin: 0, 0, 0, 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-#anto-About-fild{
+#anto-About-fild {
     text-align: center;
     white-space: nowrap;
 }
 
+
+
 #anto-prymarybox {
+    display: none ;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     background-color: var(--default-prymarybox-bg);
     height: 740px;
     width: 1000px;
     border-radius: 80px;
     padding: 30px;
+}
+
+
+.fade-in {
+    display: flex !important;
+    animation: fadeIn 2s forwards;
 }
 
 #anto-logo {
@@ -54,8 +71,51 @@
     from {
         background-position: 0% 50%;
     }
+
     to {
         background-position: 100% 50%;
     }
 
 }
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+
+
+.loader {
+    width: 40vw;
+    height: 22px;
+    border-radius: 40px;
+    color: #514b82;
+    border: 2px solid;
+    position: relative;
+  }
+
+  .loader::before {
+    content: "";
+    position: absolute;
+    margin: 2px;
+    width: 25%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: inherit;
+    background: currentColor;
+    animation: l3 1s infinite linear;
+  }
+
+
+
+  @keyframes l3 {
+      50% {left:100%;transform: translateX(calc(-100% - 4px))}
+  }
