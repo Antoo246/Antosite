@@ -1,80 +1,80 @@
 :root {
-    --default-item-color: #5f105b;
-    --default-bg-gradient: linear-gradient(90deg, #5c0749fd, #42075e, #570645fd);
-    --default-prymarybox-bg: rgb(255, 255, 255, 0.35);
+  --default-item-color: #5f105b;
+  --default-bg-gradient: linear-gradient(90deg, #5c0749fd, #42075e, #570645fd);
+  --default-prymarybox-bg: rgb(255, 255, 255, 0.35);
 }
 
 
 
 .anto-bg-gradient {
-    color: var(--default-item-color);
-    background: var(--default-bg-gradient);
-    background-size: 400% 400%;
-    animation: animationbg 25s alternate infinite;
-    height: 100vh;
-    width: 100vw;
+  color: var(--default-item-color);
+  background: var(--default-bg-gradient);
+  background-size: 400% 400%;
+  animation: animationbg 25s alternate infinite;
+  height: 100vh;
+  width: 100vw;
 }
 
 
 
 #anto-btn {
-    color: var(--default-item-color) !important;
-    background-color: transparent !important;
-    width: 100vw;
+  color: var(--default-item-color) !important;
+  background-color: transparent !important;
+  width: 100vw;
 }
 
 
 #anto-prymarycontainer {
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 #anto-About-fild {
-    text-align: center;
-    white-space: nowrap;
+  text-align: center;
+  white-space: nowrap;
 }
 
 
 
 #anto-prymarybox {
-    display: none;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--default-prymarybox-bg);
-    height: 740px;
-    width: 1000px;
-    border-radius: 80px;
-    padding: 30px;
+  display: none;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--default-prymarybox-bg);
+  height: 740px;
+  width: 1000px;
+  border-radius: 80px;
+  padding: 30px;
 }
 
 
 .fade-in {
-    display: flex !important;
-    animation: fadeIn 2s forwards;
+  display: flex !important;
+  animation: fadeIn 2s forwards;
 }
 
 #anto-logo {
-    height: 130px;
-    width: 130px;
-    border-radius: 100px;
-    border: var(--default-item-color) 2px solid;
-    margin: 0, 0, 0, 0;
+  height: 130px;
+  width: 130px;
+  border-radius: 100px;
+  border: var(--default-item-color) 2px solid;
+  margin: 0, 0, 0, 0;
 }
 
 #anto-logocontainer {
-    height: auto;
-    width: auto;
-    align-items: center;
-    margin: 0, 0, 10px, 0;
+  height: auto;
+  width: auto;
+  align-items: center;
+  margin: 0, 0, 10px, 0;
 
 }
 
-#anto-message-error{
+#anto-message-error {
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -89,81 +89,86 @@
 
 
 .loader {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    display: inline-block;
-    position: relative;
-    border: 3px solid;
-    border-color: #FFF #FFF transparent transparent;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  border: 3px solid;
+  border-color: #FFF #FFF transparent transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+.loader::after,
+.loader::before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  border: 3px solid;
+  border-color: transparent transparent var(--default-item-color) var(--default-item-color);
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  animation: rotationBack 0.5s linear infinite;
+  transform-origin: center center;
+}
+
+.loader::before {
+  width: 72px;
+  height: 72px;
+  border-color: #FFF #FFF transparent transparent;
+  animation: rotation 1.5s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
   }
-  .loader::after,
-  .loader::before {
-    content: '';  
-    box-sizing: border-box;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    border: 3px solid;
-    border-color: transparent transparent var(--default-item-color) var(--default-item-color);
-    width: 75px;
-    height: 75px;
-    border-radius: 50%;
-    box-sizing: border-box;
-    animation: rotationBack 0.5s linear infinite;
-    transform-origin: center center;
+
+  100% {
+    transform: rotate(360deg);
   }
-  .loader::before {
-    width: 72px;
-    height: 72px;
-    border-color: #FFF #FFF transparent transparent;
-    animation: rotation 1.5s linear infinite;
+}
+
+@keyframes rotationBack {
+  0% {
+    transform: rotate(0deg);
   }
-      
-  @keyframes rotation {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  } 
-  @keyframes rotationBack {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(-360deg);
-    }
+
+  100% {
+    transform: rotate(-360deg);
   }
-      
+}
+
 
 
 
 
 @keyframes animationbg {
-    from {
-        background-position: 0% 50%;
-    }
+  from {
+    background-position: 0% 50%;
+  }
 
-    to {
-        background-position: 100% 50%;
-    }
+  to {
+    background-position: 100% 50%;
+  }
 
 }
 
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+  from {
+    opacity: 0;
+  }
 
-    to {
-        opacity: 1;
-    }
+  to {
+    opacity: 1;
+  }
 }
