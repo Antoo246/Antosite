@@ -3,9 +3,6 @@ const DynamicColorIn = new DynamicColor();
 const FetchDataIn = new FetchData();
 const Textd = new TextClass();
 
-
-
-
 // Variables
 const githubusername = "anto426";
 const AntoAboutFild = "I'm a high school student who likes programming 💻✨"
@@ -55,12 +52,3 @@ function Load() {
         seeErrorPage(loader, errmessagebox);
     });
 }
-
-
-
-
-
-
-
-
-
