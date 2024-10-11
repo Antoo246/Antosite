@@ -8,11 +8,7 @@ const githubusername = "anto426";
 const AntoAboutFild = "I'm a high school student who likes programming 💻✨"
 const defaultimeout =  1000;
 
-
-
-
-// Function
-
+// Function 
 
 // Function for show site
 function showSite(loader, prymarybox, textFild) {
