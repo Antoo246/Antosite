@@ -33,7 +33,6 @@ function seeErrorPage(loader, errmessagebox, errmessage, textmessage = "An error
         errmessage.innerHTML = textmessage;
         errmessagebox.classList.add("fade-in");
         errmessagebox.style.display = "flex";
-        console.error(textmessage);
     }, defaultimeout
 );
 
