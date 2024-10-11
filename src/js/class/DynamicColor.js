@@ -2,9 +2,9 @@ class DynamicColor {
 
 
     constructor() {
-        this.Palette = [];
         this.Img;
         this.threshold = 50;
+        this.Palette = [];
         this.ColorFunctions = new ColorFunctions();
     }
 
