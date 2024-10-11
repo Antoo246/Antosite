@@ -71,6 +71,24 @@ class DynamicColor {
     }
 
 
+    // Function for sort the palette in base of the tone
+    SortPalet() {
+        return new Promise((resolve, reject) => {
+            try {
+                this.Palette = this.Palette.sort((a, b) => {
+                    const hslA = this.ColorFunctions.rgbToHsl(a[0], a[1], a[2]);
+                    const hslB = this.ColorFunctions.rgbToHsl(b[0], b[1], b[2]);
+                    return hslA[0] - hslB[0];
+                });
+                resolve(0);
+            } catch (error) {
+                reject(error);
+            }
+        })
+
+    }
+
+
     CalculateTextcolor() {
         let textcolor = this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(this.Palette));
         let hsl = this.ColorFunctions.rgbToHsl(textcolor[0], textcolor[1], textcolor[2]);
@@ -104,23 +122,8 @@ class DynamicColor {
 
     }
 
-    // Function for sort the palette in base of the tone
-    SortPalet() {
-        return new Promise((resolve, reject) => {
-            try {
-                this.Palette = this.Palette.sort((a, b) => {
-                    const hslA = this.ColorFunctions.rgbToHsl(a[0], a[1], a[2]);
-                    const hslB = this.ColorFunctions.rgbToHsl(b[0], b[1], b[2]);
-                    return hslA[0] - hslB[0];
-                });
-                resolve(0);
-            } catch (error) {
-                reject(error);
-            }
-        })
 
-    }
-
+    // Function for apply the theme
     applyTheme() {
         return new Promise((resolve, reject) => {
             this.ExtractPalet().then(() => {
