@@ -6,7 +6,15 @@ const Textd = new TextClass();
 // Variables
 const githubusername = "anto426";
 const AntoAboutFild = "I'm a high school student who likes programming 💻✨"
+const defaultimeout =  1000;
 
+
+
+
+// Function
+
+
+// Function for show site
 function showSite(loader, prymarybox, textFild) {
     console.log("Site is ready");
     setTimeout(() => {
@@ -14,10 +22,11 @@ function showSite(loader, prymarybox, textFild) {
         prymarybox.classList.add("fade-in");
         prymarybox.style.display = "flex";
         Textd.textWrriter(AntoAboutFild, textFild);
-    }, 1000);
+    }, defaultimeout);
 }
 
 
+// Function for error page
 function seeErrorPage(loader, errmessagebox, errmessage, textmessage = "An error occurred while loading the page") {
     setTimeout(() => {
         loader.style.display = "none";
@@ -25,7 +34,8 @@ function seeErrorPage(loader, errmessagebox, errmessage, textmessage = "An error
         errmessagebox.classList.add("fade-in");
         errmessagebox.style.display = "flex";
         console.error(textmessage);
-    }, 1000);
+    }, defaultimeout
+);
 
 }
 
