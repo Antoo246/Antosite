@@ -19,11 +19,13 @@ function showSite(loader, prymarybox, textFild) {
 
 
 function seeErrorPage(loader, errmessagebox, errmessage, textmessage = "An error occurred while loading the page") {
-    loader.style.display = "none";
-    errmessage.innerHTML = textmessage;
-    errmessagebox.classList.add("fade-in");
-    errmessagebox.style.display = "flex";
-    console.error(textmessage);
+    setTimeout(() => {
+        loader.style.display = "none";
+        errmessage.innerHTML = textmessage;
+        errmessagebox.classList.add("fade-in");
+        errmessagebox.style.display = "flex";
+        console.error(textmessage);
+    }, 1000);
 
 }
 
