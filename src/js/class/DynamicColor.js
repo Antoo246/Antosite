@@ -89,6 +89,7 @@ class DynamicColor {
     }
 
 
+    // Function for calculate the text color
     CalculateTextcolor() {
         let textcolor = this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(this.Palette));
         let hsl = this.ColorFunctions.rgbToHsl(textcolor[0], textcolor[1], textcolor[2]);
