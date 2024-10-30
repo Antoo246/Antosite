@@ -46,8 +46,8 @@
   justify-content: center;
   align-items: center;
   background-color: var(--default-prymarybox-bg);
-  height: 740px;
-  width: 1000px;
+  height: 640px;
+  width: 900px;
   border-radius: 80px;
   padding: 30px;
 }
