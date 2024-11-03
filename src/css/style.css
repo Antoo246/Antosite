@@ -1,11 +1,14 @@
+/* Root Variables */
 :root {
   --default-item-color: #350b42;
   --default-bg-gradient: linear-gradient(90deg, #5c0749fd, #42075e, #570645fd);
-  --default-prymarybox-bg: rgb(255, 255, 255, 0.35);
+  --default-prymarybox-bg: rgba(255, 255, 255, 0.35);
+  --loader-border-color: #FFF;
+  --border-radius: 55px;
+  --transition-duration: 3s;
 }
 
-
-
+/* Background Gradient */
 .anto-bg-gradient {
   color: var(--default-item-color);
   background: var(--default-bg-gradient);
@@ -15,15 +18,14 @@
   width: 100vw;
 }
 
-
-
+/* Button Styles */
 .anto-btn {
   color: var(--default-item-color) !important;
   background-color: transparent !important;
   width: 100vw;
 }
 
-
+/* Primary Container */
 #anto-prymarycontainer {
   height: 100vh;
   width: 100vw;
@@ -33,13 +35,13 @@
   align-items: center;
 }
 
+/* About Field */
 #anto-About-fild {
   text-align: center;
   white-space: nowrap;
 }
 
-
-
+/* Primary Box */
 #anto-prymarybox {
   display: none;
   flex-direction: row;
@@ -48,33 +50,35 @@
   background-color: var(--default-prymarybox-bg);
   height: 640px;
   width: 900px;
-  border-radius: 80px;
+  border-radius: var(--border-radius);
   padding: 30px;
 }
 
-
+/* Fade-in Animation */
 .fade-in {
   display: flex !important;
-  animation: fadeIn 3s forwards;
+  animation: fadeIn var(--transition-duration) forwards;
 }
 
+/* Logo */
 #anto-logo {
   height: 130px;
   width: 130px;
   border-radius: 100px;
-  border: var(--default-item-color) 2px solid;
-  margin: 0, 0, 0, 0;
+  border: 2px solid var(--default-item-color);
+  margin: 0;
 }
 
+/* Logo Container */
 #anto-logocontainer {
   height: auto;
   width: auto;
   align-items: center;
-  margin: 0, 0, 10px, 0;
-
+  margin: 0 0 10px 0;
 }
 
-#anto-container-message-error{
+/* Error Message Container */
+#anto-container-message-error {
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -82,10 +86,11 @@
   background-color: var(--default-prymarybox-bg);
   height: 230px;
   width: 1000px;
-  border-radius: 30px;
+  border-radius: var(--border-radius);
   padding: 30px;
 }
 
+/* Loader */
 .loader {
   width: 90px;
   height: 90px;
@@ -93,15 +98,13 @@
   display: inline-block;
   position: relative;
   border: 3px solid;
-  border-color: #FFF #FFF transparent transparent;
-  box-sizing: border-box;
+  border-color: var(--loader-border-color) var(--loader-border-color) transparent transparent;
   animation: rotation 1s linear infinite;
 }
 
 .loader::after,
 .loader::before {
   content: '';
-  box-sizing: border-box;
   position: absolute;
   left: 0;
   right: 0;
@@ -110,10 +113,7 @@
   margin: auto;
   border: 3px solid;
   border-color: transparent transparent var(--default-item-color) var(--default-item-color);
-  width: 75px;
-  height: 75px;
   border-radius: 50%;
-  box-sizing: border-box;
   animation: rotationBack 0.5s linear infinite;
   transform-origin: center center;
 }
@@ -121,10 +121,11 @@
 .loader::before {
   width: 72px;
   height: 72px;
-  border-color: #FFF #FFF transparent transparent;
+  border-color: var(--loader-border-color) var(--loader-border-color) transparent transparent;
   animation: rotation 1.5s linear infinite;
 }
 
+/* Keyframes */
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
@@ -145,10 +146,6 @@
   }
 }
 
-
-
-
-
 @keyframes animationbg {
   from {
     background-position: 0% 50%;
@@ -157,9 +154,7 @@
   to {
     background-position: 100% 50%;
   }
-
 }
-
 
 @keyframes fadeIn {
   from {
