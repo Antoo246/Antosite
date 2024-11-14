@@ -71,21 +71,28 @@ class DynamicColor {
     }
 
 
-    // Function for sort the palette in base of the tone
+    // Function for sort the palette in base of the ton
     SortPalet() {
-        return new Promise((resolve, reject) => {
-            try {
-                this.Palette = this.Palette.sort((a, b) => {
-                    const hslA = this.ColorFunctions.rgbToHsl(a[0], a[1], a[2]);
-                    const hslB = this.ColorFunctions.rgbToHsl(b[0], b[1], b[2]);
+    return new Promise((resolve, reject) => {
+        try {
+            // Ordina la palette basandoti su hue, saturazione e luminosità
+            this.Palette = this.Palette.sort((a, b) => {
+                const hslA = this.ColorFunctions.rgbToHsl(a[0], a[1], a[2]);
+                const hslB = this.ColorFunctions.rgbToHsl(b[0], b[1], b[2]);
+                
+                if (hslA[0] !== hslB[0]) {
                     return hslA[0] - hslB[0];
-                });
-                resolve(0);
-            } catch (error) {
-                reject(error);
-            }
-        })
-
+                }
+                if (hslA[1] !== hslB[1]) {
+                    return hslA[1] - hslB[1];
+                }
+                return hslA[2] - hslB[2];
+            });
+            resolve(0);
+        } catch (error) {
+            reject(error);
+        }
+    });
     }
 
 
