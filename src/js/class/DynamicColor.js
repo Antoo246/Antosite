@@ -22,7 +22,7 @@ class DynamicColor {
     // Function for extract the palette
     ExtractPalet() {
         return new Promise((resolve, reject) => {
-            let Numcolor = 3;
+            let Numcolor = 5;
             const colorThief = new ColorThief();
             if (this.Img.complete) {
                 this.Palette = colorThief.getPalette(this.Img, Numcolor);
