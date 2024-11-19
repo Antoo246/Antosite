@@ -55,6 +55,7 @@ function Load() {
         githublink.href = data.html_url;
         data.twitter_username ? twitterlink.href = `https://twitter.com/${data.twitter_username}` : twitterlink.style.display = "none";
         DynamicColorIn.setImg(logo);
+        DynamicColorIn.setNumColors(7);
         DynamicColorIn.applyTheme().then(() => {
             showSite(loader, prymarybox, textFild);
         }).catch(error => {
