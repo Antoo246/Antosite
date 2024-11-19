@@ -2,7 +2,7 @@
 :root {
   --default-item-color: #350b42;
   --default-bg-gradient: linear-gradient(90deg, #5c0749fd, #42075e, #570645fd);
-  --default-prymarybox-bg: rgba(255, 255, 255, 0.35);
+  --default-prymarybox-bg: rgba(255, 255, 255, 0.40);
   --loader-border-color: #FFF;
   --border-radius: 55px;
   --transition-duration: 3s;
