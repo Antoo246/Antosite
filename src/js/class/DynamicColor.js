@@ -1,8 +1,9 @@
 class DynamicColor {
     constructor() {
         this.Img = null;
-        this.threshold = 70;
+        this.threshold = 10;
         this.numColors = 5;
+        this.requiredfilter = true;
         this.ColorFunctions = new ColorFunctions();
     }
 
@@ -45,12 +46,15 @@ class DynamicColor {
                 let sort = this.sortPalette(palette);
                 let filtered = [...sort];
 
-                for (let i = 0; i < filtered.length; i++) {
-                    let j = i + 1;
-                    console.log(this.ColorFunctions.colorDistance(sort[i], sort[j]) > this.threshold);
-                    if (this.ColorFunctions.colorDistance(sort[i], sort[j]) > this.threshold) {
-                        filtered.splice(j, 1);
-                        j--;
+                if (this.requiredfilter) {
+
+                    for (let i = 0; i < filtered.length; i++) {
+                        let j = i + 1;
+                        console.log(this.ColorFunctions.colorDistance(sort[i], sort[j]) > this.threshold);
+                        if (this.ColorFunctions.colorDistance(sort[i], sort[j]) > this.threshold) {
+                            filtered.splice(j, 1);
+                            j--;
+                        }
                     }
                 }
 
@@ -77,15 +81,17 @@ class DynamicColor {
         return sortp;
     }
 
-    // Function to calculate the text color
     calculateItem(palette) {
-        let textColor = this.ColorFunctions.getOppositeColor(this.ColorFunctions.averageColor(palette));
-        let hsl = this.ColorFunctions.rgbToHsl(textColor[0], textColor[1], textColor[2]);
-        if (hsl[2] > 0.5) {
-            textColor = textColor.map(color => Math.max(0, color - 30));
-        }
-        return textColor;
+        const averageColor = this.ColorFunctions.averageColor(palette);
+        let textColor = this.ColorFunctions.getOppositeColor(averageColor);
+        let [h, s, l] = this.ColorFunctions.rgbToHsl(...textColor);
+
+        l = l > 0.7 ? Math.max(0, l - 0.3) : l < 0.3 ? Math.min(1, l + 0.3) : l > 0.5 ? Math.max(0, l - 0.2) : Math.min(1, l + 0.2);
+
+        textColor = this.ColorFunctions.hslToRgb(h, s, l);
+        return textColor.map(color => Math.round(Math.min(255, Math.max(0, color))));
     }
+
 
     // Function to update the gradient and the text color
     updateGradient(palette) {
@@ -109,6 +115,7 @@ class DynamicColor {
     applyTheme() {
         return new Promise((resolve, reject) => {
             this.extractPalette().then((palette) => {
+                palette.length >= 3 ? null : this.requiredfilter = false;
                 this.filterPalette(palette).then((newPalette) => {
                     this.updateGradient(newPalette).then(() => {
                         resolve(0);
