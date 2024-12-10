@@ -2,7 +2,7 @@
 const CONFIG = {
     GITHUB_USERNAME: 'anto426',
     ABOUT_TEXT: "I'm a passionate software developer and high school student 💻✨",
-    TIMEOUT_MS: 1000
+    TIMEOUT_MS: 5000,
 };
 
 // DOM Elements class for better organization
