@@ -809,30 +809,37 @@ body {
 .text-writer {
   position: relative;
   display: inline-block;
-  font-size: 1.2rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-size: 1.0rem;
   font-weight: 500;
   color: var(--text-color);
   padding: 0.5rem 1rem;
   margin: 0.5rem;
   overflow: hidden;
-  animation: typeWriter 3s steps(40) 1s both,
-             blinkCursor 0.75s step-end infinite;
   white-space: nowrap;
-  border-right: 3px solid var(--text-color);
   letter-spacing: 1.5px;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   transition: all 0.3s var(--bounce);
-}
+  }
 
-@keyframes typeWriter {
-  from { width: 0 }
-  to { width: 100% }
-}
+  .text-writer::after {
+    content: '|';
+    animation: blinkCursor 1.5s steps(1) infinite;
+    color: var(--text-color);
+    font-weight: 700;
+    margin-left: 2px;
+    }
 
-@keyframes blinkCursor {
-  from, to { border-color: transparent }
-  50% { border-color: var(--text-color) }
-}
+    @keyframes blinkCursor {
+    0%, 50%, 100% {
+      opacity: 1;
+    }
+    25%, 75% {
+      opacity: 0;
+    }
+    }
 
 .text-writer:hover {
   transform: scale(1.05);
