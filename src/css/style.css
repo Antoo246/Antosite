@@ -50,13 +50,15 @@ body {
   padding: 0;
   overflow-x: hidden;
   min-height: 100vh;
+  max-width: 100vw;
   line-height: 1.7;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   perspective: 1500px;
-  will-change: background-position;
 }
+
+
 
 .background {
   position: fixed;
@@ -157,6 +159,8 @@ body {
       rgba(255, 255, 255, 0.05) 100%);
 }
 
+
+
 @keyframes floatAnimation {
   0% {
     transform: translate(-50%, -50%) translateY(0) rotate(0deg);
@@ -199,6 +203,43 @@ body {
 }
 
 .maincontainer:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translate(-50%, -50%) scale(1.03);
+  border-color: var(--text-color);
+}
+
+
+/* Error Container */
+
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  text-align: center;
+  padding: 2rem;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-normal);
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s, border-color 0.6s;
+  background: var(--glass-bg);
+  animation: floatAnimation 8s ease-in-out infinite;
+  background-image: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      var(--glass-bg) 50%,
+      rgba(255, 255, 255, 0.05) 100%);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 600px;
+  z-index: 10;
+}
+
+.error-content:hover {
   box-shadow: var(--shadow-hover);
   transform: translate(-50%, -50%) scale(1.03);
   border-color: var(--text-color);
@@ -417,7 +458,8 @@ body {
 
 
 
-.link {
+/* Common styles for links and buttons */
+.link, button {
   padding: 1rem 2.5rem;
   border: 2px solid var(--glass-border);
   border-radius: var(--border-radius-md);
@@ -427,83 +469,82 @@ body {
   text-transform: uppercase;
   letter-spacing: 2px;
   cursor: pointer;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s, border-color 0.5s, letter-spacing 0.5s, background 0.5s;
+  transition: all 0.5s var(--bounce);
   box-shadow: var(--shadow-normal);
   position: relative;
   overflow: hidden;
   font-size: 1rem;
   text-decoration: none;
   display: inline-block;
+  backdrop-filter: blur(5px);
+  will-change: transform, box-shadow;
 }
 
-.link::before {
+/* Glow effect */
+.link::before, button::before {
   content: '';
   position: absolute;
-  top: -100%;
-  left: -100%;
-  width: 300%;
-  height: 300%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transform: rotate(45deg);
+  inset: -1px;
+  background: linear-gradient(220deg, transparent 0%, var(--text-color) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+/* Shine effect */
+.link::after, button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+  transform: rotate(45deg) translateY(-100%);
   transition: all 0.8s ease;
 }
 
-.link:hover::before {
-  top: -50%;
-  left: -50%;
+/* Hover states */
+.link:hover, button:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5),
+              0 0 20px rgba(255, 255, 255, 0.2);
+  border-color: var(--text-color);
+  letter-spacing: 3px;
+  background: linear-gradient(145deg, 
+    var(--secondary-color), 
+    var(--primary-color)
+  );
+}
+
+.link:hover::before, button:hover::before {
+  opacity: 0.2;
+}
+
+.link:hover::after, button:hover::after {
   transform: rotate(45deg) translateY(0);
 }
 
-.link:hover {
-  transform: translateY(-5px) scale(1.1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  border-color: var(--text-color);
-  letter-spacing: 3px;
-  background: linear-gradient(145deg, var(--secondary-color), var(--primary-color));
+/* Active states */
+.link:active, button:active {
+  transform: translateY(-2px) scale(0.98);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transition-duration: 0.1s;
 }
 
-/* Buttons */
-button {
-  padding: 1rem 2.5rem;
-  border: 2px solid var(--glass-border);
-  border-radius: var(--border-radius-md);
-  background: linear-gradient(145deg, var(--accent-color), var(--secondary-color));
-  color: var(--text-color);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s, border-color 0.5s, letter-spacing 0.5s, background 0.5s;
-  box-shadow: var(--shadow-normal);
-  position: relative;
-  overflow: hidden;
-  font-size: 1rem;
+/* Focus states */
+.link:focus, button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-color),
+              0 0 0 6px rgba(255, 255, 255, 0.2);
 }
 
-button::before {
-  content: '';
-  position: absolute;
-  top: -100%;
-  left: -100%;
-  width: 300%;
-  height: 300%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transform: rotate(45deg);
-  transition: all 0.8s ease;
-}
-
-button:hover::before {
-  top: -50%;
-  left: -50%;
-  transform: rotate(45deg) translateY(0);
-}
-
-button:hover {
-  transform: translateY(-5px) scale(1.1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  border-color: var(--text-color);
-  letter-spacing: 3px;
-  background: linear-gradient(145deg, var(--secondary-color), var(--primary-color));
+/* Disabled states */
+.link:disabled, button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Loading Animation */
@@ -563,12 +604,14 @@ button:hover {
     text-shadow: 0 0 30px var(--text-color);
     filter: hue-rotate(0deg);
   }
+
   50% {
     transform: scale(1.3) rotate(8deg) translateZ(50px);
     opacity: 1;
     text-shadow: 0 0 50px var(--text-color);
     filter: hue-rotate(180deg);
   }
+
   100% {
     transform: scale(0.8) rotate(-8deg) translateZ(-30px);
     opacity: 0.7;
@@ -581,6 +624,7 @@ button:hover {
   0%, 100% {
     transform: translateY(0) rotateX(0);
   }
+
   50% {
     transform: translateY(-25px) rotateX(15deg);
   }
@@ -614,47 +658,47 @@ button:hover {
 
 .hide {
   opacity: 0;
-  transform: translateY(-25px) scale(0.92) rotateX(-10deg);
+  transform: translateY(-50%) scale(0.95);
   visibility: hidden;
-  transition: 
-    opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
-    transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
-    filter 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    opacity 1s var(--bounce),
+    transform 1s var(--bounce),
+    filter 0.8s ease;
   pointer-events: none;
-  filter: blur(8px) brightness(0.8);
-  perspective: 1000px;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
   position: relative;
+  will-change: transform, opacity, filter;
+  filter: blur(10px);
 }
 
-.hide::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: translateX(-100%);
-  animation: shimmerOut 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.hide {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.95);
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    visibility 0s 0.3s;
+  pointer-events: none;
+  display: none;
 }
 
-@keyframes shimmerOut {
-  to {
-    transform: translateX(200%);
-    opacity: 0;
-  }
-}
 
 .show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
   visibility: visible;
-  transition: opacity 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-  pointer-events: auto;
-  filter: blur(0);
+  opacity: 0;
+  animation: fadeInShow 0.8s var(--bounce) forwards;
 }
+
+@keyframes fadeInShow {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    }
+    to {
+    opacity: 1;
+    filter: blur(0);
+    }
+  }
 
 .page-load {
   animation: pageReveal 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -670,12 +714,10 @@ button:hover {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent);
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
@@ -685,7 +727,7 @@ button:hover {
     transform: translateY(40px) scale(0.92);
     filter: blur(15px) brightness(0.8);
   }
-  
+
   50% {
     filter: blur(8px) brightness(0.9);
   }
@@ -701,6 +743,7 @@ button:hover {
   0% {
     left: -100%;
   }
+
   100% {
     left: 200%;
   }
