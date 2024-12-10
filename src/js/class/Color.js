@@ -1,6 +1,12 @@
 class ColorFunctions {
 
-    // Function for convert RGB to HSL
+    /**
+     * Convert RGB to HSL
+     * @param {number} r - Red value (0-255)
+     * @param {number} g - Green value (0-255)
+     * @param {number} b - Blue value (0-255)
+     * @returns {number[]} - HSL values
+     */
     rgbToHsl(r, g, b) {
         r /= 255;
         g /= 255;
@@ -8,7 +14,8 @@ class ColorFunctions {
 
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
-        let h, s, l = (max + min) / 2;
+        let h, s;
+        const l = (max + min) / 2;
 
         if (max === min) {
             h = s = 0;
@@ -28,77 +35,95 @@ class ColorFunctions {
         return [h, s, l];
     }
 
+    /**
+     * Calculate the average color
+     * @param {number[][]} colors - Array of RGB colors
+     * @returns {number[]} - Average RGB color
+     */
+    averageColor(colors) {
+        const sum = colors.reduce((acc, color) => {
+            acc.r += color[0];
+            acc.g += color[1];
+            acc.b += color[2];
+            return acc;
+        }, { r: 0, g: 0, b: 0 });
 
-    averageColor(color) {
-        let somme = { r: 0, g: 0, b: 0 };
-        color.forEach(element => {
-            somme.r += element[0];
-            somme.g += element[1];
-            somme.b += element[2];
-        });
-
-        somme.r = Math.round(somme.r / color.length);
-        somme.g = Math.round(somme.g / color.length);
-        somme.b = Math.round(somme.b / color.length);
-
-
-
-        return [somme.r, somme.g, somme.b];
+        const length = colors.length;
+        return [
+            Math.round(sum.r / length),
+            Math.round(sum.g / length),
+            Math.round(sum.b / length)
+        ];
     }
 
-
-
-    // Function for calculate the distance between two colors
+    /**
+     * Calculate the distance between two colors
+     * @param {number[]} color1 - First RGB color
+     * @param {number[]} color2 - Second RGB color
+     * @returns {number} - Distance between the colors
+     */
     colorDistance(color1, color2) {
-        let difRgb = this.diffColor(color1, color2);
-        return Math.sqrt(Math.pow(difRgb[0], 2) + Math.pow(difRgb[1], 2) + Math.pow(difRgb[2], 2));
+        const diff = this.diffColor(color1, color2);
+        return Math.sqrt(diff.reduce((acc, val) => acc + Math.pow(val, 2), 0));
     }
 
-
-    // Function for calculate the difference between two colors
-    diffColor(color, color2) {
-        const rDiff = color[0] - color2[0];
-        const gDiff = color[1] - color2[1];
-        const bDiff = color[2] - color2[2];
-        return [rDiff, gDiff, bDiff];
+    /**
+     * Calculate the difference between two colors
+     * @param {number[]} color1 - First RGB color
+     * @param {number[]} color2 - Second RGB color
+     * @returns {number[]} - Difference in RGB values
+     */
+    diffColor(color1, color2) {
+        return color1.map((val, index) => val - color2[index]);
     }
 
-
-    // Function for convert an array to rgb
-    ArrayToRgb(color) {
-        return `rgb(${color[0]}, ${color[1]}, ${color[2]})`
+    /**
+     * Convert an array to RGB string
+     * @param {number[]} color - RGB color array
+     * @returns {string} - RGB string
+     */
+    arrayToRgb(color) {
+        return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
     }
-    
 
+    /**
+     * Convert HSL to RGB
+     * @param {number} h - Hue (0-1)
+     * @param {number} s - Saturation (0-1)
+     * @param {number} l - Lightness (0-1)
+     * @returns {number[]} - RGB values
+     */
     hslToRgb(h, s, l) {
-        let r, g, b;
+        const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+        };
 
         if (s === 0) {
-            r = g = b = l;
-        } else {
-            const hue2rgb = (p, q, t) => {
-                if (t < 0) t += 1;
-                if (t > 1) t -= 1;
-                if (t < 1 / 6) return p + (q - p) * 6 * t;
-                if (t < 1 / 2) return q;
-                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-                return p;
-            };
-
-            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-            const p = 2 * l - q;
-
-            r = hue2rgb(p, q, h + 1 / 3);
-            g = hue2rgb(p, q, h);
-            b = hue2rgb(p, q, h - 1 / 3);
+            const gray = l * 255;
+            return [gray, gray, gray];
         }
+
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+
+        const r = hue2rgb(p, q, h + 1 / 3);
+        const g = hue2rgb(p, q, h);
+        const b = hue2rgb(p, q, h - 1 / 3);
 
         return [r * 255, g * 255, b * 255];
     }
 
-
-    // Function for get the opposite color
+    /**
+     * Get the opposite color
+     * @param {number[]} color - RGB color
+     * @returns {number[]} - Opposite RGB color
+     */
     getOppositeColor(color) {
-        return [255 - color[0], 255 - color[1], 255 - color[2]];
+        return color.map(val => 255 - val);
     }
 }

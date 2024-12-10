@@ -73,14 +73,35 @@ class DynamicColor {
     }
 
     calculateTextColor(palette) {
-        const averageColor = this.colorFunctions.averageColor(palette);
-        let textColor = this.colorFunctions.getOppositeColor(averageColor);
-        let [h, s, l] = this.colorFunctions.rgbToHsl(...textColor);
+        if (!Array.isArray(palette)) {
+            throw new TypeError('Palette must be an array');
+        }
+        if (palette.length === 0) {
+            throw new Error('Palette cannot be empty');
+        }
+        if (!palette.every(color => Array.isArray(color) && color.length === 3)) {
+            throw new TypeError('Each color in palette must be an RGB array of 3 values');
+        }
 
-        l = this.adjustLightness(l);
-        textColor = this.colorFunctions.hslToRgb(h, s, l);
+        try {
+            const averageColor = this.colorFunctions.averageColor(palette);
+            const oppositeColor = this.colorFunctions.getOppositeColor(averageColor);
+            
+            const [h, s, l] = this.colorFunctions.rgbToHsl(...oppositeColor);
+            
+            const adjustedColor = this.colorFunctions.hslToRgb(
+                h,
+                s,
+                this.adjustLightness(l)
+            );
 
-        return textColor.map(color => Math.round(Math.max(0, Math.min(255, color))));
+            return new Uint8ClampedArray(adjustedColor);
+        } catch (error) {
+            console.error('Error calculating text color:', error);
+            return this.colorFunctions.averageBrightness(palette) > 128 
+                ? [0, 0, 0] 
+                : [255, 255, 255];
+        }
     }
 
     adjustLightness(l) {
@@ -97,7 +118,7 @@ class DynamicColor {
 
         document.documentElement.style.setProperty(
             '--default-item-color',
-            this.colorFunctions.ArrayToRgb(textColor)
+            this.colorFunctions.arrayToRgb(textColor)
         );
 
         document.documentElement.style.setProperty(
@@ -129,6 +150,11 @@ class DynamicColor {
         document.documentElement.style.setProperty(
             '--default-bg-gradient',
             `linear-gradient(to right, ${paletteColors.join(', ')})`
+        );
+
+        document.documentElement.style.setProperty(
+            '--text-color',
+            this.colorFunctions.arrayToRgb(textColor)
         );
     }
 
