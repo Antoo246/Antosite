@@ -40,13 +40,5 @@ class TextClass {
         console.log("calculated length ", len + 'px');
     }
 
-
-
-
-
-
-
-
-
 }
 

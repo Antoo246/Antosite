@@ -1,73 +1,102 @@
-// import other modules
-const DynamicColorIn = new DynamicColor();
-const FetchDataIn = new FetchData();
-const Textd = new TextClass();
+// Constants
+const CONFIG = {
+    GITHUB_USERNAME: 'anto426',
+    ABOUT_TEXT: "I'm a passionate software developer and high school student 💻✨",
+    TIMEOUT_MS: 1000
+};
 
-// Variables
-const githubusername = "anto426";
-const AntoAboutFild = "I'm a high school student who likes programming 💻✨"
-const defaultimeout =  1000;
-
-// Function 
-
-// Function for show site
-function showSite(loader, prymarybox, textFild) {
-    console.log("Site is ready");
-    setTimeout(() => {
-        loader.classList.remove("show");
-        loader.classList.add("hide");
-        prymarybox.classList.remove("hide");
-        prymarybox.classList.add("show");
-        Textd.textWrriter(AntoAboutFild, textFild);
-    }, defaultimeout);
+// DOM Elements class for better organization
+class DOMElements {
+    constructor() {
+        this.main = document.getElementById('home');
+        this.error = document.getElementById('error');
+        this.errorMessage = document.getElementById('message-error');
+        this.aboutMe = document.getElementById('aboutme');
+        this.loading = document.getElementById('loading');
+        this.github = document.getElementById('github');
+        this.twitter = document.getElementById('twitter');
+        this.logo = document.getElementById('logo');
+        this.name = document.getElementById('username');
+        this.username = document.getElementById('tag');
+    }
 }
 
+// UI Controller class
+class UIController {
+    static showSite(elements) {
+        console.log('Site is ready');
+        setTimeout(() => {
+            elements.loading.classList.replace('show', 'hide');
+            elements.main.classList.replace('hide', 'show');
+            new TextClass().textWrriter(CONFIG.ABOUT_TEXT, elements.aboutMe);
+        }, CONFIG.TIMEOUT_MS);
+    }
 
-// Function for error page
-function seeErrorPage(loader, errmessagebox, errmessage, textmessage = "An error occurred while loading the page") {
-    setTimeout(() => {
-        loader.classList.remove("show");
-        loader.classList.add("hide");
-        errmessagebox.classList.remove("hide");
-        errmessagebox.classList.add("show");
-        errmessage.innerHTML = textmessage;
-    }, defaultimeout
-);
-
+    static showError(elements, message = 'An error occurred while loading the page') {
+        setTimeout(() => {
+            elements.loading.classList.replace('show', 'hide');
+            elements.error.classList.replace('hide', 'show');
+            elements.errorMessage.innerHTML = message;
+        }, CONFIG.TIMEOUT_MS);
+    }
 }
 
-// Function for loadpage
+// Main app class
+class App {
+    constructor() {
+        this.elements = new DOMElements();
+        this.dynamicColor = new DynamicColor();
+        this.fetchData = new FetchData();
+    }
+
+    async updateUserInterface(data) {
+        this.elements.name.innerHTML = data.name;
+        this.elements.username.innerHTML = data.login;
+        this.elements.github.href = data.html_url;
+
+        if (data.twitter_username) {
+            this.elements.twitter.href = `https://twitter.com/${data.twitter_username}`;
+        } else {
+            this.elements.twitter.style.display = 'none';
+        }
+
+        this.elements.logo.src = data.avatar_url;
+    }
+
+    async applyTheme() {
+        this.dynamicColor.setConfig({ img: this.elements.logo, numColors: 5 });
+
+        try {
+            const palette = await this.dynamicColor.applyTheme();
+            console.log('Theme applied successfully', palette);
+            new Background('backgroundCanvas', palette);
+            UIController.showSite(this.elements);
+        } catch (error) {
+            console.error('Failed to apply theme:', error);
+            this.handleError(error);
+        }
+    }
+
+    handleError(error) {
+        new Background('backgroundCanvas', null);
+        console.error('Error:', error);
+        UIController.showError(this.elements);
+    }
+
+    async init() {
+        try {
+            const data = await this.fetchData.fetchGithubData(CONFIG.GITHUB_USERNAME);
+            console.log('Data fetched successfully', data);
+            await this.updateUserInterface(data);
+            await this.applyTheme();
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+}
+
+// Initialize the application
 function loadPage() {
-    let mainContainer = document.getElementById("home");
-    let errorContainer = document.getElementById("error");
-    let errorMessageElement = document.getElementById("message-error");
-    let aboutMeElement = document.getElementById("aboutme");
-    let loadingElement = document.getElementById("loading");
-    let githubLinkElement = document.getElementById("github");
-    let twitterLinkElement = document.getElementById("twitter");
-    
-    Textd.setlenText(aboutMeElement, AntoAboutFild);
-    FetchDataIn.fetchGithubData(githubusername).then(async githubData => {
-        let profileImageElement = document.getElementById("logo");
-        let nameElement = document.getElementById("username");
-        let usernameElement = document.getElementById("tag");
-        profileImageElement.src = githubData.avatar_url;
-        nameElement.innerHTML = githubData.name;
-        usernameElement.innerHTML = githubData.login;
-        githubLinkElement.href = githubData.html_url;
-        githubData.twitter_username ? 
-            twitterLinkElement.href = `https://twitter.com/${githubData.twitter_username}` : 
-            twitterLinkElement.style.display = "none";
-        DynamicColorIn.setImg(profileImageElement);
-        DynamicColorIn.setNumColors(10);
-        DynamicColorIn.applyTheme().then(() => {
-            showSite(loadingElement, mainContainer, aboutMeElement);
-        }).catch(error => {
-            console.error("Color Dynamic error : ", error);
-            seeErrorPage(loadingElement, errorContainer, errorMessageElement, error);
-        });
-    }).catch(error => {
-        console.error(error);
-        seeErrorPage(loadingElement, errorContainer, errorMessageElement, error);
-    });
+    const app = new App();
+    app.init();
 }

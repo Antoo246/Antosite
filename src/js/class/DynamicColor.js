@@ -1,135 +1,149 @@
 class DynamicColor {
-    constructor() {
-        this.Img = null;
-        this.threshold = 10;
-        this.numColors = 5;
-        this.requiredfilter = true;
-        this.ColorFunctions = new ColorFunctions();
+    constructor(options = {}) {
+        this.img = null;
+        this.threshold = options.threshold || 7;
+        this.numColors = options.numColors || 5;
+        this.requiredFilter = options.requiredFilter ?? true;
+        this.colorFunctions = new ColorFunctions();
     }
 
-    setImg(img) {
-        this.Img = img;
+    setConfig({ img, threshold, numColors } = {}) {
+        if (img) this.img = img;
+        if (threshold) this.threshold = threshold;
+        if (numColors) this.numColors = numColors;
     }
 
-    setThreshold(threshold) {
-        this.threshold = threshold;
-    }
+    async extractPalette() {
+        if (!this.img) {
+            throw new Error('No image has been set');
+        }
 
-    setNumColors(numColors) {
-        this.numColors = numColors;
-    }
+        const colorThief = new ColorThief();
 
-    // Function to extract the palette
-    extractPalette() {
+        if (this.img.complete) {
+            return colorThief.getPalette(this.img, this.numColors);
+        }
+
         return new Promise((resolve, reject) => {
-            const colorThief = new ColorThief();
-            if (this.Img.complete) {
-                resolve(colorThief.getPalette(this.Img, this.numColors));
-            } else {
-                this.Img.addEventListener('load', () => {
-                    if (this.Img.naturalWidth > 0 && this.Img.naturalHeight > 0) {
-                        console.log("Image loaded successfully");
-                        resolve(colorThief.getPalette(this.Img, this.numColors));
-                    } else {
-                        reject("Image not loaded properly.");
-                    }
-                });
-            }
+            this.img.addEventListener('load', () => {
+                if (this.img.naturalWidth > 0 && this.img.naturalHeight > 0) {
+                    resolve(colorThief.getPalette(this.img, this.numColors));
+                } else {
+                    reject(new Error('Image failed to load properly'));
+                }
+            });
+
+            this.img.addEventListener('error', () => {
+                reject(new Error('Error loading image'));
+            });
         });
     }
 
-    // Function to filter the palette
-    filterPalette(palette) {
-        return new Promise(async (resolve, reject) => {
-            try {
+    async filterPalette(palette) {
+        if (!Array.isArray(palette) || palette.length === 0) {
+            throw new Error('Invalid palette provided');
+        }
 
-                let sort = this.sortPalette(palette);
-                let filtered = [...sort];
+        const sortedPalette = this.sortPalette(palette);
 
-                if (this.requiredfilter) {
+        if (!this.requiredFilter) {
+            return sortedPalette;
+        }
 
-                    for (let i = 0; i < filtered.length; i++) {
-                        let j = i + 1;
-                        console.log(this.ColorFunctions.colorDistance(sort[i], sort[j]) > this.threshold);
-                        if (this.ColorFunctions.colorDistance(sort[i], sort[j]) > this.threshold) {
-                            filtered.splice(j, 1);
-                            j--;
-                        }
-                    }
-                }
-
-                if (filtered.length === 0) {
-                    reject("No colors left after filtering");
-                } else {
-                    console.log("Filtered Palette :", filtered);
-
-                    resolve(filtered);
-                }
-            } catch (error) {
-                reject(error);
+        const filtered = sortedPalette.reduce((acc, color, index, arr) => {
+            if (index === 0 ||
+                this.colorFunctions.colorDistance(arr[index - 1], color) > this.threshold) {
+                acc.push(color);
             }
-        });
+            return acc;
+        }, []);
+
+        if (filtered.length === 0) {
+            throw new Error('No colors left after filtering');
+        }
+
+        return filtered;
     }
 
     sortPalette(palette) {
-        let paletteCopy = [...palette];
-        let sortp = paletteCopy.sort((a, b) => {
-            return this.ColorFunctions.colorDistance([0, 0, 0], a) - this.ColorFunctions.colorDistance([0, 0, 0], b);
-        });
-        console.log("Original Palette :", palette);
-        console.log("Sorted Palette :", sortp);
-        return sortp;
+        return [...palette].sort((a, b) =>
+            this.colorFunctions.colorDistance([0, 0, 0], a) -
+            this.colorFunctions.colorDistance([0, 0, 0], b)
+        );
     }
 
-    calculateItem(palette) {
-        const averageColor = this.ColorFunctions.averageColor(palette);
-        let textColor = this.ColorFunctions.getOppositeColor(averageColor);
-        let [h, s, l] = this.ColorFunctions.rgbToHsl(...textColor);
+    calculateTextColor(palette) {
+        const averageColor = this.colorFunctions.averageColor(palette);
+        let textColor = this.colorFunctions.getOppositeColor(averageColor);
+        let [h, s, l] = this.colorFunctions.rgbToHsl(...textColor);
 
-        l = l > 0.7 ? Math.max(0, l - 0.3) : l < 0.3 ? Math.min(1, l + 0.3) : l > 0.5 ? Math.max(0, l - 0.2) : Math.min(1, l + 0.2);
+        l = this.adjustLightness(l);
+        textColor = this.colorFunctions.hslToRgb(h, s, l);
 
-        textColor = this.ColorFunctions.hslToRgb(h, s, l);
-        return textColor.map(color => Math.round(Math.min(255, Math.max(0, color))));
+        return textColor.map(color => Math.round(Math.max(0, Math.min(255, color))));
     }
 
-
-    // Function to update the gradient and the text color
-    updateGradient(palette) {
-        return new Promise((resolve, reject) => {
-            try {
-                let textColor = this.calculateItem(palette);
-                console.log("New Palette color :", palette);
-                console.log("New Text color", textColor);
-
-                const paletteColors = palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-                document.documentElement.style.setProperty('--default-item-color', this.ColorFunctions.ArrayToRgb(textColor));
-                document.documentElement.style.setProperty('--default-bg-gradient', `linear-gradient(to right, ${paletteColors.join(', ')})`);
-                resolve(0);
-            } catch (error) {
-                reject(error);
-            }
-        });
+    adjustLightness(l) {
+        if (l > 0.7) return Math.max(0, l - 0.3);
+        if (l < 0.3) return Math.min(1, l + 0.3);
+        return l > 0.5 ? Math.max(0, l - 0.2) : Math.min(1, l + 0.2);
     }
 
-    // Function to apply the theme
-    applyTheme() {
-        return new Promise((resolve, reject) => {
-            this.extractPalette().then((palette) => {
-                palette.length >= 3 ? null : this.requiredfilter = false;
-                this.filterPalette(palette).then((newPalette) => {
-                    this.updateGradient(newPalette).then(() => {
-                        resolve(0);
-                    }).catch(error => {
-                        reject(error);
-                    });
-                }).catch(error => {
-                    reject(error);
-                    console.error(error);
-                });
-            }).catch(error => {
-                reject(error);
-                console.error(error);
-            });
-        });
+    async updateGradient(palette) {
+        const textColor = this.calculateTextColor(palette);
+        const paletteColors = palette.map(color =>
+            `rgb(${color[0]}, ${color[1]}, ${color[2]})`
+        );
+
+        document.documentElement.style.setProperty(
+            '--default-item-color',
+            this.colorFunctions.ArrayToRgb(textColor)
+        );
+
+        document.documentElement.style.setProperty(
+            '--accent-color',
+            paletteColors[length - 1]
+        );
+
+        document.documentElement.style.setProperty(
+            '--secondary-color',
+            paletteColors[1]
+        );
+
+        document.documentElement.style.setProperty(
+            '--primary-color',
+            paletteColors[2]
+        );
+
+        document.documentElement.style.setProperty(
+            '--dark-overlay',
+            paletteColors[0]
+
+        );
+
+        document.documentElement.style.setProperty(
+            '--highlight-color',
+            paletteColors[0]
+        );
+
+        document.documentElement.style.setProperty(
+            '--default-bg-gradient',
+            `linear-gradient(to right, ${paletteColors.join(', ')})`
+        );
+    }
+
+    async applyTheme() {
+        try {
+            const palette = await this.extractPalette();
+            this.requiredFilter = palette.length >= 3;
+
+            const filteredPalette = await this.filterPalette(palette);
+            await this.updateGradient(filteredPalette);
+
+            return filteredPalette;
+        } catch (error) {
+            console.error('Error applying theme:', error);
+            throw error;
+        }
     }
 }
