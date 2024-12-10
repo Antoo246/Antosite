@@ -17,7 +17,7 @@ class TextClass {
 
         return new Promise((resolve) => {
             element.innerHTML = '';
-            
+
             if (text.length === 0) {
                 console.warn('Text is empty');
                 resolve();
@@ -66,7 +66,7 @@ class TextClass {
 
         measureElement.textContent = text;
         document.body.appendChild(measureElement);
-        
+
         const width = measureElement.offsetWidth;
         document.body.removeChild(measureElement);
 

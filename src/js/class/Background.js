@@ -82,7 +82,7 @@ class Background {
         const centerX = (this.gradientPoints[0].x + this.gradientPoints[2].x) / 2;
         const centerY = (this.gradientPoints[0].y + this.gradientPoints[2].y) / 2;
         const radius = Math.hypot(this.width, this.height) * 0.9; // Increased radius
-        
+
         const gradient = this.ctx.createRadialGradient(
             centerX, centerY, radius * 0.02, // Smaller inner radius for softer center
             centerX, centerY, radius

@@ -86,9 +86,9 @@ class DynamicColor {
         try {
             const averageColor = this.colorFunctions.averageColor(palette);
             const oppositeColor = this.colorFunctions.getOppositeColor(averageColor);
-            
+
             const [h, s, l] = this.colorFunctions.rgbToHsl(...oppositeColor);
-            
+
             const adjustedColor = this.colorFunctions.hslToRgb(
                 h,
                 s,
@@ -98,8 +98,8 @@ class DynamicColor {
             return new Uint8ClampedArray(adjustedColor);
         } catch (error) {
             console.error('Error calculating text color:', error);
-            return this.colorFunctions.averageBrightness(palette) > 128 
-                ? [0, 0, 0] 
+            return this.colorFunctions.averageBrightness(palette) > 128
+                ? [0, 0, 0]
                 : [255, 255, 255];
         }
     }
