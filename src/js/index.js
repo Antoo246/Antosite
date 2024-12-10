@@ -28,7 +28,7 @@ class UIController {
         setTimeout(() => {
             elements.loading.classList.replace('show', 'hide');
             elements.main.classList.replace('hide', 'show');
-            new TextClass().textWrriter(CONFIG.ABOUT_TEXT, elements.aboutMe);
+            new TextClass().textWriter(CONFIG.ABOUT_TEXT, elements.aboutMe);
         }, CONFIG.TIMEOUT_MS);
     }
 
