@@ -14,9 +14,10 @@ const defaultimeout =  1000;
 function showSite(loader, prymarybox, textFild) {
     console.log("Site is ready");
     setTimeout(() => {
-        loader.style.display = "none";
-        prymarybox.classList.add("fade-in");
-        prymarybox.style.display = "flex";
+        loader.classList.remove("show");
+        loader.classList.add("hide");
+        prymarybox.classList.remove("hide");
+        prymarybox.classList.add("show");
         Textd.textWrriter(AntoAboutFild, textFild);
     }, defaultimeout);
 }
@@ -25,45 +26,48 @@ function showSite(loader, prymarybox, textFild) {
 // Function for error page
 function seeErrorPage(loader, errmessagebox, errmessage, textmessage = "An error occurred while loading the page") {
     setTimeout(() => {
-        loader.style.display = "none";
+        loader.classList.remove("show");
+        loader.classList.add("hide");
+        errmessagebox.classList.remove("hide");
+        errmessagebox.classList.add("show");
         errmessage.innerHTML = textmessage;
-        errmessagebox.classList.add("fade-in");
-        errmessagebox.style.display = "flex";
     }, defaultimeout
 );
 
 }
 
 // Function for loadpage
-function Load() {
-    let prymarybox = document.getElementById("anto-prymarybox");
-    let errmessagebox = document.getElementById("anto-container-message-error");
-    let errmessage = document.getElementById("anto-message-error");
-    let textFild = document.getElementById("anto-About-fild");
-    let loader = document.getElementById("anto-loader");
-    let githublink = document.getElementById("anto-link-github");
-    let twitterlink = document.getElementById("anto-link-twitter");
-    Textd.setlenText(textFild, AntoAboutFild);
-
-    FetchDataIn.fetchGithubData(githubusername).then(async data => {
-        let logo = document.getElementById("anto-logo");
-        let username = document.getElementById("anto-username");
-        let tag = document.getElementById("anto-tag");
-        logo.src = data.avatar_url;
-        username.innerHTML = data.name;
-        tag.innerHTML = data.login;
-        githublink.href = data.html_url;
-        data.twitter_username ? twitterlink.href = `https://twitter.com/${data.twitter_username}` : twitterlink.style.display = "none";
-        DynamicColorIn.setImg(logo);
+function loadPage() {
+    let mainContainer = document.getElementById("home");
+    let errorContainer = document.getElementById("error");
+    let errorMessageElement = document.getElementById("message-error");
+    let aboutMeElement = document.getElementById("aboutme");
+    let loadingElement = document.getElementById("loading");
+    let githubLinkElement = document.getElementById("github");
+    let twitterLinkElement = document.getElementById("twitter");
+    
+    Textd.setlenText(aboutMeElement, AntoAboutFild);
+    FetchDataIn.fetchGithubData(githubusername).then(async githubData => {
+        let profileImageElement = document.getElementById("logo");
+        let nameElement = document.getElementById("username");
+        let usernameElement = document.getElementById("tag");
+        profileImageElement.src = githubData.avatar_url;
+        nameElement.innerHTML = githubData.name;
+        usernameElement.innerHTML = githubData.login;
+        githubLinkElement.href = githubData.html_url;
+        githubData.twitter_username ? 
+            twitterLinkElement.href = `https://twitter.com/${githubData.twitter_username}` : 
+            twitterLinkElement.style.display = "none";
+        DynamicColorIn.setImg(profileImageElement);
         DynamicColorIn.setNumColors(10);
         DynamicColorIn.applyTheme().then(() => {
-            showSite(loader, prymarybox, textFild);
+            showSite(loadingElement, mainContainer, aboutMeElement);
         }).catch(error => {
             console.error("Color Dynamic error : ", error);
-            seeErrorPage(loader, errmessagebox, errmessage, error);
+            seeErrorPage(loadingElement, errorContainer, errorMessageElement, error);
         });
     }).catch(error => {
         console.error(error);
-        seeErrorPage(loader, errmessagebox, errmessage, error);
+        seeErrorPage(loadingElement, errorContainer, errorMessageElement, error);
     });
 }
