@@ -132,6 +132,8 @@ body {
 
   width: var(--error-width);
   height: var(--error-height);
+  justify-content: center;
+
 }
 
 /* Hover styles */
@@ -991,6 +993,10 @@ button:disabled {
     --border-radius-md: clamp(18px, 2.5vw, 22px);
   }
 
+  .error-content {
+    max-height: 10vh;
+  }
+
   .text {
     font-size: clamp(0.9rem, 1.6vw, 0.95rem);
   }
@@ -1011,6 +1017,10 @@ button:disabled {
   :root {
     --container-padding: 1.25rem;
     --glass-blur: 8px;
+  }
+
+  .error-content {
+    max-height: 20vh;
   }
 
   .text-writer {
@@ -1047,6 +1057,10 @@ button:disabled {
     --glass-blur: 6px;
   }
 
+  .error-content {
+    max-height: 20vh;
+  }
+
   .text-writer {
     --typing-speed: 2s;
     --cursor-blink-speed: 0.6s;
@@ -1055,6 +1069,10 @@ button:disabled {
     white-space: pre-wrap;
     letter-spacing: 0.5px;
 
+  }
+
+  .error-content {
+    max-height: 20vh;
   }
 
   .text {
