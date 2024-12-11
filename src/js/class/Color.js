@@ -126,4 +126,19 @@ class ColorFunctions {
     getOppositeColor(color) {
         return color.map(val => 255 - val);
     }
+
+
+    /**
+     * Calculate the average brightness of a color palette
+     * @param {number[][]} palet - Array of RGB colors
+     * @returns {number} - Average brightness value (0-255)
+     */
+    averageBrightness(palet) {
+        const total = palet.reduce((sum, color) => {
+            // Using the luminance formula: 0.299R + 0.587G + 0.114B
+            return sum + (0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2]);
+        }, 0);
+        
+        return total / palet.length;
+    }
 }
