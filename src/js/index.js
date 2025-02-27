@@ -290,7 +290,7 @@ class App {
       repoLink.href = repo.html_url;
       repoLink.target = "_blank";
       repoLink.textContent = "View";
-      repoLink.className = "view-link"; // Classe per eventuale styling
+      repoLink.className = "link small"; 
 
       projectElement.appendChild(projectTitle);
       projectElement.appendChild(projectDesc);

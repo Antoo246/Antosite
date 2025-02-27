@@ -203,12 +203,14 @@ body {
 }
 
 .logocontainer::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
-              rgba(255,255,255,0.1) 0%, 
-              transparent 60%);
+  background: radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 60%
+  );
   opacity: 0;
   transition: opacity 0.4s ease;
 }
@@ -255,12 +257,14 @@ body {
   left: 50%;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg,
-              transparent,
-              var(--text-color) 20%,
-              rgba(255,255,255,0.8) 50%,
-              var(--text-color) 80%,
-              transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--text-color) 20%,
+    rgba(255, 255, 255, 0.8) 50%,
+    var(--text-color) 80%,
+    transparent
+  );
   transition: all 0.6s var(--bounce);
   transform: translateX(-50%);
 }
@@ -307,7 +311,6 @@ body {
   transform-style: preserve-3d;
 }
 
-
 /* Logo Styles */
 .logo {
   width: 150px;
@@ -316,7 +319,8 @@ body {
   overflow: hidden;
   border: 3px solid var(--glass-border);
   box-shadow: var(--shadow-normal);
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s, border-color 0.6s;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s,
+    border-color 0.6s;
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
 }
@@ -442,18 +446,30 @@ body {
   box-shadow: 0 0 20px var(--text-color);
 }
 
-/* Links */
 .links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(200px, 1fr)); /* 4 colonne fisse */
   gap: clamp(1.5rem, 4vw, 2.5rem);
+  width: 100%;
+  max-width: 1000px;
   margin: 2.5rem auto;
   padding: clamp(1rem, 3vw, 2rem);
-  max-width: 800px;
+  justify-items: center; /* Allinea al centro i singoli link */
+  justify-content: center; /* Centra la griglia se ci sono pochi link */
   transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s,
     border-color 0.6s, gap 0.6s, background 0.6s, backdrop-filter 0.6s;
+}
+
+@media (max-width: 768px) {
+  .links {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .links {
+    grid-template-columns: repeat(1, minmax(200px, 1fr));
+  }
 }
 
 .itemcenter {
@@ -1042,7 +1058,8 @@ button:disabled {
   padding: var(--space-xs) var(--space-md);
   position: relative;
   flex-wrap: nowrap;
-  animation: scrollCarousel 80s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
+  animation: scrollCarousel 80s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite
+    alternate;
   will-change: transform;
   backface-visibility: hidden;
   transform: translateZ(0);
@@ -1111,13 +1128,17 @@ button:disabled {
 }
 
 .item::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.25) 0%,
+    transparent 70%
+  );
   opacity: 0;
   transform: rotate(45deg) translateY(-100%);
   transition: opacity 0.8s ease, transform 0.8s ease;
@@ -1127,7 +1148,11 @@ button:disabled {
 
 .item:hover {
   transform: translateY(-12px) scale(1.1) perspective(500px) rotateX(5deg);
-  background: linear-gradient(145deg, var(--secondary-color), var(--accent-color));
+  background: linear-gradient(
+    145deg,
+    var(--secondary-color),
+    var(--accent-color)
+  );
   border-color: rgba(255, 255, 255, 0.4);
   box-shadow: var(--shadow-md), 0 10px 25px rgba(79, 0, 130, 0.5);
   letter-spacing: 1.2px;
@@ -1141,7 +1166,8 @@ button:disabled {
 }
 
 @keyframes itemPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) scale(1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
@@ -1171,47 +1197,65 @@ button:disabled {
   .carousel-container {
     overflow-x: auto;
   }
-  
+
   .carousel {
     animation: none;
     padding: var(--space-xs);
     flex-wrap: nowrap;
   }
-  
+
   .carousel::-webkit-scrollbar {
     height: 4px;
   }
-  
+
   .carousel::-webkit-scrollbar-thumb {
     background: var(--accent-color);
     border-radius: 10px;
   }
 }
 
-
 .skill {
   display: inline-block;
-  padding: 1rem 1.5rem;
+  padding: 1rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-color);
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--glass-border);
   border-radius: var(--border-radius-md);
   background: linear-gradient(
     145deg,
     var(--accent-color),
     var(--secondary-color)
   );
-  border: 2px solid var(--glass-border);
-  transition: all 0.5s var(--bounce), box-shadow 0.4s ease;
-  will-change: transform, box-shadow;
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
-  color: var(--text-color);
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  box-shadow: var(--shadow-normal);
+  transition: transform 0.5s var(--bounce), box-shadow 0.5s var(--bounce),
+    background 0.5s var(--bounce), letter-spacing 0.5s var(--bounce);
+  will-change: transform, box-shadow, letter-spacing;
 }
 
 .skill::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(
+    220deg,
+    transparent 0%,
+    var(--text-color) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+.skill::after {
   content: "";
   position: absolute;
   top: -50%;
@@ -1225,32 +1269,40 @@ button:disabled {
   );
   transform: rotate(45deg) translateY(-100%);
   transition: all 0.8s ease;
-  z-index: 1;
+  z-index: -1;
 }
 
 .skill:hover {
   transform: translateY(-5px) scale(1.05);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.2);
   border-color: var(--text-color);
+  letter-spacing: 3px;
   background: linear-gradient(
     145deg,
     var(--secondary-color),
     var(--primary-color)
   );
-  letter-spacing: 1.5px;
-  text-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
 }
 
 .skill:hover::before {
+  opacity: 0.2;
+}
+
+.skill:hover::after {
   transform: rotate(45deg) translateY(0);
 }
 
 .skill:active {
   transform: translateY(-2px) scale(0.98);
-  transition: all 0.2s var(--bounce);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transition-duration: 0.1s;
 }
 
-/* Animation for skills scrolling in */
+.skill:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-color), 0 0 0 6px rgba(255, 255, 255, 0.2);
+}
+
 @keyframes skillAppear {
   0% {
     opacity: 0;
@@ -1262,7 +1314,6 @@ button:disabled {
   }
 }
 
-/* Add hover effect for skills */
 .skills-container > *:hover {
   transform: translateY(-10px) scale(1.1);
   z-index: 2;
@@ -1326,7 +1377,17 @@ button:disabled {
   animation: projectAppear 0.8s var(--bounce) both;
   animation-delay: calc(var(--item-index, 0) * 0.15s);
 }
+.small {
+  width: auto;
+  min-height: 24px;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.9rem;
+  transform-origin: center;
+}
 
+.small:hover {
+  transform: translateY(-3px) scale(1.03);
+}
 .project::before,
 .project::after {
   content: "";
@@ -1391,7 +1452,21 @@ button:disabled {
 /* Wrap the text in a span to animate the scroll if it's wider than the container */
 .project h5 span {
   display: inline-block;
-  padding-right: 100%; /* extra space for smooth scrolling */
+  padding-right: 50px;
+  animation: textSlide 15s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes textSlide {
+  0% {
+    transform: translateX(0);
+  }
+  95% {
+    transform: translateX(calc(-100% + 240px));
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 /* Underline effect */
@@ -1494,63 +1569,6 @@ button:disabled {
 
 .project:hover span i {
   transform: rotate(8deg);
-}
-
-.project a {
-  margin-top: auto;
-  padding: 0.6rem 1rem;
-  background: linear-gradient(
-    145deg,
-    var(--accent-color),
-    var(--secondary-color)
-  );
-  color: var(--text-color);
-  text-decoration: none;
-  border-radius: var(--border-radius-sm);
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-align: center;
-  letter-spacing: 0.7px;
-  border: 1px solid var(--glass-border);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-  transition: all 0.4s var(--bounce);
-}
-
-.project a::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.25),
-    transparent
-  );
-  transform: translateX(-100%) skewX(-15deg);
-  transition: transform 0.6s ease;
-}
-
-.project a:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.35), 0 0 8px var(--primary-color);
-  background: linear-gradient(
-    145deg,
-    var(--secondary-color),
-    var(--primary-color)
-  );
-  letter-spacing: 1px;
-  border-color: rgba(255, 255, 255, 0.35);
-}
-
-.project a:hover::before {
-  transform: translateX(100%) skewX(-15deg);
-}
-
-.project a:active {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
 }
 
 /* Optimized animations */
