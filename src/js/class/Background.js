@@ -1,127 +1,185 @@
 class Background {
-    constructor(canvasId, palette) {
-        this.canvas = document.getElementById(canvasId);
-        if (!this.canvas || !(this.canvas instanceof HTMLCanvasElement)) {
-            throw new Error(`Canvas element with id '${canvasId}' not found or is not a canvas`);
-        }
-        this.ctx = this.canvas.getContext('2d');
-        this.palette = Array.isArray(palette) && palette.length 
-            ? palette 
-            : ['26, 0, 55', '59, 1, 86', '79, 0, 130'];
-        this.resizeTimeoutId = null;
-
-        this.settings = {
-            dampening: 0.995,
-            maxSpeed: 0.02,
-            padding: 150,
-            acceleration: 0.00005
-        };
-
-        // Bind methods for event listeners
-        this.handleResize = this.handleResize.bind(this);
-
-        this.initializeCanvas();
-        this.addEventListeners();
-        requestAnimationFrame(() => this.animate());
+  constructor(canvasId, palette) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas || !(this.canvas instanceof HTMLCanvasElement)) {
+      throw new Error(
+        `Canvas element with id '${canvasId}' not found or is not a canvas`
+      );
     }
+    this.ctx = this.canvas.getContext("2d");
 
-    initializeCanvas() {
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
-        this.gradientPoints = this.createGradientPoints();
+    // Palette con colori in formato "R, G, B"
+    // Si assume che il primo elemento sia il colore più scuro
+    this.palette =
+      Array.isArray(palette) && palette.length
+        ? palette
+        : ["26, 0, 55", "59, 1, 86", "79, 0, 130", "147, 0, 255", "68, 0, 255"];
+
+    this.settings = {
+      splashCount: 30, // Numero di schizzi
+      minVertices: 6, // Numero minimo di vertici per la forma irregolare
+      maxVertices: 12, // Numero massimo di vertici
+      amplitude: 10, // Ampiezza dell'oscillazione del raggio
+    };
+
+    this.time = 0;
+    this.brushSplashes = [];
+    this.handleResize = this.handleResize.bind(this);
+    this.initializeCanvas();
+    this.addEventListeners();
+    this.animationFrame = requestAnimationFrame(this.animate.bind(this));
+  }
+
+  // Genera gli schizzi (brush splashes) con forme irregolari
+  generateBrushSplashes() {
+    this.brushSplashes = [];
+    const { splashCount, minVertices, maxVertices } = this.settings;
+    const minDim = Math.min(this.width, this.height);
+    const baseRadiusMin = minDim / 25;
+    const baseRadiusMax = minDim / 8;
+
+    // Create distribution zones for better splash placement
+    const gridSize = Math.sqrt(splashCount);
+    const cellWidth = this.width / gridSize;
+    const cellHeight = this.height / gridSize;
+
+    for (let i = 0; i < splashCount; i++) {
+      // Grid-based positioning with random offset
+      const gridX = i % gridSize;
+      const gridY = Math.floor(i / gridSize);
+      const x = gridX * cellWidth + Math.random() * cellWidth * 0.8;
+      const y = gridY * cellHeight + Math.random() * cellHeight * 0.8;
+
+      // Enhanced radius calculation with golden ratio variation
+      const baseRadius =
+        baseRadiusMin + Math.random() * (baseRadiusMax - baseRadiusMin);
+      const phase = Math.random() * Math.PI * 2;
+
+      // Improved color selection with weighted randomization
+      const colorIndex = Math.min(
+        this.palette.length - 1,
+        1 +
+          Math.floor(Math.random() * Math.random() * (this.palette.length - 1))
+      );
+      const color = this.palette[colorIndex];
+
+      // Dynamic vertices calculation
+      const vertices =
+        minVertices +
+        Math.floor(Math.random() * (maxVertices - minVertices + 1));
+
+      // Smoother multipliers with controlled variation
+      const multipliers = Array.from({ length: vertices }, (_, index) => {
+        const base = 0.85 + Math.random() * 0.3;
+        const angle = (index / vertices) * Math.PI * 2;
+        return base + 0.1 * Math.sin(angle);
+      });
+
+      this.brushSplashes.push({
+        x,
+        y,
+        baseRadius,
+        phase,
+        color,
+        vertices,
+        multipliers,
+      });
     }
+  }
 
-    addEventListeners() {
-        window.addEventListener('resize', this.handleResize);
+  // Disegna gli schizzi come forme irregolari
+  drawSplashes() {
+    // Set global composite operation for better blending
+    this.ctx.globalCompositeOperation = "screen";
+
+    this.brushSplashes.forEach((splash) => {
+      // Enhanced dynamic radius with smoother animation
+      const time = this.time * 0.015;
+      const dynamicRadius =
+        splash.baseRadius +
+        this.settings.amplitude *
+          (Math.sin(time + splash.phase) * 0.7 +
+            Math.sin(time * 1.3 + splash.phase) * 0.3);
+
+      // Improved opacity animation with multiple frequencies
+      const opacity =
+        0.7 +
+        0.15 * Math.sin(time * 0.7 + splash.phase) +
+        0.05 * Math.cos(time * 1.1 + splash.phase);
+
+      // Create and optimize gradient
+      const gradient = this.ctx.createRadialGradient(
+        splash.x,
+        splash.y,
+        0,
+        splash.x,
+        splash.y,
+        dynamicRadius
+      );
+      gradient.addColorStop(0, `rgba(${splash.color}, ${opacity})`);
+      gradient.addColorStop(0.6, `rgba(${splash.color}, ${opacity * 0.5})`);
+      gradient.addColorStop(1, `rgba(${splash.color}, 0)`);
+
+      // Optimized path drawing
+      this.ctx.beginPath();
+      const angleStep = (Math.PI * 2) / splash.vertices;
+
+      for (let i = 0; i <= splash.vertices; i++) {
+        const angle = i * angleStep;
+        const r = dynamicRadius * splash.multipliers[i % splash.vertices];
+        const x = splash.x + r * Math.cos(angle);
+        const y = splash.y + r * Math.sin(angle);
+
+        i === 0 ? this.ctx.moveTo(x, y) : this.ctx.lineTo(x, y);
+      }
+
+      this.ctx.fillStyle = gradient;
+      this.ctx.fill();
+    });
+
+    // Reset composite operation
+    this.ctx.globalCompositeOperation = "source-over";
+  }
+
+  render() {
+    // Riempi lo sfondo con il colore più scuro della palette (si assume sia il primo)
+    this.ctx.globalCompositeOperation = "source-over";
+    this.ctx.fillStyle = `rgb(${this.palette[0]})`;
+    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    // Se non sono stati generati o al resize, genera gli schizzi
+    if (!this.brushSplashes.length) {
+      this.generateBrushSplashes();
     }
+    // Disegna gli schizzi sopra lo sfondo
+    this.drawSplashes();
+  }
 
-    handleResize() {
-        if (this.resizeTimeoutId) {
-            clearTimeout(this.resizeTimeoutId);
-        }
-        // Debounce resize events
-        this.resizeTimeoutId = setTimeout(() => {
-            this.initializeCanvas();
-        }, 300);
-    }
+  handleResize() {
+    this.initializeCanvas();
+  }
 
-    createGradientPoints() {
-        return [
-            { x: 0, y: 0, vx: 0.015, vy: 0.01 },
-            { x: this.width, y: 0, vx: -0.01, vy: 0.015 },
-            { x: this.width, y: this.height, vx: -0.015, vy: -0.01 },
-            { x: 0, y: this.height, vx: 0.01, vy: -0.015 }
-        ];
-    }
+  initializeCanvas() {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+    // Rigenera gli schizzi per adattarli alle nuove dimensioni
+    this.generateBrushSplashes();
+  }
 
-    updatePoints() {
-        const { dampening, maxSpeed, padding, acceleration } = this.settings;
-        this.gradientPoints.forEach(point => {
-            // Add small random acceleration
-            const ax = (Math.random() - 0.5) * acceleration;
-            const ay = (Math.random() - 0.5) * acceleration;
-            point.vx = (point.vx + ax) * dampening;
-            point.vy = (point.vy + ay) * dampening;
+  addEventListeners() {
+    window.addEventListener("resize", this.handleResize);
+  }
 
-            // Clamp velocity
-            point.vx = Math.max(-maxSpeed, Math.min(maxSpeed, point.vx));
-            point.vy = Math.max(-maxSpeed, Math.min(maxSpeed, point.vy));
+  animate() {
+    this.time += 0.01;
+    this.render();
+    this.animationFrame = requestAnimationFrame(this.animate.bind(this));
+  }
 
-            // Update position
-            point.x += point.vx;
-            point.y += point.vy;
-
-            // Keep within padded area
-            if (point.x <= padding) {
-                point.vx = Math.abs(point.vx) * dampening;
-                point.x = padding;
-            } else if (point.x >= this.width - padding) {
-                point.vx = -Math.abs(point.vx) * dampening;
-                point.x = this.width - padding;
-            }
-            if (point.y <= padding) {
-                point.vy = Math.abs(point.vy) * dampening;
-                point.y = padding;
-            } else if (point.y >= this.height - padding) {
-                point.vy = -Math.abs(point.vy) * dampening;
-                point.y = this.height - padding;
-            }
-        });
-    }
-
-    createGradient() {
-        // Compute radial gradient centered at mid-point of diagonal points
-        const centerX = (this.gradientPoints[0].x + this.gradientPoints[2].x) / 2;
-        const centerY = (this.gradientPoints[0].y + this.gradientPoints[2].y) / 2;
-        const radius = Math.hypot(this.width, this.height) * 0.9;
-
-        const gradient = this.ctx.createRadialGradient(
-            centerX, centerY, radius * 0.02,
-            centerX, centerY, radius
-        );
-
-        // Evenly space color stops
-        this.palette.forEach((color, index) => {
-            const position = index / (this.palette.length - 1);
-            const opacity = 0.8 + position * 0.2;
-            gradient.addColorStop(position, `rgba(${color}, ${opacity})`);
-        });
-
-        return gradient;
-    }
-
-    render() {
-        this.ctx.globalCompositeOperation = 'source-over';
-        const gradient = this.createGradient();
-        this.ctx.fillStyle = gradient;
-        this.ctx.fillRect(0, 0, this.width, this.height);
-    }
-
-    animate() {
-        this.updatePoints();
-        this.render();
-        requestAnimationFrame(() => this.animate());
-    }
+  destroy() {
+    window.removeEventListener("resize", this.handleResize);
+    cancelAnimationFrame(this.animationFrame);
+  }
 }
