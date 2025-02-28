@@ -1,200 +1,528 @@
-/* Mobile First: Default (Small/Mobile) */
+/*--------------------------------------------------------------
+1. Base Settings & Mobile First (Default)
+--------------------------------------------------------------*/
 :root {
-    /* Spacing */
-    --container-padding: clamp(1rem, 3vw, 1.5rem);
-    /* Visual Effects */
-    --glass-blur: clamp(8px, 1.5vw, 12px);
-    /* Border Radius */
-    --border-radius-lg: clamp(15px, 3vw, 20px);
-    --border-radius-md: clamp(12px, 2vw, 15px);
-    /* Text Writer */
-    --typing-speed: 2.5s;
+  /* Spacing & Sizing */
+  --container-padding: clamp(1rem, 3vw, 1.5rem);
+  --scale-factor: 1;
+  --text-scale: 1;
+
+  /* Visual Effects */
+  --glass-blur: clamp(8px, 1.5vw, 12px);
+
+  /* Border Radius */
+  --border-radius-lg: clamp(15px, 3vw, 20px);
+  --border-radius-md: clamp(12px, 2vw, 15px);
+  --border-radius-sm: clamp(6px, 1.5vw, 8px);
+
+  /* Text Writer */
+  --typing-speed: 2.5s;
 }
 
-/* Global component settings for mobile */
-.text-writer {
+@media (max-width: 1019px) {
+  /* Global mobile settings */
+  body {
+    font-size: clamp(14px, 4vw, 16px);
+    line-height: 1.5;
+  }
+
+  .maincontainer,
+  .error-content {
+    padding: var(--container-padding);
+    max-height: 90vh;
+    width: 95vw;
+    margin: 0 auto;
+  }
+
+  .logocontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .logo {
+    width: clamp(100px, 25vw, 120px);
+    height: clamp(100px, 25vw, 120px);
+    object-fit: contain;
+  }
+
+  .text-logo h3 {
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+    margin: 0.5rem 0;
+  }
+
+  .text-logo p {
+    font-size: clamp(0.8rem, 3vw, 0.9rem);
+    margin: 0.25rem 0;
+  }
+
+  .text-writer {
     font-size: clamp(0.8rem, 4vw, 0.9rem);
     padding: 0.6rem 1rem;
     letter-spacing: clamp(0.5px, 0.15vw, 1.5px);
-}
+  }
 
-.button {
+  .links {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 3vw, 1.5rem);
+    padding: clamp(0.8rem, 2vw, 1.5rem);
+  }
+
+  .link,
+  button,
+  .skill {
     padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1.5rem, 3vw, 2.5rem);
     font-size: clamp(0.875rem, 1.2vw, 1rem);
     min-width: clamp(160px, 25vw, 220px);
-    transition: all 0.4s var(--bounce);
+    letter-spacing: 1.5px;
+    border: none;
+    background: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .link:hover,
+  button:hover,
+  .skill:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+  }
+
+  .title {
+    font-size: clamp(1.5rem, 6vw, 1.8rem);
+    padding: clamp(0.8rem, 2vw, 1rem);
+    text-align: center;
+  }
+
+  .othercontainer {
+    width: 95%;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    margin: 0 auto;
+  }
+
+  .project {
+    width: 100%;
+    min-height: 240px;
+    padding: clamp(0.8rem, 2vw, 1rem);
+    box-sizing: border-box;
+  }
+
+  .carousel {
+    padding: clamp(0.5rem, 1vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .item {
+    min-width: clamp(160px, 40vw, 200px);
+    height: clamp(80px, 15vh, 100px);
+  }
 }
 
-/* Extra small devices (below 320px) */
+/*--------------------------------------------------------------
+2. Extra Small Devices (below 320px)
+--------------------------------------------------------------*/
 @media (max-width: 319px) {
-    .maincontainer {
-        padding: calc(var(--container-padding) * 0.8);
-    }
-    .text-writer {
-        font-size: clamp(0.65rem, 4vw, 0.75rem);
-    }
+  :root {
+    --container-padding: clamp(0.5rem, 2vw, 0.8rem);
+    --scale-factor: 0.9;
+    --text-scale: 0.85;
+  }
+
+  .maincontainer {
+    padding: calc(var(--container-padding) * 0.8);
+  }
+
+  .logocontainer {
+    padding: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .logo {
+    width: clamp(80px, 22vw, 100px);
+    height: clamp(80px, 22vw, 100px);
+  }
+
+  .links {
+    gap: 0.8rem;
+  }
+
+  .link,
+  button,
+  .skill {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.75rem;
+    min-width: 140px;
+    letter-spacing: 1px;
+  }
 }
 
-/* Small Phones (320px - 479px) */
+/*--------------------------------------------------------------
+3. Small Phones (320px - 479px)
+--------------------------------------------------------------*/
 @media (min-width: 320px) and (max-width: 479px) {
-    .maincontainer {
-        padding: var(--container-padding);
-    }
-    .text-writer {
-        font-size: clamp(0.75rem, 3.5vw, 0.85rem);
-        letter-spacing: 0.5px;
-    }
+  .maincontainer,
+  .error-content {
+    padding: var(--container-padding);
+  }
+
+  .text-writer {
+    font-size: clamp(0.75rem, 3.5vw, 0.85rem);
+    letter-spacing: 0.5px;
+  }
+
+  .links {
+    grid-template-columns: 1fr;
+  }
+
+  .project h5 {
+    font-size: 1.1rem;
+  }
+
+  .project p {
+    font-size: 0.85rem;
+  }
 }
 
-/* Mobile Landscape / Larger Phones (480px - 767px) */
+/*--------------------------------------------------------------
+4. Mobile Landscape / Larger Phones (480px - 767px)
+--------------------------------------------------------------*/
 @media (min-width: 480px) and (max-width: 767px) {
-    /* Se non è specificato l'orientamento, applica i default */
-    .maincontainer {
-        padding: var(--container-padding);
-    }
-    .text-writer {
-        font-size: clamp(0.8rem, 4vw, 0.9rem);
-    }
+  :root {
+    --container-padding: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .links {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .logocontainer {
+    flex-direction: row;
+  }
 }
 
-/* Mobile Landscape specifico (480px - 767px in landscape) */
+/* Landscape Specific Adjustments */
 @media (min-width: 480px) and (max-width: 767px) and (orientation: landscape) {
-    .maincontainer {
-        padding: calc(var(--container-padding) * 1.1);
-    }
-    .text-writer {
-        font-size: clamp(0.85rem, 3.5vw, 0.95rem);
-    }
+  .maincontainer {
+    padding: calc(var(--container-padding) * 1.1);
+    height: auto;
+    min-height: 95vh;
+  }
+
+  .logocontainer {
+    flex-direction: row;
+  }
+
+  .links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .project {
+    min-height: 200px;
+  }
 }
 
-/* Tablet (768px - 1023px) */
+/*--------------------------------------------------------------
+5. Tablet (768px - 1023px)
+--------------------------------------------------------------*/
 @media (min-width: 768px) and (max-width: 1023px) {
-    :root {
-        --container-padding: clamp(1.5rem, 3vw, 2rem);
-        --glass-blur: clamp(10px, 1.8vw, 15px);
-    }
-    .maincontainer {
-        --container-width: 90vw;
-        --container-height: auto;
-        min-height: 500px;
-    }
-    .button-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: clamp(0.8rem, 2vw, 1.2rem);
-    }
+  :root {
+    --container-padding: clamp(1.5rem, 3vw, 2rem);
+    --glass-blur: clamp(10px, 1.8vw, 15px);
+    --scale-factor: 1.1;
+    --text-scale: 1.05;
+  }
+
+  .maincontainer {
+    --container-width: 90vw;
+    --container-height: auto;
+    min-height: 500px;
+  }
+
+  .logocontainer {
+    flex-direction: row;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .logo {
+    width: clamp(120px, 15vw, 140px);
+    height: clamp(120px, 15vw, 140px);
+  }
+
+  .links {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(1rem, 2.5vw, 2rem);
+  }
+
+  .text-writer {
+    font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+  }
+
+  .project {
+    width: clamp(200px, 45%, 280px);
+  }
+
+  .carousel-container {
+    padding: var(--space-sm) 0;
+  }
+
+  .item {
+    min-width: clamp(180px, 30vw, 220px);
+  }
 }
 
-/* Small Laptops / Large Tablets (1024px - 1279px) */
+/*--------------------------------------------------------------
+6. Small Laptops / Large Tablets (1024px - 1279px)
+--------------------------------------------------------------*/
 @media (min-width: 1024px) and (max-width: 1279px) {
-    :root {
-        --container-padding: clamp(1.8rem, 3.5vw, 2.5rem);
-        --glass-blur: clamp(11px, 2vw, 16px);
-    }
-    .maincontainer {
-        --container-width: clamp(850px, 80vw, 1100px);
-        --container-height: clamp(550px, 70vh, 750px);
-    }
+  :root {
+    --container-padding: clamp(1.8rem, 3.5vw, 2.5rem);
+    --glass-blur: clamp(11px, 2vw, 16px);
+    --scale-factor: 1.15;
+    --text-scale: 1.1;
+  }
+
+  .maincontainer {
+    --container-width: clamp(850px, 80vw, 1100px);
+    --container-height: clamp(550px, 70vh, 750px);
+  }
+
+  .links {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .logo {
+    width: 130px;
+    height: 130px;
+  }
+
+  .project {
+    width: 220px;
+  }
 }
 
-/* Laptops and Desktop standard (1280px - 1439px) */
+/*--------------------------------------------------------------
+7. Laptops & Desktop (1280px - 1439px)
+--------------------------------------------------------------*/
 @media (min-width: 1280px) and (max-width: 1439px) {
-    :root {
-        --container-padding: clamp(2rem, 4vw, 3rem);
-        --glass-blur: clamp(12px, 2vw, 20px);
-    }
-    .maincontainer {
-        --container-width: clamp(900px, 85vw, 1200px);
-        --container-height: clamp(600px, 75vh, 800px);
-    }
+  :root {
+    --container-padding: clamp(2rem, 4vw, 3rem);
+    --glass-blur: clamp(12px, 2vw, 20px);
+    --scale-factor: 1.2;
+    --text-scale: 1.15;
+  }
+
+  .maincontainer {
+    --container-width: clamp(900px, 85vw, 1200px);
+    --container-height: clamp(600px, 75vh, 800px);
+  }
+
+  .links {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-/* Large Desktop (1440px - 1799px) */
+/*--------------------------------------------------------------
+8. Large Desktop (1440px - 1799px)
+--------------------------------------------------------------*/
 @media (min-width: 1440px) and (max-width: 1799px) {
-    .maincontainer {
-        --container-width: clamp(1200px, 60vw, 1400px);
-        --container-height: clamp(700px, 80vh, 900px);
-    }
+  :root {
+    --scale-factor: 1.25;
+    --text-scale: 1.2;
+  }
+
+  .maincontainer {
+    --container-width: clamp(1000px, 60vw, 1400px);
+    --container-height: clamp(700px, 80vh, 900px);
+  }
+
+  .logo {
+    width: 150px;
+    height: 150px;
+  }
+
+  .text-writer {
+    font-size: clamp(0.9rem, 1vw, 1.1rem);
+  }
+
+  .project {
+    width: 240px;
+  }
 }
 
-/* Extra Large Screens (1800px - 2559px) */
+/*--------------------------------------------------------------
+9. Extra Large Screens & 4K+ (1800px and Up)
+--------------------------------------------------------------*/
 @media (min-width: 1800px) and (max-width: 2559px) {
-    .maincontainer {
-        --container-width: clamp(1400px, 55vw, 1600px);
-        --container-height: clamp(800px, 75vh, 1000px);
-    }
-    .text-writer {
-        font-size: clamp(1rem, 1vw, 1.25rem);
-    }
+  :root {
+    --scale-factor: 1.3;
+    --text-scale: 1.25;
+  }
+
+  .maincontainer {
+    --container-width: clamp(1200px, 55vw, 1600px);
+    --container-height: clamp(800px, 75vh, 1000px);
+  }
+
+  .text-writer {
+    font-size: clamp(1rem, 1vw, 1.25rem);
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .project {
+    width: 280px;
+  }
 }
 
-/* 4K+ Displays (2560px and up) */
 @media (min-width: 2560px) {
-    .maincontainer {
-        --container-width: min(1800px, 60vw);
-        --container-height: min(1200px, 70vh);
-    }
-    .text-writer {
-        font-size: clamp(1rem, 1vw, 1.25rem);
-    }
+  :root {
+    --scale-factor: 1.5;
+    --text-scale: 1.4;
+  }
+
+  .maincontainer {
+    --container-width: min(1800px, 60vw);
+    --container-height: min(1200px, 70vh);
+  }
+
+  .text-writer {
+    font-size: clamp(1.1rem, 1.1vw, 1.5rem);
+  }
+
+  .logo {
+    width: 180px;
+    height: 180px;
+  }
+
+  .title {
+    font-size: 3rem;
+  }
+
+  .project {
+    width: 320px;
+    min-height: 350px;
+  }
 }
 
-/* Orientation Specific: Landscape mode on short screens */
+/*--------------------------------------------------------------
+10. Orientation & Touch Device Optimizations
+--------------------------------------------------------------*/
+/* Landscape Mode on Short Screens */
 @media (max-height: 600px) and (orientation: landscape) {
-    .maincontainer {
-        height: auto;
-        min-height: 100vh;
-    }
-    .button-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.8rem;
-    }
-    .button {
-        width: auto;
-        min-width: 140px;
-        padding: 0.5rem 1rem;
-    }
+  .maincontainer {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .logocontainer {
+    flex-direction: row;
+    padding: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .button-container,
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+
+  .link,
+  button,
+  .skill {
+    width: auto;
+    min-width: 140px;
+    padding: 0.5rem 1rem;
+  }
 }
 
-/* High Density Screens */
+/* Touch Devices adjustments */
+@media (hover: none) and (pointer: coarse) {
+  .link,
+  button,
+  .skill,
+  .project,
+  .item {
+    padding: calc(var(--container-padding) * 0.8);
+  }
+
+  /* Simplify hover effects */
+  .text-logo p:hover,
+  .text-logo h3:hover {
+    transform: none;
+    letter-spacing: inherit;
+  }
+
+  .link:hover,
+  button:hover,
+  .skill:hover {
+    transform: translateY(-2px);
+    letter-spacing: 2px;
+  }
+}
+
+/*--------------------------------------------------------------
+11. High Density & Print
+--------------------------------------------------------------*/
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
-             only screen and (min-resolution: 192dpi) {
-    .text-writer {
-        letter-spacing: clamp(0.6px, 0.2vw, 1.6px);
-    }
+  only screen and (min-resolution: 192dpi) {
+  .text-writer {
+    letter-spacing: clamp(0.6px, 0.2vw, 1.6px);
+  }
+
+  .logo img {
+    image-rendering: -webkit-optimize-contrast;
+  }
 }
 
-/* Ultra-wide Screens (3440px and up) */
-@media (min-width: 3440px) {
-    .maincontainer {
-        --container-width: clamp(1800px, 50vw, 2000px);
-        --container-height: clamp(1200px, 65vh, 1400px);
-    }
-    .button {
-        font-size: clamp(1rem, 1.1vw, 1.2rem);
-    }
+@media print {
+  .maincontainer,
+  .error-content {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  .link,
+  button,
+  .skill {
+    background: #f0f0f0 !important;
+    color: black !important;
+    border: 1px solid #ccc !important;
+  }
 }
 
-/* iOS Specific Fixes */
+/*--------------------------------------------------------------
+12. iOS Specific Fixes & Reduced Motion
+--------------------------------------------------------------*/
 @supports (-webkit-touch-callout: none) {
-    .maincontainer {
-        min-height: -webkit-fill-available;
-    }
+  .maincontainer {
+    min-height: -webkit-fill-available;
+  }
+
+  .text-writer,
+  .link,
+  button,
+  .skill {
+    text-size-adjust: 100%;
+  }
 }
 
-/* Esempio specifico per dispositivi noti (es. iPad) */
-@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
-    .maincontainer {
-        --container-width: 90vw;
-        --container-height: auto;
-    }
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-@media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
-    .maincontainer {
-        --container-width: clamp(900px, 85vw, 1200px);
-        --container-height: clamp(600px, 75vh, 800px);
-    }
+/*--------------------------------------------------------------
+13. Dark/Light Mode: Using native dark theme (no changes needed)
+--------------------------------------------------------------*/
+@media (prefers-color-scheme: dark) {
+  /* Dark mode is already supported by the base theme */
 }
