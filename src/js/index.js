@@ -290,7 +290,7 @@ class App {
       repoLink.href = repo.html_url;
       repoLink.target = "_blank";
       repoLink.textContent = "View";
-      repoLink.className = "link small"; 
+      repoLink.className = "link small";
 
       projectElement.appendChild(projectTitle);
       projectElement.appendChild(projectDesc);
@@ -310,7 +310,7 @@ class App {
 
   async applyTheme() {
     console.log("App.applyTheme called");
-    this.dynamicColor.setConfig({ img: this.elements.logo, numColors: 5 });
+    this.dynamicColor.setConfig({ img: this.elements.logo, numColors: 7 });
 
     try {
       console.log("Applying theme...");
