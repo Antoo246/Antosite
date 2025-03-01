@@ -1,80 +1,3 @@
-// Constants
-const CONFIG = {
-  GITHUB_USERNAME: "anto426",
-  ABOUT_TEXT:
-    "I'm a passionate software developer and high school student 💻✨",
-  TIMEOUT_MS: 5000,
-  languageIcons: {
-    javascript: '<i class="bi bi-filetype-js"></i> ',
-    typescript: '<i class="bi bi-filetype-ts"></i> ',
-    python: '<i class="bi bi-file-earmark-code"></i> ',
-    java: '<i class="bi bi-filetype-java"></i> ',
-    kotlin: '<i class="bi bi-file-code"></i> ',
-    swift: '<i class="bi bi-lightning-charge"></i> ',
-    html: '<i class="bi bi-filetype-html"></i> ',
-    css: '<i class="bi bi-filetype-css"></i> ',
-    scss: '<i class="bi bi-filetype-css"></i> ',
-    sass: '<i class="bi bi-filetype-css"></i> ',
-    less: '<i class="bi bi-filetype-css"></i> ',
-    c: '<i class="bi bi-filetype-c"></i> ',
-    "c++": '<i class="bi bi-filetype-cpp"></i> ',
-    "c#": '<i class="bi bi-filetype-cs"></i> ',
-    ruby: '<i class="bi bi-gem"></i> ',
-    php: '<i class="bi bi-filetype-php"></i> ',
-    go: '<i class="bi bi-file-code"></i> ',
-    rust: '<i class="bi bi-gear-wide-connected"></i> ',
-    dart: '<i class="bi bi-filetype-dart"></i> ',
-    lua: '<i class="bi bi-moon-stars"></i> ',
-    r: '<i class="bi bi-graph-up"></i> ',
-    perl: '<i class="bi bi-file-code"></i> ',
-    shell: '<i class="bi bi-terminal"></i> ',
-    bash: '<i class="bi bi-terminal"></i> ',
-    powershell: '<i class="bi bi-terminal"></i> ',
-    sql: '<i class="bi bi-database"></i> ',
-    graphql: '<i class="bi bi-diagram-2"></i> ',
-    json: '<i class="bi bi-braces"></i> ',
-    yaml: '<i class="bi bi-file-earmark-text"></i> ',
-    xml: '<i class="bi bi-filetype-xml"></i> ',
-    markdown: '<i class="bi bi-markdown"></i> ',
-    latex: '<i class="bi bi-file-earmark-text"></i> ',
-    asm: '<i class="bi bi-cpu"></i> ',
-    vb: '<i class="bi bi-file-code"></i> ',
-    pascal: '<i class="bi bi-file-code"></i> ',
-    julia: '<i class="bi bi-file-code"></i> ',
-    haskell: '<i class="bi bi-layers-half"></i> ',
-    clojure: '<i class="bi bi-braces"></i> ',
-    lisp: '<i class="bi bi-braces"></i> ',
-    fortran: '<i class="bi bi-file-code"></i> ',
-    cobol: '<i class="bi bi-file-code"></i> ',
-    raku: '<i class="bi bi-file-code"></i> ',
-    matlab: '<i class="bi bi-graph-up"></i> ',
-    octave: '<i class="bi bi-graph-up"></i> ',
-  },
-  skills: [
-    { name: "JavaScript", icon: '<i class="bi bi-filetype-js"></i>' },
-    { name: "C", icon: '<i class="bi bi-filetype-c"></i>' },
-    { name: "C++", icon: '<i class="bi bi-filetype-cpp"></i>' },
-    { name: "Java", icon: '<i class="bi bi-cup-hot"></i>' },
-    { name: "Kotlin", icon: '<i class="bi bi-code-square"></i>' },
-    { name: "Python", icon: '<i class="bi bi-filetype-py"></i>' },
-    { name: "HTML", icon: '<i class="bi bi-filetype-html"></i>' },
-    { name: "CSS", icon: '<i class="bi bi-filetype-css"></i>' },
-    { name: "SQL", icon: '<i class="bi bi-database"></i>' },
-    { name: "Discord.js", icon: '<i class="bi bi-discord"></i>' },
-    { name: "Node.js", icon: '<i class="bi bi-box"></i>' },
-    { name: "Docker", icon: '<i class="bi bi-box-seam"></i>' },
-    { name: "Bootstrap", icon: '<i class="bi bi-bootstrap"></i>' },
-    { name: "Visual Studio Code", icon: '<i class="bi bi-code-square"></i>' },
-    { name: "Blender", icon: '<i class="bi bi-box"></i>' },
-    { name: "Git", icon: '<i class="bi bi-git"></i>' },
-    { name: "Android", icon: '<i class="bi bi-android"></i>' },
-    { name: "Magisk", icon: '<i class="bi bi-shield-lock"></i>' },
-    { name: "Android Studio", icon: '<i class="bi bi-android2"></i>' },
-    { name: "Windows", icon: '<i class="bi bi-windows"></i>' },
-    { name: "Arch Linux", icon: '<i class="bi bi-terminal"></i>' },
-  ],
-};
-
 // DOM Elements class for better organization
 class DOMElements {
   constructor() {
@@ -94,7 +17,7 @@ class DOMElements {
 
 // UI Controller class
 class UIController {
-  static showSite(elements) {
+  static showSite(elements, CONFIG) {
     console.log("UIController.showSite called");
     setTimeout(() => {
       elements.loading.classList.replace("show", "hide");
@@ -106,7 +29,8 @@ class UIController {
 
   static showError(
     elements,
-    message = "An error occurred while loading the page"
+    message = "An error occurred while loading the page",
+    CONFIG
   ) {
     console.log("UIController.showError called");
     setTimeout(() => {
@@ -120,7 +44,8 @@ class UIController {
 
 // Main app class
 class App {
-  constructor() {
+  constructor(CONFIG) {
+    this.CONFIG = CONFIG;
     this.elements = new DOMElements();
     this.dynamicColor = new DynamicColor();
     this.fetchData = new FetchData();
@@ -137,10 +62,24 @@ class App {
 
     // Handle skills
     const skillsContainer = document.getElementById("skills-container");
-    CONFIG.skills.forEach((skill) => {
+
+    this.CONFIG.skills.forEach((skill) => {
+      console.log("Adding skill:", skill);
+
       const skillElement = document.createElement("div");
       skillElement.className = "skill";
-      skillElement.innerHTML = skill.icon + " " + skill.name;
+
+      let skillIcon = this.CONFIG.languageIcons.find(
+        (icon) => icon.language.toLowerCase() === skill.toLowerCase()
+      );
+
+      skillIcon = skillIcon
+        ? skillIcon.icon
+        : '<i class="bi bi-code-slash"></i>';
+
+      console.log("Skill Icon:", skillIcon);
+
+      skillElement.innerHTML = skillIcon + " " + skill;
       skillsContainer.appendChild(skillElement);
     });
 
@@ -225,19 +164,19 @@ class App {
 
     // Handle GitHub Repos
     const repoCarousel = document.getElementById("projects-container");
+    const projectsTitle = document.getElementById("projects");
 
-    const progetTitle = document.getElementById("projects");
-    progetTitle.innerHTML = "Projects (" + data.repo.length + ")";
+    // Display number of projects
+    projectsTitle.textContent = `Projects (${data.repo?.length || 0})`;
 
     if (!data.repo || data.repo.length === 0) {
       repoCarousel.classList.remove("carousel");
       repoCarousel.classList.add("itemcenter");
-      repoCarousel.innerHTML =
-        '<div class="item">🚫 No projects available</div>';
+      repoCarousel.innerHTML = `<div class="item">🚫 No projects available</div>`;
       return;
     }
 
-    const filteredRepos = data.repo.sort(
+    const filteredRepos = [...data.repo].sort(
       (a, b) => b.stargazers_count - a.stargazers_count
     );
 
@@ -245,64 +184,52 @@ class App {
 
     filteredRepos.forEach((repo) => {
       const projectElement = document.createElement("div");
-      projectElement.className = "project";
+      projectElement.classList.add("project");
 
-      const projectTitle = document.createElement("h5");
-      projectTitle.textContent = repo.name || "Unnamed Project";
-
-      const projectDesc = document.createElement("p");
-      projectDesc.textContent = repo.description
-        ? `📄 ${repo.description}`
-        : "No description available";
+      projectElement.innerHTML = `
+        <h5>${repo.name || "Unnamed Project"}</h5>
+        <p>${
+          repo.description
+            ? `📄 ${repo.description}`
+            : "No description available"
+        }</p>
+      `;
 
       const statsContainer = document.createElement("div");
-      statsContainer.className = "stats-container";
 
       if (repo.language) {
-        const language = document.createElement("span");
-        let languageIcon = "";
-
-        languageIcon =
-          CONFIG.languageIcons[repo.language.toLowerCase()] ||
-          '<i class="bi bi-file-earmark"></i> ';
-
-        language.innerHTML = `${languageIcon}${repo.language}`;
-        statsContainer.appendChild(language);
+        const languageIcon =
+          this.CONFIG.languageIcons[repo.language.toLowerCase()] ||
+          '<i class="bi bi-file-earmark"></i>';
+        statsContainer.innerHTML += `<span>${languageIcon}${repo.language}</span>`;
       }
 
-      const stars = document.createElement("span");
-      stars.innerHTML = `<i class="bi bi-star"></i> ${repo.stargazers_count}`;
-      statsContainer.appendChild(stars);
+      statsContainer.innerHTML += `<span><i class="bi bi-star"></i> ${repo.stargazers_count}</span>`;
 
       if (repo.fork) {
-        const forkedIndicator = document.createElement("span");
-        forkedIndicator.className = "forked-indicator";
-        forkedIndicator.title = "Forked Repository";
-        forkedIndicator.innerHTML = '<i class="bi bi-code-slash"></i> forked';
-        statsContainer.appendChild(forkedIndicator);
+        statsContainer.innerHTML += `
+          <span class="forked-indicator" title="Forked Repository">
+            <i class="bi bi-code-slash"></i> forked
+          </span>
+        `;
       } else {
-        const forks = document.createElement("span");
-        forks.innerHTML = `<i class="bi bi-diagram-2"></i> ${repo.forks_count}`;
-        statsContainer.appendChild(forks);
+        statsContainer.innerHTML += `<span><i class="bi bi-diagram-2"></i> ${repo.forks_count}</span>`;
       }
 
+      // Repository link
       const repoLink = document.createElement("a");
       repoLink.href = repo.html_url;
       repoLink.target = "_blank";
       repoLink.textContent = "View";
-      repoLink.className = "link small";
+      repoLink.classList.add("link", "small");
 
-      projectElement.appendChild(projectTitle);
-      projectElement.appendChild(projectDesc);
-      projectElement.appendChild(statsContainer);
-      projectElement.appendChild(repoLink);
-
+      projectElement.append(statsContainer, repoLink);
       repoCarousel.appendChild(projectElement);
     });
 
+    // Duplicate items if more than 4 repositories are available for carousel effect
     if (filteredRepos.length > 4) {
-      const items = repoCarousel.innerHTML;
-      repoCarousel.innerHTML = items + items;
+      repoCarousel.innerHTML += repoCarousel.innerHTML;
     }
 
     console.log("User interface updated");
@@ -310,14 +237,17 @@ class App {
 
   async applyTheme() {
     console.log("App.applyTheme called");
-    this.dynamicColor.setConfig({ img: this.elements.logo, numColors: 7 });
+    this.dynamicColor.setConfig({
+      img: this.elements.logo,
+      numColors: this.CONFIG.NUM_COLORS,
+    });
 
     try {
       console.log("Applying theme...");
       const palette = await this.dynamicColor.applyTheme();
       console.log("Theme applied successfully", palette);
       new Background("backgroundCanvas", palette);
-      UIController.showSite(this.elements);
+      UIController.showSite(this.elements, this.CONFIG);
     } catch (error) {
       console.error("Failed to apply theme:", error);
       this.handleError(error);
@@ -328,15 +258,18 @@ class App {
     console.log("App.handleError called with error:", error);
     new Background("backgroundCanvas", null);
     console.error("Error:", error);
-    UIController.showError(this.elements);
+    UIController.showError(this.elements, error.message, this.CONFIG);
   }
 
   async init() {
     console.log("App.init called");
     try {
-      const data = await this.fetchData.fetchGithubData(CONFIG.GITHUB_USERNAME);
+      console.log("Fetching data...");
+      const data = await this.fetchData.fetchGithubData(
+        this.CONFIG.GITHUB_USERNAME
+      );
       data.repo = await this.fetchData.fetchGithubData(
-        CONFIG.GITHUB_USERNAME + "/repos"
+        this.CONFIG.GITHUB_USERNAME + "/repos"
       );
 
       console.log("Data fetched successfully", data);
@@ -359,8 +292,15 @@ class App {
   }
 }
 
-function loadPage() {
+async function loadPage() {
+  // Constants
   console.log("loadPage called");
-  const app = new App();
+  const config = await fetch("./src/config/setting.json")
+    .then((response) => response.json())
+    .catch((error) => {
+      console.error("Errore nel caricamento del JSON:", error);
+      return {};
+    });
+  const app = new App(config);
   app.init();
 }
