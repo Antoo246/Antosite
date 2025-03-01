@@ -1523,7 +1523,7 @@ button:disabled {
   border-radius: var(--border-radius-sm);
   white-space: normal;
   word-break: break-word;
-  color: var(--text-color-secondary);
+  color: var(--text-color-primary);
   transition: transform 0.4s var(--bounce), background 0.4s var(--bounce),
     color 0.4s var(--bounce);
 }
@@ -1533,7 +1533,7 @@ button:disabled {
   opacity: 0.9;
   padding-top: 0.2rem;
   transition: transform 0.3s var(--bounce), color 0.3s var(--bounce);
-  color: var(--text-color-secondary);
+  color: var(--text-color-primary);
   will-change: transform, color;
 }
 
@@ -1558,7 +1558,7 @@ button:disabled {
   padding: 0.6rem 0 0.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.85rem;
-  color: var(--text-color-secondary);
+  color: var(--text-color-primary);
 }
 
 .project-stats span {
