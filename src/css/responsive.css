@@ -21,6 +21,8 @@
 }
 
 /* ========== BASE MOBILE STYLES (< 480px) ========== */
+/* Core containers */
+
 @media (max-width: 480px) {
   .maincontainer,
   .error-content {
@@ -239,6 +241,21 @@
 
   .project {
     width: 100%;
+  }
+}
+
+/* Large Devices (1200 >) */
+@media (min-width: 1200px) {
+  .logo {
+    width: 160px;
+    height: 160px;
+  }
+
+  .link,
+  button {
+    width: auto;
+    min-width: 180px;
+    transition: all var(--transition-speed-desktop) var(--bounce);
   }
 }
 
