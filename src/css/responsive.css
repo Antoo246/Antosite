@@ -251,6 +251,10 @@
     height: 160px;
   }
 
+  .links {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
   .link,
   button {
     width: auto;
