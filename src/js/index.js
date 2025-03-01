@@ -156,12 +156,6 @@ class App {
       }
     });
 
-    if (socialContainer.children >= 3) {
-      socialContainer.classList.add("four-columns");
-    } else {
-      socialContainer.classList.remove("four-columns");
-    }
-
     // Handle GitHub Repos
     const repoCarousel = document.getElementById("projects-container");
     const projectsTitle = document.getElementById("projects");
@@ -176,6 +170,8 @@ class App {
       repoCarousel.classList.add("itemcenter");
       repoCarousel.innerHTML = `<div class="item">🚫 No projects available</div>`;
       return;
+    } else if (data.repo.length < 3) {
+      repoCarousel.classList.remove("carousel");
     }
 
     const filteredRepos = [...data.repo].sort(
