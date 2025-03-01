@@ -205,27 +205,22 @@ class App {
       }`;
 
       const projectDescription = document.createElement("p");
-      projectDescription.classList.add("project-description");
       projectDescription.setAttribute(
         "title",
         repo.description || "No description available"
       );
 
-      if (repo.description) {
-        projectDescription.innerHTML = `
+      projectDescription.innerHTML = `
+    <div class="project-description-container">
+      <p class="project-description">
         <span class="description-icon">
-        <i class="bi bi-file-text"></i>
+          <i class="bi bi-file-text"></i>
         </span>
-        <span class="description-text">${repo.description}</span>
-      `;
-      } else {
-        projectDescription.innerHTML = `
-        <span class="description-icon">
-        <i class="bi bi-question-circle"></i>
-        </span>
-        <span class="description-text">No description available</span>
-      `;
-      }
+        <span class="description-text">${
+          repo.description || "No description available"
+        }</span>
+      </p>
+    </div>`;
 
       // Add elements to the project card with animation delays
       const elements = [projectTitle, projectDescription];
@@ -255,7 +250,7 @@ class App {
 
       if (repo.fork) {
         statsContainer.innerHTML += `
-        <span class="forked-indicator" title="Forked Repository">
+        <span title="Forked Repository">
         <i class="bi bi-diagram-3"></i> forked
         </span>
       `;
@@ -267,7 +262,7 @@ class App {
       const repoLink = document.createElement("a");
       repoLink.href = repo.html_url;
       repoLink.target = "_blank";
-      repoLink.classList.add("project-link");
+      repoLink.classList.add("project-link", "link");
       repoLink.innerHTML = `<i class="bi bi-box-arrow-up-right"> View Project</i> `;
       repoLink.style.setProperty("--child-nr", elements.length + 2);
 
