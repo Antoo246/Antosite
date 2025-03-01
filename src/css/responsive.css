@@ -101,6 +101,15 @@ button {
   .links {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
+  .text-writer {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+    white-space: normal;
+    min-height: 60px;
+  }
+  .text-writer::after {
+    display: none;
+  }
 }
 
 @media (max-width: 991px) {
@@ -115,6 +124,11 @@ button {
   .logo {
     width: 140px;
     height: 140px;
+  }
+  .text-writer {
+    width: 100%;
+    letter-spacing: 1px;
+    overflow-wrap: break-word;
   }
 }
 
