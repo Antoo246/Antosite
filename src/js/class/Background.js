@@ -8,29 +8,77 @@ class Background {
     }
     this.ctx = this.canvas.getContext("2d");
 
-    // Palette con colori in formato "R, G, B"
-    // Si assume che il primo elemento sia il colore più scuro
+    // Palette with colors in "R, G, B" format
     this.palette =
       Array.isArray(palette) && palette.length
         ? palette
         : ["26, 0, 55", "59, 1, 86", "79, 0, 130", "147, 0, 255", "68, 0, 255"];
 
     this.settings = {
-      splashCount: 30, // Numero di schizzi
-      minVertices: 6, // Numero minimo di vertici per la forma irregolare
-      maxVertices: 12, // Numero massimo di vertici
-      amplitude: 10, // Ampiezza dell'oscillazione del raggio
+      splashCount: 30, // Number of splashes
+      minVertices: 6, // Minimum number of vertices for irregular shapes
+      maxVertices: 12, // Maximum number of vertices
+      amplitude: 10, // Amplitude of radius oscillation
+      fps: 30, // Frame rate limit
     };
 
     this.time = 0;
     this.brushSplashes = [];
-    this.handleResize = this.handleResize.bind(this);
+    this.isFullScreen = this.checkFullScreen();
+    this.lastWidth = window.innerWidth;
+    this.lastHeight = window.innerHeight;
+    this.handleResize = this.debounce(this.handleResize.bind(this), 250);
+    this.lastFrameTime = 0;
+    this.frameInterval = 1000 / this.settings.fps;
+
     this.initializeCanvas();
+    this.generateBrushSplashes(); // Generate background splashes for the first time
     this.addEventListeners();
     this.animationFrame = requestAnimationFrame(this.animate.bind(this));
   }
 
-  // Genera gli schizzi (brush splashes) con forme irregolari
+  // Check if browser is in fullscreen mode
+  checkFullScreen() {
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+  }
+
+  // Debounce function to limit frequent updates on resize
+  debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  handleResize() {
+    // Check for transition between fullscreen and non-fullscreen
+    const currentFullScreen = this.checkFullScreen();
+    if (currentFullScreen !== this.isFullScreen) {
+      this.isFullScreen = currentFullScreen;
+      this.lastWidth = window.innerWidth;
+      this.lastHeight = window.innerHeight;
+      this.generateBrushSplashes(); // Regenerate brush splashes only if fullscreen state changes
+    }
+  }
+
+  initializeCanvas() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
+  }
+
+  // Generate brush splashes with irregular shapes
   generateBrushSplashes() {
     this.brushSplashes = [];
     const { splashCount, minVertices, maxVertices } = this.settings;
@@ -58,8 +106,7 @@ class Background {
       // Improved color selection with weighted randomization
       const colorIndex = Math.min(
         this.palette.length - 1,
-        1 +
-          Math.floor(Math.random() * Math.random() * (this.palette.length - 1))
+        Math.floor(Math.random() * (this.palette.length - 1))
       );
       const color = this.palette[colorIndex];
 
@@ -87,7 +134,7 @@ class Background {
     }
   }
 
-  // Disegna gli schizzi come forme irregolari
+  // Draw splashes as irregular shapes
   drawSplashes() {
     // Set global composite operation for better blending
     this.ctx.globalCompositeOperation = "screen";
@@ -142,44 +189,41 @@ class Background {
   }
 
   render() {
-    // Riempi lo sfondo con il colore più scuro della palette (si assume sia il primo)
+    // Fill background with the darkest color from the palette (assumed to be the first one)
     this.ctx.globalCompositeOperation = "source-over";
     this.ctx.fillStyle = `rgb(${this.palette[0]})`;
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    // Se non sono stati generati o al resize, genera gli schizzi
-    if (!this.brushSplashes.length) {
-      this.generateBrushSplashes();
-    }
-    // Disegna gli schizzi sopra lo sfondo
+    // Draw the splashes
     this.drawSplashes();
-  }
-
-  handleResize() {
-    this.initializeCanvas();
-  }
-
-  initializeCanvas() {
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
-    // Rigenera gli schizzi per adattarli alle nuove dimensioni
-    this.generateBrushSplashes();
   }
 
   addEventListeners() {
     window.addEventListener("resize", this.handleResize);
+    document.addEventListener("fullscreenchange", this.handleResize);
+    document.addEventListener("webkitfullscreenchange", this.handleResize);
+    document.addEventListener("mozfullscreenchange", this.handleResize);
+    document.addEventListener("MSFullscreenChange", this.handleResize);
   }
 
-  animate() {
-    this.time += 0.01;
-    this.render();
+  animate(timestamp) {
+    const elapsed = timestamp - this.lastFrameTime;
+
+    if (elapsed > this.frameInterval) {
+      this.lastFrameTime = timestamp - (elapsed % this.frameInterval);
+      this.time += 0.01;
+      this.render();
+    }
+
     this.animationFrame = requestAnimationFrame(this.animate.bind(this));
   }
 
   destroy() {
     window.removeEventListener("resize", this.handleResize);
+    document.removeEventListener("fullscreenchange", this.handleResize);
+    document.removeEventListener("webkitfullscreenchange", this.handleResize);
+    document.removeEventListener("mozfullscreenchange", this.handleResize);
+    document.removeEventListener("MSFullscreenChange", this.handleResize);
     cancelAnimationFrame(this.animationFrame);
   }
 }
