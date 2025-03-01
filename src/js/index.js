@@ -147,11 +147,11 @@ class App {
         link.target = "_blank";
         link.title = info.text;
         const icon = document.createElement("i");
-        icon.className = "bi " + info.icon;
+        icon.className = `bi ${info.icon}`;
         const text = document.createTextNode(" " + info.text);
         link.appendChild(icon);
         link.appendChild(text);
-        link.appendChild(icon);
+
         socialContainer.appendChild(link);
       }
     });
@@ -167,7 +167,9 @@ class App {
     const projectsTitle = document.getElementById("projects");
 
     // Display number of projects
-    projectsTitle.textContent = `Projects (${data.repo?.length || 0})`;
+    projectsTitle.innerHTML = `<i class="bi bi-box"> Projects (${
+      data.public_repos || 0
+    })</i>  `;
 
     if (!data.repo || data.repo.length === 0) {
       repoCarousel.classList.remove("carousel");
@@ -181,50 +183,99 @@ class App {
     );
 
     repoCarousel.innerHTML = "";
-
-    filteredRepos.forEach((repo) => {
+    filteredRepos.forEach((repo, index) => {
       const projectElement = document.createElement("div");
       projectElement.classList.add("project");
+      projectElement.style.setProperty("--project-index", index); // For staggered animations
 
-      projectElement.innerHTML = `
-        <h5>${repo.name || "Unnamed Project"}</h5>
-        <p>${
-          repo.description
-            ? `📄 ${repo.description}`
-            : "No description available"
-        }</p>
+      // Interactive hover tracking for glass morphism effect
+      projectElement.addEventListener("mousemove", (e) => {
+        const rect = projectElement.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / projectElement.offsetWidth) * 100;
+        const y = ((e.clientY - rect.top) / projectElement.offsetHeight) * 100;
+        projectElement.style.setProperty("--x", `${x}%`);
+        projectElement.style.setProperty("--y", `${y}%`);
+      });
+
+      // Create elements with proper structure and classes
+      const projectTitle = document.createElement("h5");
+      projectTitle.classList.add("project-title");
+      projectTitle.innerHTML = `<i class="bi bi-code-square"></i> ${
+        repo.name || "Unnamed Project"
+      }`;
+
+      const projectDescription = document.createElement("p");
+      projectDescription.classList.add("project-description");
+      projectDescription.setAttribute(
+        "title",
+        repo.description || "No description available"
+      );
+
+      if (repo.description) {
+        projectDescription.innerHTML = `
+        <span class="description-icon">
+        <i class="bi bi-file-text"></i>
+        </span>
+        <span class="description-text">${repo.description}</span>
       `;
+      } else {
+        projectDescription.innerHTML = `
+        <span class="description-icon">
+        <i class="bi bi-question-circle"></i>
+        </span>
+        <span class="description-text">No description available</span>
+      `;
+      }
+
+      // Add elements to the project card with animation delays
+      const elements = [projectTitle, projectDescription];
+      elements.forEach((el, i) => {
+        el.style.setProperty("--child-nr", i + 1); // Animation sequence
+        projectElement.appendChild(el);
+      });
 
       const statsContainer = document.createElement("div");
+      statsContainer.classList.add("project-stats");
+      statsContainer.style.setProperty("--child-nr", elements.length + 1);
 
       if (repo.language) {
-        const languageIcon =
-          this.CONFIG.languageIcons[repo.language.toLowerCase()] ||
-          '<i class="bi bi-file-earmark"></i>';
-        statsContainer.innerHTML += `<span>${languageIcon}${repo.language}</span>`;
+        // Find language icon from CONFIG
+        let languageIcon = this.CONFIG.languageIcons.find(
+          (icon) => icon.language.toLowerCase() === repo.language.toLowerCase()
+        );
+
+        languageIcon = languageIcon
+          ? languageIcon.icon
+          : '<i class="bi bi-file-earmark-code"></i>';
+
+        statsContainer.innerHTML += `<span>${languageIcon} ${repo.language}</span>`;
       }
 
       statsContainer.innerHTML += `<span><i class="bi bi-star"></i> ${repo.stargazers_count}</span>`;
 
       if (repo.fork) {
         statsContainer.innerHTML += `
-          <span class="forked-indicator" title="Forked Repository">
-            <i class="bi bi-code-slash"></i> forked
-          </span>
-        `;
+        <span class="forked-indicator" title="Forked Repository">
+        <i class="bi bi-diagram-3"></i> forked
+        </span>
+      `;
       } else {
         statsContainer.innerHTML += `<span><i class="bi bi-diagram-2"></i> ${repo.forks_count}</span>`;
       }
 
-      // Repository link
+      // Repository link with enhanced styling
       const repoLink = document.createElement("a");
       repoLink.href = repo.html_url;
       repoLink.target = "_blank";
-      repoLink.textContent = "View";
-      repoLink.classList.add("link", "small");
+      repoLink.classList.add("project-link");
+      repoLink.innerHTML = `<i class="bi bi-box-arrow-up-right"> View Project</i> `;
+      repoLink.style.setProperty("--child-nr", elements.length + 2);
 
       projectElement.append(statsContainer, repoLink);
       repoCarousel.appendChild(projectElement);
+
+      // Add subtle animation delay for each project card
+      projectElement.style.animationDelay = `${index * 0.1}s`;
     });
 
     // Duplicate items if more than 4 repositories are available for carousel effect

@@ -14,6 +14,12 @@
   --glass-blur: clamp(10px, 2vw, 20px);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
+  /* Margin */
+  --margin-xs: clamp(0.5rem, 1vw, 0.75rem);
+  --margin-sm: clamp(1rem, 2vw, 1.5rem);
+  --margin-md: clamp(2rem, 3vw, 3rem);
+  --margin-lg: clamp(3rem, 4vw, 4.5rem);
+
   /* Spacing System */
   --space-xs: clamp(0.5rem, 1vw, 0.75rem);
   --space-sm: clamp(1rem, 2vw, 1.5rem);
@@ -316,7 +322,7 @@ body {
 /* Other Containers */
 .othercontainer {
   width: 85%;
-  margin: 1.5rem auto;
+  margin: var(--margin-xs) auto;
   padding: 2rem;
   border-radius: var(--border-radius-md);
   border: 1px solid var(--glass-border);
@@ -875,7 +881,7 @@ button:disabled {
 
   /* Visual styles */
   padding: 0.8rem 1.5rem;
-  margin: 0.5rem;
+  margin: var(--margin-xs) auto;
   overflow: hidden;
   white-space: nowrap;
   letter-spacing: calc(1.5px + var(--hover-state, 0) * 0.5px);
@@ -1034,7 +1040,7 @@ button:disabled {
   width: 100%;
   overflow: hidden;
   position: relative;
-  margin: var(--space-md) 0;
+  margin: var(--margin-xs) 0;
   padding: var(--space-xs) 0;
   border-radius: var(--border-radius-md);
 }
@@ -1342,396 +1348,348 @@ button:disabled {
   }
 }
 
-/* Project Cards - Enhanced UI Components */
 .project {
-  /* Base Structure */
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  width: clamp(220px, 45vw, 300px);
+  min-height: 240px;
+  padding: var(--space-sm) var(--space-sm) calc(var(--space-sm) * 1.4);
+  background: rgba(255, 255, 255, 0.06);
+  background-image: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.07) 45%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: var(--border-radius-md);
-  padding: clamp(1.2rem, 2.5vw, 1.8rem);
-  margin: var(--space-xs) 0;
-  width: clamp(220px, 100%, 300px);
-  min-height: 260px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
-
-  /* Positioning & Effects */
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--space-xs) * 1.2);
   position: relative;
+  color: var(--text-color);
   overflow: hidden;
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
   box-shadow: var(--shadow-sm);
-  transform-origin: center;
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-
-  /* Animation & Transitions */
-  transition: transform 0.5s var(--bounce), border-color 0.4s ease,
-    box-shadow 0.5s var(--bounce), background 0.5s ease;
+  transition: all 0.5s var(--bounce), transform 0.5s var(--bounce),
+    box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  animation: projectAppear 0.8s var(--bounce) both;
+  animation-delay: calc(var(--project-index, 0) * 0.12s + 0.1s);
   will-change: transform, box-shadow;
-  animation: projectFadeIn 0.6s var(--bounce) both;
-  animation-delay: calc(var(--item-index, 0) * 0.12s);
+  contain: content; /* Improve performance */
 }
 
 .project:hover {
-  transform: translateY(-10px) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: var(--shadow-md), 0 15px 35px rgba(79, 0, 130, 0.4);
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.18),
-    var(--secondary-color) 85%
-  );
-  z-index: 2;
+  transform: translateY(-12px) scale(1.04) perspective(800px) rotateX(4deg)
+    translateZ(15px);
+  box-shadow: var(--shadow-md), 0 12px 30px rgba(79, 0, 130, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+  z-index: 5;
 }
 
-/* Light Effects with Pseudo-elements */
-.project::before,
-.project::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  transition: opacity 0.6s var(--bounce), transform 0.6s var(--bounce);
-  pointer-events: none;
+.project:focus-within {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-color), var(--shadow-md);
+  transform: translateY(-6px) scale(1.02);
 }
 
 .project::before {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.18), transparent);
-  opacity: 0.25;
-  z-index: 1;
-}
-
-.project::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: radial-gradient(
-    circle at 70% 30%,
-    rgba(255, 255, 255, 0.25) 0%,
-    transparent 75%
+    circle at 50% 10%,
+    rgba(255, 255, 255, 0.08),
+    transparent 70%
   );
   opacity: 0;
-  z-index: 1;
-  transform: scale(0.8);
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .project:hover::before {
-  opacity: 0.6;
+  opacity: 0.7;
+}
+
+.project::after {
+  content: "";
+  position: absolute;
+  top: -120%;
+  left: -120%;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.06) 0%,
+    transparent 70%
+  );
+  transform: rotate(45deg) translateY(-100%);
+  transform: rotate(45deg) translateY(-100%);
+  transition: transform 0.8s ease;
+  opacity: 0;
 }
 
 .project:hover::after {
-  opacity: 1;
-  transform: scale(1.25);
-  animation: projectGlow 2.5s infinite alternate var(--bounce);
+  transform: rotate(45deg) translateY(60%);
+  opacity: 0.4; /* Reduced from 0.6 */
 }
 
-/* Content Elements */
 .project > * {
   position: relative;
-  z-index: 2;
-  transition: transform 0.45s var(--bounce);
+  z-index: 1;
 }
 
-.project:hover > * {
-  transform: translateY(-4px);
-}
-
-/* Project Title */
-.project h5 {
-  font-size: 1.1rem;
-  margin: 0 0 var(--space-xs);
-  padding-bottom: calc(var(--space-xs) * 0.75);
+.project-title {
+  font-size: clamp(1.05rem, 2vw, 1.2rem);
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.5rem 0;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.8px;
   color: var(--text-color);
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
   position: relative;
-  transition: all 0.45s var(--bounce);
+  transition: all 0.4s var(--bounce);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.project:hover .project-title {
+  transform: translateY(-4px);
+  color: var(--text-color);
+  text-shadow: 0 3px 12px rgba(255, 255, 255, 0.5);
+  letter-spacing: 1.2px;
+}
+.project-description {
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+  margin: 0.6rem 0;
+  padding: 0.5rem;
+  line-height: 1.6;
+  text-align: left;
+  width: 100%;
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  color: var(--text-color-secondary);
+  transition: all 0.4s var(--bounce);
+  overflow: hidden;
+  position: relative;
+  border-radius: var(--border-radius-sm);
+}
+
+.description-icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  opacity: 0.9;
+  padding-top: 0.2rem;
+  transition: all 0.3s var(--bounce);
+  color: var(--text-color-secondary);
+}
+
+.project:hover .description-icon {
+  transform: scale(1.2) translateY(-2px);
+  color: var(--text-color);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.description-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
-
-/* Scroll Container for Long Titles */
-.project h5 .scroll-container {
-  display: inline-block;
+  max-height: 4.8em; /* Backup for browsers without -webkit-line-clamp support */
   position: relative;
-  max-width: 100%;
-  overflow: hidden;
 }
 
-.project h5 .scroll-text {
-  display: inline-block;
-  white-space: nowrap;
-  padding-right: 20px;
-  transform: translateX(0);
-  transition: transform 0.3s ease-out;
-}
-
-/* Title Underline */
-.project h5::after {
+/* Gradient fade for longer text */
+.description-text::after {
   content: "";
   position: absolute;
   bottom: 0;
-  left: 0;
-  width: 35px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--text-color), transparent);
-  transition: width 0.45s var(--bounce), box-shadow 0.45s var(--bounce);
-  transform-origin: left;
+  right: 0;
+  width: 30%;
+  height: 1.6em;
+  pointer-events: none;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
 }
 
-/* Title Hover Effects */
-.project:hover h5 {
-  transform: translateY(-3px);
-  letter-spacing: 0.9px;
+.project:hover .project-description {
   color: var(--text-color);
-  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
 }
 
-.project:hover h5::after {
-  width: 85%;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+.project:hover .description-text::after {
+  opacity: 0.3;
 }
 
-/* Title Text Animation */
-.project h5:hover .scroll-text {
-  animation: scrollProjectTitle 3.5s linear infinite alternate;
-  animation-play-state: running;
-}
-
-/* Only animate if text overflows */
-.project h5.overflow .scroll-text {
-  animation: scrollProjectTitle 3.5s linear infinite alternate;
-  animation-play-state: paused;
-}
-
-.project h5.overflow:hover .scroll-text {
-  animation-play-state: running;
-}
-
-@keyframes scrollProjectTitle {
-  0%,
-  10% {
-    transform: translateX(0);
+@media (max-width: 480px) {
+  .project-description {
+    font-size: 0.85rem;
+    padding: 0.4rem;
+    gap: 0.4rem;
   }
-  90%,
-  100% {
-    transform: translateX(min(0px, calc(200px - 100%)));
+
+  .description-icon {
+    font-size: 0.9rem;
   }
 }
 
-/* Project Description */
-.project p {
-  font-size: 0.92rem;
-  margin: 0;
-  line-height: 1.6;
-  flex-grow: 1;
-  color: var(--text-color-secondary);
-  transition: color 0.45s var(--bounce), transform 0.45s var(--bounce),
-    text-shadow 0.45s var(--bounce);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  word-wrap: break-word;
-  position: relative;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.project:hover p {
-  transform: translateY(-3px);
-  color: var(--text-color);
-  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.25);
-}
-
-/* Project Tags Container */
-.project div {
-  margin: var(--space-xs) 0 0;
+.project-stats {
+  width: 100%;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-start;
+  justify-content: space-around;
   align-items: center;
-  max-height: 150px; /* Increased from 110px */
-  overflow-y: auto;
-  padding: 6px 10px 6px 6px;
-  border-radius: var(--border-radius-sm);
-  transition: transform 0.45s var(--bounce), max-height 0.5s var(--bounce),
-    box-shadow 0.45s var(--bounce);
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent-color) transparent;
+  margin-top: 0.8rem;
+  padding: 0.6rem 0 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+  color: var(--text-color-secondary);
+}
+
+.project-stats span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.3s var(--bounce);
+  padding: 0.2rem 0.4rem;
+  border-radius: 1rem;
+}
+
+.project-stats span:hover {
+  color: var(--text-color);
+  transform: translateY(-3px) scale(1.05);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.project-stats i {
+  font-size: 0.95rem;
+  transition: transform 0.3s ease;
+}
+
+.project-stats span:hover i {
+  transform: scale(1.2);
+}
+
+.forked-indicator {
+  color: var(--secondary-color);
+  font-style: italic;
+  text-shadow: 0 0 8px var(--glass-border);
+  transition: color 0.3s var(--bounce), text-shadow 0.3s var(--bounce);
+}
+
+.project-link {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
   position: relative;
-}
-
-/* Scrollbar Styling */
-.project div::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.project div::-webkit-scrollbar-thumb {
+  padding: 0.5rem 1.2rem;
+  overflow: hidden;
   background: linear-gradient(
-    to bottom,
+    135deg,
     var(--accent-color),
     var(--secondary-color)
   );
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(79, 0, 130, 0.7);
-}
-
-.project div::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.15);
-}
-
-/* Firefox scrollbar support */
-.project div {
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent-color) rgba(255, 255, 255, 0.15);
-}
-
-/* Tags Container Hover Effects */
-.project:hover div {
-  transform: translateY(-4px) scale(1.02);
-  max-height: 160px; /* Increased from 140px */
-  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.18), 0 6px 18px rgba(0, 0, 0, 0.12);
-}
-
-/* Enhanced scrollbar on hover */
-.project:hover div::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    var(--accent-color),
-    var(--primary-color)
-  );
-  box-shadow: 0 0 18px rgba(79, 0, 130, 0.9), 0 0 8px rgba(255, 255, 255, 0.35);
-}
-
-/* Individual Tag Styling */
-.project span {
-  font-size: 0.75rem; /* Reduced from 0.82rem */
+  border-radius: var(--border-radius-sm);
+  transition: all 0.4s var(--bounce);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  letter-spacing: 1px;
+  text-decoration: none;
   color: var(--text-color);
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 4px; /* Reduced from 6px */
-  padding: 4px 10px; /* Reduced from 5px 12px */
-  border-radius: var(--border-radius-sm);
-  background: rgba(255, 255, 255, 0.17);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transform-origin: center;
-  transition: all 0.35s var(--bounce);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
-  letter-spacing: 0.5px; /* Slightly reduced from 0.6px */
-  white-space: nowrap;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  font-weight: 500;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  gap: 0.5rem;
 }
 
-/* Icon styling within tags */
-.project span i {
-  font-size: 0.7rem; /* Reduced from 0.78rem */
-  transition: transform 0.45s var(--bounce), opacity 0.45s var(--bounce);
-  opacity: 0.96;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+.project-link::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: rotate(45deg);
+  transition: transform 0.6s ease, opacity 0.6s ease;
+  z-index: 0;
 }
 
-/* Tag hover states */
-.project:hover span {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: scale(1.05); /* Slightly reduced scale from 1.06 */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22), 0 0 10px rgba(255, 255, 255, 0.18);
-}
-
-/* Staggered animation for tags */
-.project:hover span:nth-child(odd) {
-  animation: tagFloatOdd 3s var(--bounce) infinite alternate;
-}
-
-.project:hover span:nth-child(even) {
-  animation: tagFloatEven 3s var(--bounce) infinite alternate-reverse;
-}
-
-@keyframes tagFloatOdd {
-  0%,
-  100% {
-    transform: translateY(0) scale(1.06);
-  }
-  50% {
-    transform: translateY(-6px) scale(1.08);
-  }
-}
-
-@keyframes tagFloatEven {
-  0%,
-  100% {
-    transform: translateY(0) scale(1.06);
-  }
-  50% {
-    transform: translateY(-4px) scale(1.08);
-  }
-}
-
-/* Icon animation within tags */
-.project:hover span i {
-  transform: rotate(12deg) scale(1.15);
+.project-link:hover::before {
+  transform: rotate(45deg) translateY(60%);
   opacity: 1;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
 }
 
-/* Individual tag hover enhancement */
-.project span:hover {
-  transform: scale(1.15) translateY(-5px) !important;
+.project-link:hover {
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 255, 255, 0.2);
   background: linear-gradient(
-    145deg,
-    var(--accent-color),
-    var(--secondary-color)
-  ) !important;
-  border-color: rgba(255, 255, 255, 0.55) !important;
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.28), 0 0 18px rgba(79, 0, 130, 0.55) !important;
-  z-index: 1;
-  animation: none !important;
-  color: white !important;
-  letter-spacing: 1px !important;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45) !important;
+    135deg,
+    var(--secondary-color),
+    var(--primary-color)
+  );
+  letter-spacing: 1.5px;
 }
 
-.small {
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius-sm);
-  background: var(--glass-bg);
-  color: var(--text-color);
-  border: 1px solid var(--glass-border);
+.project-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-color), 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Entrance animation */
-@keyframes projectFadeIn {
+.project-link:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+  transition-duration: 0.2s;
+}
+
+@keyframes projectAppear {
   0% {
     opacity: 0;
-    transform: translateY(25px) scale(0.94);
-    filter: blur(10px);
+    transform: translateY(40px) scale(0.8);
+    filter: blur(12px) brightness(0.8);
+  }
+  70% {
+    filter: blur(5px) brightness(0.9);
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
-    filter: blur(0);
+    filter: blur(0) brightness(1);
   }
 }
 
-/* Glow effect animation */
-@keyframes projectGlow {
-  0% {
-    opacity: 0.45;
-    transform: scale(0.95) rotate(0deg);
-    filter: blur(6px);
+@media (max-width: 768px) {
+  .project {
+    width: calc(100% - 2rem);
+    min-width: 280px;
+    max-width: 400px;
+    min-height: 220px;
   }
-  100% {
-    opacity: 0.85;
-    transform: scale(1.25) rotate(6deg);
-    filter: blur(12px);
+
+  .project:hover {
+    transform: translateY(-8px) scale(1.03);
+  }
+}
+
+@media (max-width: 480px) {
+  .project-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .project-stats span {
+    width: 100%;
+    justify-content: center;
   }
 }
