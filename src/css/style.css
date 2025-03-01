@@ -1118,11 +1118,8 @@ button:disabled {
   60% {
     transform: translateX(-60%) translateY(8px) scale(0.99) rotateZ(-0.4deg);
   }
-  80% {
-    transform: translateX(-80%) translateY(-10px) scale(1.01) rotateZ(0.3deg);
-  }
   100% {
-    transform: translateX(-100%) translateY(0) rotateZ(-0.2deg);
+    transform: translateX(-80%) translateY(-10px) scale(1.01) rotateZ(0.3deg);
   }
 }
 
@@ -1533,7 +1530,7 @@ button:disabled {
   opacity: 0.9;
   padding-top: 0.2rem;
   transition: transform 0.3s var(--bounce), color 0.3s var(--bounce);
-  color: var(--text-color-primary);
+  color: var(--text-color-);
   will-change: transform, color;
 }
 
