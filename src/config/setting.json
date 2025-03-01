@@ -3,257 +3,26 @@
     "ABOUT_TEXT": "I'm a passionate software developer and high school student 💻✨",
     "TIMEOUT_MS": 5000,
     "NUM_COLORS": 7,
-    "languageIcons": [
-        {
-            "language": "javascript",
-            "icon": "<i class=\"devicon-javascript-plain\"></i>"
-        },
-        {
-            "language": "Shell",
-            "icon": "<i class=\"devicon-powershell-plain\"></i>"
-        },
-        {
-            "language": "typescript",
-            "icon": "<i class=\"devicon-typescript-plain\"></i>"
-        },
-        {
-            "language": "python",
-            "icon": "<i class=\"devicon-python-plain\"></i>"
-        },
-        {
-            "language": "java",
-            "icon": "<i class=\"devicon-java-plain\"></i>"
-        },
-        {
-            "language": "kotlin",
-            "icon": "<i class=\"devicon-kotlin-plain\"></i>"
-        },
-        {
-            "language": "swift",
-            "icon": "<i class=\"devicon-swift-plain\"></i>"
-        },
-        {
-            "language": "html",
-            "icon": "<i class=\"devicon-html5-plain\"></i>"
-        },
-        {
-            "language": "css",
-            "icon": "<i class=\"devicon-css3-plain\"></i>"
-        },
-        {
-            "language": "scss",
-            "icon": "<i class=\"devicon-sass-original\"></i>"
-        },
-        {
-            "language": "sass",
-            "icon": "<i class=\"devicon-sass-original\"></i>"
-        },
-        {
-            "language": "less",
-            "icon": "<i class=\"devicon-less-plain\"></i>"
-        },
-        {
-            "language": "c",
-            "icon": "<i class=\"devicon-c-plain\"></i>"
-        },
-        {
-            "language": "cpp",
-            "icon": "<i class=\"devicon-cplusplus-plain\"></i>"
-        },
-        {
-            "language": "c#",
-            "icon": "<i class=\"devicon-csharp-plain\"></i>"
-        },
-        {
-            "language": "ruby",
-            "icon": "<i class=\"devicon-ruby-plain\"></i>"
-        },
-        {
-            "language": "php",
-            "icon": "<i class=\"devicon-php-plain\"></i>"
-        },
-        {
-            "language": "go",
-            "icon": "<i class=\"devicon-go-plain\"></i>"
-        },
-        {
-            "language": "rust",
-            "icon": "<i class=\"devicon-rust-plain\"></i>"
-        },
-        {
-            "language": "dart",
-            "icon": "<i class=\"devicon-dart-plain\"></i>"
-        },
-        {
-            "language": "lua",
-            "icon": "<i class=\"devicon-lua-plain\"></i>"
-        },
-        {
-            "language": "r",
-            "icon": "<i class=\"devicon-r-plain\"></i>"
-        },
-        {
-            "language": "perl",
-            "icon": "<i class=\"devicon-perl-plain\"></i>"
-        },
-        {
-            "language": "shell",
-            "icon": "<i class=\"devicon-shell-plain\"></i>"
-        },
-        {
-            "language": "bash",
-            "icon": "<i class=\"devicon-bash-plain\"></i>"
-        },
-        {
-            "language": "powershell",
-            "icon": "<i class=\"devicon-powershell-plain\"></i>"
-        },
-        {
-            "language": "sql",
-            "icon": "<i class=\"devicon-mysql-plain\"></i>"
-        },
-        {
-            "language": "graphql",
-            "icon": "<i class=\"devicon-graphql-plain\"></i>"
-        },
-        {
-            "language": "json",
-            "icon": "<i class=\"devicon-json-plain\"></i>"
-        },
-        {
-            "language": "yaml",
-            "icon": "<i class=\"devicon-yaml-plain\"></i>"
-        },
-        {
-            "language": "xml",
-            "icon": "<i class=\"devicon-xml-plain\"></i>"
-        },
-        {
-            "language": "markdown",
-            "icon": "<i class=\"devicon-markdown-plain\"></i>"
-        },
-        {
-            "language": "latex",
-            "icon": "<i class=\"devicon-latex-plain\"></i>"
-        },
-        {
-            "language": "asm",
-            "icon": "<i class=\"devicon-asm-plain\"></i>"
-        },
-        {
-            "language": "vb",
-            "icon": "<i class=\"devicon-visualstudio-plain\"></i>"
-        },
-        {
-            "language": "pascal",
-            "icon": "<i class=\"devicon-pascal-plain\"></i>"
-        },
-        {
-            "language": "julia",
-            "icon": "<i class=\"devicon-julia-plain\"></i>"
-        },
-        {
-            "language": "haskell",
-            "icon": "<i class=\"devicon-haskell-plain\"></i>"
-        },
-        {
-            "language": "clojure",
-            "icon": "<i class=\"devicon-clojure-plain\"></i>"
-        },
-        {
-            "language": "lisp",
-            "icon": "<i class=\"devicon-lisp-plain\"></i>"
-        },
-        {
-            "language": "fortran",
-            "icon": "<i class=\"devicon-fortran-plain\"></i>"
-        },
-        {
-            "language": "cobol",
-            "icon": "<i class=\"devicon-cobol-plain\"></i>"
-        },
-        {
-            "language": "raku",
-            "icon": "<i class=\"devicon-raku-plain\"></i>"
-        },
-        {
-            "language": "matlab",
-            "icon": "<i class=\"devicon-matlab-plain\"></i>"
-        },
-        {
-            "language": "octave",
-            "icon": "<i class=\"devicon-octave-plain\"></i>"
-        },
-        {
-            "language": "Discord.js",
-            "icon": "<i class=\"devicon-discordjs-plain\"></i>"
-        },
-        {
-            "language": "Node.js",
-            "icon": "<i class=\"devicon-nodejs-plain\"></i>"
-        },
-        {
-            "language": "Docker",
-            "icon": "<i class=\"devicon-docker-plain\"></i>"
-        },
-        {
-            "language": "Bootstrap",
-            "icon": "<i class=\"devicon-bootstrap-plain\"></i>"
-        },
-        {
-            "language": "Visual Studio Code",
-            "icon": "<i class=\"devicon-vscode-plain\"></i>"
-        },
-        {
-            "language": "Blender",
-            "icon": "<i class=\"devicon-blender-original\"></i>"
-        },
-        {
-            "language": "Git",
-            "icon": "<i class=\"devicon-git-plain\"></i>"
-        },
-        {
-            "language": "Android",
-            "icon": "<i class=\"devicon-android-plain\"></i>"
-        },
-        {
-            "language": "Magisk",
-            "icon": "<i class=\"devicon-magisk-plain\"></i>"
-        },
-        {
-            "language": "Android Studio",
-            "icon": "<i class=\"devicon-androidstudio-plain\"></i>"
-        },
-        {
-            "language": "Windows",
-            "icon": "<i class=\"devicon-windows8-plain\"></i>"
-        },
-        {
-            "language": "Arch Linux",
-            "icon": "<i class=\"devicon-archlinux-plain\"></i>"
-        }
-    ],
     "skills": [
         "JavaScript",
         "C",
-        "Cpp",
+        "c++",
         "Java",
         "Kotlin",
         "Python",
-        "HTML",
-        "CSS",
-        "SQL",
-        "Discord.js",
-        "Node.js",
+        "HTML5",
+        "CSS3",
+        "MYSQL",
+        "Discordjs",
+        "Nodejs",
         "Docker",
         "Bootstrap",
-        "Visual Studio Code",
-        "Blender",
+        "VSCode",
+        "blender",
         "Git",
         "Android",
-        "Magisk",
         "Android Studio",
-        "Windows",
+        "Windows11",
         "Arch Linux"
     ]
 }

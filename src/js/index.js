@@ -11,7 +11,7 @@ class DOMElements {
     this.logo = document.getElementById("logo");
     this.name = document.getElementById("username");
     this.username = document.getElementById("tag");
-    console.log("DOMElements initialized", this);
+    this.skillIconJSON = [];
   }
 }
 
@@ -52,6 +52,72 @@ class App {
     console.log("App initialized");
   }
 
+  findLanguageIcon(language) {
+    console.log("App.findLanguageIcon called with language:", language);
+    if (!language || !this.skillIconJSON || !this.skillIconJSON.length) {
+      return null;
+    }
+
+    const languagelower = language.toLowerCase().replace(/\s+/g, "");
+
+    // First try exact name matches (most accurate)
+    let icon = this.skillIconJSON.find(
+      (icon) => icon.name && icon.name.toLowerCase() === languagelower
+    );
+
+    // Then try exact altname matches
+    if (!icon) {
+      icon = this.skillIconJSON.find(
+        (icon) =>
+          icon.altnames &&
+          icon.altnames.some(
+            (altname) => altname.toLowerCase() === languagelower
+          )
+      );
+    }
+
+    // Then try partial name matches with stricter conditions (must start with the language name)
+    if (!icon) {
+      icon = this.skillIconJSON.find(
+        (icon) =>
+          (icon.name && icon.name.toLowerCase().startsWith(languagelower)) ||
+          (icon.altnames &&
+            icon.altnames.some((altname) =>
+              altname.toLowerCase().startsWith(languagelower)
+            ))
+      );
+    }
+
+    // Last resort - exact tag match
+    if (!icon) {
+      console.warn("Trying with tags...");
+      icon = this.skillIconJSON.find(
+        (icon) => icon.tags && icon.tags.includes(languagelower)
+      );
+    }
+
+    if (!icon) {
+      console.warn(`No icon found for language: ${language}`);
+      return null;
+    } else {
+      console.log(
+        "Icon found for language:",
+        language,
+        "using icon:",
+        icon.name
+      );
+
+      let iconVariant = "plain";
+      if (icon.versions && icon.versions.font) {
+        if (!icon.versions.font.includes("plain")) {
+          iconVariant = icon.versions.font[0] || "plain";
+        }
+      }
+
+      return `<i class="devicon-${icon.name}-${iconVariant}" title="${language}"></i>`;
+    }
+  }
+
   async updateUserInterface(data) {
     console.log("App.updateUserInterface called with data:", data);
 
@@ -60,30 +126,23 @@ class App {
     this.elements.username.innerHTML = data.login;
     this.elements.logo.src = data.avatar_url;
 
-    // Handle skills
+    this.skillIconJSON = await fetch(
+      "https://raw.githubusercontent.com/devicons/devicon/refs/heads/master/devicon.json"
+    )
+      .then((response) => response.json())
+      .then((data) => data);
+
     const skillsContainer = document.getElementById("skills-container");
 
     this.CONFIG.skills.forEach((skill) => {
-      console.log("Adding skill:", skill);
-
-      const skillElement = document.createElement("div");
-      skillElement.className = "skill";
-
-      let skillIcon = this.CONFIG.languageIcons.find(
-        (icon) => icon.language.toLowerCase() === skill.toLowerCase()
-      );
-
-      skillIcon = skillIcon
-        ? skillIcon.icon
-        : '<i class="bi bi-code-slash"></i>';
-
-      console.log("Skill Icon:", skillIcon);
-
+      let skillIcon = this.findLanguageIcon(skill);
+      console.warn("Skill icon:", skillIcon);
+      let skillElement = document.createElement("div");
+      skillElement.classList.add("skill");
       skillElement.innerHTML = skillIcon + " " + skill;
       skillsContainer.appendChild(skillElement);
     });
 
-    // Social media extraction
     const extractSocialFromBio = (bio, platform) => {
       const regexes = {
         linkedin: /linkedin\.com\/in\/([a-zA-Z0-9_-]+)/i,
@@ -95,7 +154,6 @@ class App {
 
     console.log("Extracted social media from bio");
 
-    // Update social links
     let socialContainer = document.getElementById("social-container");
 
     const socialLinks = {
@@ -230,15 +288,7 @@ class App {
       statsContainer.style.setProperty("--child-nr", elements.length + 1);
 
       if (repo.language) {
-        // Find language icon from CONFIG
-        let languageIcon = this.CONFIG.languageIcons.find(
-          (icon) => icon.language.toLowerCase() === repo.language.toLowerCase()
-        );
-
-        languageIcon = languageIcon
-          ? languageIcon.icon
-          : '<i class="bi bi-file-earmark-code"></i>';
-
+        let languageIcon = this.findLanguageIcon(repo.language);
         statsContainer.innerHTML += `<span>${languageIcon} ${repo.language}</span>`;
       }
 
