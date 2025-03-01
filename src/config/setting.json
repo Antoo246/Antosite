@@ -9,6 +9,10 @@
             "icon": "<i class=\"devicon-javascript-plain\"></i>"
         },
         {
+            "language": "Shell",
+            "icon": "<i class=\"devicon-powershell-plain\"></i>"
+        },
+        {
             "language": "typescript",
             "icon": "<i class=\"devicon-typescript-plain\"></i>"
         },
