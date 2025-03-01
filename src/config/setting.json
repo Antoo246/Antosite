@@ -186,7 +186,7 @@
         },
         {
             "language": "Discord.js",
-            "icon": "<i class=\"bi bi-discord\"></i>"
+            "icon": "<i class=\"devicon-discordjs-plain\"></i>"
         },
         {
             "language": "Node.js",
@@ -206,7 +206,7 @@
         },
         {
             "language": "Blender",
-            "icon": "<i class=\"devicon-blender-plain\"></i>"
+            "icon": "<i class=\"devicon-blender-original\"></i>"
         },
         {
             "language": "Git",
