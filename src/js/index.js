@@ -136,7 +136,6 @@ class App {
 
     this.CONFIG.skills.forEach((skill) => {
       let skillIcon = this.findLanguageIcon(skill);
-      console.warn("Skill icon:", skillIcon);
       let skillElement = document.createElement("div");
       skillElement.classList.add("skill");
       skillElement.innerHTML = skillIcon + " " + skill;
