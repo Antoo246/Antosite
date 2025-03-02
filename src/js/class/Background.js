@@ -20,6 +20,8 @@ class Background {
       maxVertices: 12, // Maximum number of vertices
       amplitude: 10, // Amplitude of radius oscillation
       fps: 30, // Frame rate limit
+      moveSpeed: 7, // Speed of movement
+      maxMovement: 100, // Maximum movement distance
     };
 
     this.time = 0;
@@ -122,9 +124,19 @@ class Background {
         return base + 0.1 * Math.sin(angle);
       });
 
+      // Add movement properties
+      const movePhase = Math.random() * Math.PI * 2;
+      const moveSpeed = this.settings.moveSpeed * (0.5 + Math.random());
+      const originalX = x;
+      const originalY = y;
+
       this.brushSplashes.push({
         x,
         y,
+        originalX,
+        originalY,
+        movePhase,
+        moveSpeed,
         baseRadius,
         phase,
         color,
@@ -132,6 +144,17 @@ class Background {
         multipliers,
       });
     }
+  }
+
+  // Update splash positions for movement
+  updateSplashPositions() {
+    const time = this.time * 0.15;
+    
+    this.brushSplashes.forEach(splash => {
+      // Calculate new position based on time
+      splash.x = splash.originalX + Math.sin(time * splash.moveSpeed + splash.movePhase) * this.settings.maxMovement;
+      splash.y = splash.originalY + Math.cos(time * splash.moveSpeed * 0.7 + splash.movePhase) * this.settings.maxMovement * 0.8;
+    });
   }
 
   // Draw splashes as irregular shapes
@@ -194,7 +217,8 @@ class Background {
     this.ctx.fillStyle = `rgb(${this.palette[0]})`;
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    // Draw the splashes
+    // Update positions and then draw
+    this.updateSplashPositions();
     this.drawSplashes();
   }
 
