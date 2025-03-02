@@ -318,10 +318,7 @@ class App {
       projectElement.style.animationDelay = `${index * 0.1}s`;
     });
 
-    // Duplicate items if more than 4 repositories are available for carousel effect
-    if (filteredRepos.length > 4) {
-      repoCarousel.innerHTML += repoCarousel.innerHTML;
-    }
+
 
     console.log("User interface updated");
   }
