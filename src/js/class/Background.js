@@ -8,7 +8,6 @@ class Background {
     }
     this.ctx = this.canvas.getContext("2d");
 
-    // Palette with colors in "R, G, B" format
     this.palette =
       Array.isArray(palette) && palette.length
         ? palette
