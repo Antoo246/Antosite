@@ -137,6 +137,12 @@ button {
     width: var(--container-width-desktop);
     max-width: var(--maxwidth-desktop);
   }
+  .error-content {
+    width: var(--container-width-desktop);
+    max-width: var(--maxwidth-desktop);
+    height: auto;
+    min-height: 60vh;
+  }
   .logo {
     width: 140px;
     height: 140px;
@@ -146,12 +152,24 @@ button {
     padding: 1.5rem;
     gap: 1rem;
   }
+  .error-content .link,
+  .error-content button {
+    width: auto;
+    padding: 0.8rem 1.5rem;
+    margin: 0.5rem;
+  }
 }
 
 @media (min-width: 1400px) {
   .maincontainer {
     width: var(--container-width-large);
     max-width: var(--maxwidth-large);
+  }
+  .error-content {
+    width: var(--container-width-large);
+    max-width: var(--maxwidth-large);
+    height: auto;
+    min-height: 50vh;
   }
   .logo {
     width: 150px;
@@ -161,6 +179,12 @@ button {
     flex-direction: row;
     padding: 2rem;
     gap: 1.5rem;
+  }
+  .error-content .link,
+  .error-content button {
+    width: auto;
+    padding: 1rem 1.8rem;
+    margin: 0.5rem;
   }
 }
 
