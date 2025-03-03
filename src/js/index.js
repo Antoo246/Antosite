@@ -98,7 +98,7 @@ class App {
 
     if (!icon) {
       console.warn(`No icon found for language: ${language}`);
-      return null;
+      return '<i class="bi bi-question-circle" title="' + language + '"></i>';
     } else {
       console.log(
         "Icon found for language:",
@@ -314,24 +314,77 @@ class App {
           }
         );
 
-        // Stats container (language, stars, forks)
+        // Stats container (language, stars, forks, and additional info)
         const statsContainer = document.createElement("div");
         statsContainer.classList.add("project-stats");
         statsContainer.style.setProperty("--child-nr", "3");
 
+        // Language info
+        let languageInfo = "";
         if (repo.language) {
-          const languageIcon = this.findLanguageIcon(repo.language);
-          statsContainer.innerHTML += `<span>${languageIcon} ${repo.language}</span>`;
-        }
-        statsContainer.innerHTML += `<span><i class="bi bi-star"></i> ${repo.stargazers_count}</span>`;
-
-        if (repo.fork) {
-          statsContainer.innerHTML += `
-            <span title="Forked Repository">
-              <i class="bi bi-diagram-3"></i> forked
-            </span>`;
+          const languageIcon = this.findLanguageIcon(repo.language) || "";
+          languageInfo = `<span title="Primary language">${languageIcon} ${repo.language}</span>`;
         } else {
-          statsContainer.innerHTML += `<span><i class="bi bi-diagram-2"></i> ${repo.forks_count}</span>`;
+          languageInfo = `<span title="Primary language"><i class="bi bi-question-circle"></i> N/A</span>`;
+        }
+        statsContainer.innerHTML += languageInfo;
+
+        // Repository size
+        let repoSize = "0 KB";
+        if (repo.size !== undefined && repo.size !== null) {
+          repoSize =
+            repo.size > 1000
+              ? (repo.size / 1000).toFixed(1) + " MB"
+              : repo.size + " KB";
+        }
+        statsContainer.innerHTML += `<span title="Repository size"><i class="bi bi-hdd"></i> ${repoSize}</span>`;
+
+        // Stars count
+        let stars =
+          repo.stargazers_count !== undefined && repo.stargazers_count !== null
+            ? repo.stargazers_count
+            : "0";
+        const formattedStars =
+          stars >= 1000 ? (stars / 1000).toFixed(1) + "k" : stars;
+        statsContainer.innerHTML += `<span title="Stars"><i class="bi bi-star-fill"></i> ${formattedStars}</span>`;
+
+        // Fork info
+        let forksCount =
+          repo.forks_count !== undefined && repo.forks_count !== null
+            ? repo.forks_count
+            : "0";
+        const formattedForks =
+          forksCount >= 1000
+            ? (forksCount / 1000).toFixed(1) + "k"
+            : forksCount;
+        statsContainer.innerHTML += `<span title="Forks"><i class="bi bi-diagram-2-fill"></i> ${formattedForks}</span>`;
+
+        // Fork tag
+        if (repo.fork) {
+          statsContainer.innerHTML += `<span title="Forked"><i class="bi bi bi-exclamation-circle-fill"></i> Forked</span>`;
+        } else {
+          statsContainer.innerHTML += `<span title="Original"><i class="bi bi bi-exclamation-circle-fill"></i> Original</span>`;
+        }
+
+        // Last updated info
+        let timeAgo = "N/A";
+        if (repo.updated_at) {
+          const updateDate = new Date(repo.updated_at);
+          timeAgo = getTimeAgo(updateDate);
+        }
+        statsContainer.innerHTML += `<span title="Last updated"><i class="bi bi-clock-history"></i> ${timeAgo}</span>`;
+
+        // Helper function to calculate relative time
+        function getTimeAgo(date) {
+          const diffDays = Math.floor(
+            (Date.now() - date) / (1000 * 60 * 60 * 24)
+          );
+          if (diffDays < 1) return "today";
+          if (diffDays < 2) return "yesterday";
+          if (diffDays < 7) return `${diffDays}d ago`;
+          if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+          if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`;
+          return `${Math.floor(diffDays / 365)}y ago`;
         }
 
         // Repository link with enhanced styling
