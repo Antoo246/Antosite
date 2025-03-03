@@ -154,6 +154,7 @@ class App {
     console.log("Extracted social media from bio");
 
     let socialContainer = document.getElementById("social-container");
+    socialContainer.innerHTML = "";
 
     const socialLinks = {
       twitter: {
@@ -193,35 +194,38 @@ class App {
       },
     };
 
+    // Render social media links
     Object.entries(socialLinks).forEach(([platform, info]) => {
       if (
-        info.username &&
-        window.location.href !== info.baseUrl + info.username
-      ) {
-        const link = document.createElement("a");
-        link.classList.add("link");
-        link.href = info.baseUrl + info.username;
-        link.target = "_blank";
-        link.title = info.text;
-        const icon = document.createElement("i");
-        icon.className = `bi ${info.icon}`;
-        const text = document.createTextNode(" " + info.text);
-        link.appendChild(icon);
-        link.appendChild(text);
+        !info.username ||
+        window.location.href === info.baseUrl + info.username
+      )
+        return;
 
-        socialContainer.appendChild(link);
-      }
+      const link = document.createElement("a");
+      link.classList.add("link");
+      link.href = `${info.baseUrl}${info.username}`;
+      link.target = "_blank";
+      link.title = info.text;
+
+      const icon = document.createElement("i");
+      icon.className = `bi ${info.icon}`;
+
+      link.appendChild(icon);
+      link.appendChild(document.createTextNode(` ${info.text}`));
+      socialContainer.appendChild(link);
     });
 
-    // Handle GitHub Repos
+    // Handle GitHub Repositories
     const repoCarousel = document.getElementById("projects-container");
     const projectsTitle = document.getElementById("projects");
 
-    // Display number of projects
+    // Display the number of projects
     projectsTitle.innerHTML = `<i class="bi bi-box"> Projects (${
       data.public_repos || 0
-    })</i>  `;
+    })</i>`;
 
+    // If no repositories, show a message and adjust styles
     if (!data.repo || data.repo.length === 0) {
       repoCarousel.classList.remove("carousel");
       repoCarousel.classList.add("itemcenter");
@@ -229,98 +233,125 @@ class App {
       return;
     } else if (data.repo.length < 3) {
       repoCarousel.classList.remove("carousel");
-    }
-
-    const filteredRepos = [...data.repo].sort(
-      (a, b) => b.stargazers_count - a.stargazers_count
-    );
-
-    repoCarousel.innerHTML = "";
-    filteredRepos.forEach((repo, index) => {
-      const projectElement = document.createElement("div");
-      projectElement.classList.add("project");
-      projectElement.style.setProperty("--project-index", index); // For staggered animations
-
-      // Interactive hover tracking for glass morphism effect
-      projectElement.addEventListener("mousemove", (e) => {
-        const rect = projectElement.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / projectElement.offsetWidth) * 100;
-        const y = ((e.clientY - rect.top) / projectElement.offsetHeight) * 100;
-        projectElement.style.setProperty("--x", `${x}%`);
-        projectElement.style.setProperty("--y", `${y}%`);
-      });
-
-      // Create elements with proper structure and classes
-      const projectTitle = document.createElement("h5");
-      projectTitle.classList.add("project-title");
-      projectTitle.innerHTML = `<i class="bi bi-code-square"></i> ${
-        repo.name || "Unnamed Project"
-      }`;
-
-      const projectDescription = document.createElement("p");
-      projectDescription.setAttribute(
-        "title",
-        repo.description || "No description available"
+    } else {
+      const sortedRepos = [...data.repo].sort(
+        (a, b) => b.stargazers_count - a.stargazers_count
       );
+      repoCarousel.innerHTML = "";
 
-      projectDescription.innerHTML = `
-    <div class="project-description-container">
-      <p class="project-description">
-        <span class="description-icon">
-          <i class="bi bi-file-text"></i>
-        </span>
-        <span class="description-text">${
-          repo.description || "No description available"
-        }</span>
-      </p>
-    </div>`;
+      // Render each project card
+      sortedRepos.forEach((repo, index) => {
+        const projectElement = document.createElement("div");
+        projectElement.classList.add("project");
+        projectElement.style.setProperty("--project-index", index.toString());
 
-      // Add elements to the project card with animation delays
-      const elements = [projectTitle, projectDescription];
-      elements.forEach((el, i) => {
-        el.style.setProperty("--child-nr", i + 1); // Animation sequence
-        projectElement.appendChild(el);
+        // Glass morphism hover effect
+        projectElement.addEventListener("mousemove", (e) => {
+          const rect = projectElement.getBoundingClientRect();
+          const x =
+            ((e.clientX - rect.left) / projectElement.offsetWidth) * 100;
+          const y =
+            ((e.clientY - rect.top) / projectElement.offsetHeight) * 100;
+          projectElement.style.setProperty("--x", `${x}%`);
+          projectElement.style.setProperty("--y", `${y}%`);
+        });
+
+        // Project title container with bookmark icon and title
+
+        const projectTitleContainer = document.createElement("div");
+        projectTitleContainer.classList.add("project-title-container");
+
+        const bookmarkIcon = document.createElement("i");
+        bookmarkIcon.className = "bi bi-bookmark-heart-fill project-bookmark";
+        projectTitleContainer.appendChild(bookmarkIcon);
+
+        const projectTitle = document.createElement("h5");
+        projectTitle.classList.add("project-title");
+        const titleText = repo.name
+          ? repo.name.charAt(0).toUpperCase() + repo.name.slice(1)
+          : "Unnamed Project";
+        projectTitle.textContent = titleText;
+
+        if (titleText.length > 15) {
+          console.warn("Long title detected:", titleText);
+
+          const scrollingContainer = document.createElement("div");
+          scrollingContainer.classList.add("text-scrolling-container");
+
+          projectTitle.classList.add("text-scrolling");
+          projectTitle.title = titleText;
+
+          scrollingContainer.appendChild(projectTitle);
+          projectTitleContainer.appendChild(scrollingContainer);
+        } else {
+          projectTitleContainer.appendChild(projectTitle);
+        }
+
+        // Project description container with icon and text
+        const projectDescriptionContainer = document.createElement("div");
+        projectDescriptionContainer.classList.add(
+          "project-description-container"
+        );
+
+        const projectDescription = document.createElement("p");
+        projectDescription.classList.add("project-description");
+        projectDescription.title =
+          repo.description || "No description available";
+        projectDescription.innerHTML = `
+          <span class="description-icon">
+            <i class="bi bi-file-text"></i>
+          </span>
+          <span class="description-text">${
+            repo.description || "No description available"
+          }</span>`;
+        projectDescriptionContainer.appendChild(projectDescription);
+
+        // Append title and description with animation sequencing
+        [projectTitleContainer, projectDescriptionContainer].forEach(
+          (el, i) => {
+            el.style.setProperty("--child-nr", (i + 1).toString());
+            projectElement.appendChild(el);
+          }
+        );
+
+        // Stats container (language, stars, forks)
+        const statsContainer = document.createElement("div");
+        statsContainer.classList.add("project-stats");
+        statsContainer.style.setProperty("--child-nr", "3");
+
+        if (repo.language) {
+          const languageIcon = this.findLanguageIcon(repo.language);
+          statsContainer.innerHTML += `<span>${languageIcon} ${repo.language}</span>`;
+        }
+        statsContainer.innerHTML += `<span><i class="bi bi-star"></i> ${repo.stargazers_count}</span>`;
+
+        if (repo.fork) {
+          statsContainer.innerHTML += `
+            <span title="Forked Repository">
+              <i class="bi bi-diagram-3"></i> forked
+            </span>`;
+        } else {
+          statsContainer.innerHTML += `<span><i class="bi bi-diagram-2"></i> ${repo.forks_count}</span>`;
+        }
+
+        // Repository link with enhanced styling
+        const repoLink = document.createElement("a");
+        repoLink.href = repo.html_url;
+        repoLink.target = "_blank";
+        repoLink.classList.add("project-link", "link");
+        repoLink.innerHTML = `<i class="bi bi-box-arrow-up-right"> View Project</i>`;
+        repoLink.style.setProperty("--child-nr", "4");
+
+        // Append stats and link to project card and then add to the carousel
+        projectElement.append(statsContainer, repoLink);
+        repoCarousel.appendChild(projectElement);
+
+        // Apply staggered animation delay
+        projectElement.style.animationDelay = `${index * 0.1}s`;
       });
 
-      const statsContainer = document.createElement("div");
-      statsContainer.classList.add("project-stats");
-      statsContainer.style.setProperty("--child-nr", elements.length + 1);
-
-      if (repo.language) {
-        let languageIcon = this.findLanguageIcon(repo.language);
-        statsContainer.innerHTML += `<span>${languageIcon} ${repo.language}</span>`;
-      }
-
-      statsContainer.innerHTML += `<span><i class="bi bi-star"></i> ${repo.stargazers_count}</span>`;
-
-      if (repo.fork) {
-        statsContainer.innerHTML += `
-        <span title="Forked Repository">
-        <i class="bi bi-diagram-3"></i> forked
-        </span>
-      `;
-      } else {
-        statsContainer.innerHTML += `<span><i class="bi bi-diagram-2"></i> ${repo.forks_count}</span>`;
-      }
-
-      // Repository link with enhanced styling
-      const repoLink = document.createElement("a");
-      repoLink.href = repo.html_url;
-      repoLink.target = "_blank";
-      repoLink.classList.add("project-link", "link");
-      repoLink.innerHTML = `<i class="bi bi-box-arrow-up-right"> View Project</i> `;
-      repoLink.style.setProperty("--child-nr", elements.length + 2);
-
-      projectElement.append(statsContainer, repoLink);
-      repoCarousel.appendChild(projectElement);
-
-      // Add subtle animation delay for each project card
-      projectElement.style.animationDelay = `${index * 0.1}s`;
-    });
-
-
-
-    console.log("User interface updated");
+      console.log("User interface updated");
+    }
   }
 
   async applyTheme() {
@@ -363,17 +394,6 @@ class App {
       console.log("Data fetched successfully", data);
       await this.updateUserInterface(data);
       await this.applyTheme();
-      document.addEventListener("DOMContentLoaded", function () {
-        const carousels = document.querySelectorAll(".carousel");
-
-        carousels.forEach((carousel) => {
-          const originalItems = carousel.innerHTML;
-          carousel.innerHTML = originalItems + originalItems;
-
-          const itemWidth = carousel.scrollWidth / 2;
-          carousel.style.setProperty("--carousel-width", itemWidth + "px");
-        });
-      });
     } catch (error) {
       this.handleError(error);
     }

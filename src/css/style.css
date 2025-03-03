@@ -1415,7 +1415,6 @@ button:disabled {
   justify-content: center;
   position: relative;
   color: var(--text-color);
-  text-align: center;
   overflow: hidden;
   backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
   -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
@@ -1491,26 +1490,72 @@ button:disabled {
   z-index: 1;
 }
 
-.project-title {
+.project-title-container {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 0.5rem;
-  font-size: clamp(0.95rem, 1.8vw, 1.1rem);
   width: 100%;
-  margin: 0.5rem 0;
-  padding: 0.5rem 0;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: 0.8px;
-  color: var(--text-color);
-  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+}
+
+.project-bookmark {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  font-size: clamp(1.6rem, 2.5vw, 2rem);
+  color: var(--accent-color);
+  opacity: 0.8;
+  cursor: pointer;
+  transition: all 0.35s var(--bounce);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  transform-origin: center;
   position: relative;
-  transition: transform 0.4s var(--bounce), color 0.4s var(--bounce),
-    text-shadow 0.4s var(--bounce);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  will-change: transform, color, text-shadow;
+  z-index: 2;
+  margin: 0 auto;
+}
+
+.project-bookmark:hover {
+  transform: translateY(-4px) scale(1.12) rotate(3deg);
+  color: var(--text-color);
+  opacity: 1;
+  filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.25));
+}
+
+.project-bookmark:active {
+  transform: scale(0.92) rotate(-2deg);
+  transition-duration: 0.15s;
+}
+
+.project-bookmark::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--text-color);
+  transform: translateX(-50%);
+  transition: width 0.3s var(--bounce), opacity 0.3s ease;
+  opacity: 0;
+}
+
+.project-bookmark:hover::after {
+  width: 70%;
+  opacity: 0.8;
+}
+
+.project-title {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.2px !important;
+  position: relative;
+  padding-bottom: 0.4rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+  text-align: left;
   white-space: nowrap;
-  line-height: 1.3;
+  max-width: 100%;
 }
 
 .project:hover .project-title {
@@ -1669,5 +1714,49 @@ button:disabled {
   .project-stats span {
     width: 100%;
     justify-content: center;
+  }
+}
+
+.text-scrolling-container {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%; /* Assicura che il contenitore prenda tutta la larghezza disponibile */
+}
+
+.text-scrolling {
+  display: inline-block;
+  padding-right: 50px; /* Space between repeated text */
+  white-space: nowrap;
+  animation: textScroll 20s linear infinite;
+  cursor: grab;
+  transition: all 0.3s var(--bounce);
+  will-change: transform;
+}
+
+.text-scrolling:hover {
+  animation-play-state: paused;
+  color: var(--accent-color);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.text-scrolling:active {
+  cursor: grabbing;
+}
+
+@keyframes textScroll {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Support for reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .text-scrolling {
+    animation-duration: 30s;
   }
 }
