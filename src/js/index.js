@@ -234,8 +234,8 @@ class App {
     } else if (data.repo.length < 3) {
       repoCarousel.classList.remove("carousel");
     } else {
-      const sortedRepos = [...data.repo].sort(
-        (a, b) => b.stargazers_count - a.stargazers_count
+      const sortedRepos = [...data.repo].sort((a, b) =>
+        a.name.localeCompare(b.name)
       );
       repoCarousel.innerHTML = "";
 
