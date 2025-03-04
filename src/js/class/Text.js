@@ -27,12 +27,7 @@ class TextClass {
     });
   }
 
-  /**
-   * Calculates and sets the width of a text field based on its content
-   * @param {HTMLElement} textField - The text field element
-   * @param {string} text - The text to measure
-   * @returns {number} The calculated width in pixels
-   */
+ 
   setTextLength(textField, text) {
     if (!textField || !(textField instanceof HTMLElement)) {
       throw new Error("Invalid text field element");
@@ -45,7 +40,6 @@ class TextClass {
     const measureElement = document.createElement("span");
     const computedStyle = window.getComputedStyle(textField);
 
-    // Copy relevant styles
     measureElement.style.cssText = `
             visibility: hidden;
             white-space: nowrap;
@@ -63,7 +57,6 @@ class TextClass {
     const width = measureElement.offsetWidth;
     document.body.removeChild(measureElement);
 
-    // Add small padding to prevent text cutoff
     const finalWidth = width + 2;
     textField.style.width = `${finalWidth}px`;
 

@@ -1,11 +1,4 @@
 class ColorFunctions {
-  /**
-   * Convert RGB to HSL
-   * @param {number} r - Red value (0-255)
-   * @param {number} g - Green value (0-255)
-   * @param {number} b - Blue value (0-255)
-   * @returns {number[]} - HSL values
-   */
   rgbToHsl(r, g, b) {
     r /= 255;
     g /= 255;
@@ -40,11 +33,6 @@ class ColorFunctions {
     return [h, s, l];
   }
 
-  /**
-   * Calculate the average color
-   * @param {number[][]} colors - Array of RGB colors
-   * @returns {number[]} - Average RGB color
-   */
   averageColor(colors) {
     const sum = colors.reduce(
       (acc, color) => {
@@ -64,43 +52,19 @@ class ColorFunctions {
     ];
   }
 
-  /**
-   * Calculate the distance between two colors
-   * @param {number[]} color1 - First RGB color
-   * @param {number[]} color2 - Second RGB color
-   * @returns {number} - Distance between the colors
-   */
   colorDistance(color1, color2) {
     const diff = this.diffColor(color1, color2);
     return Math.sqrt(diff.reduce((acc, val) => acc + Math.pow(val, 2), 0));
   }
 
-  /**
-   * Calculate the difference between two colors
-   * @param {number[]} color1 - First RGB color
-   * @param {number[]} color2 - Second RGB color
-   * @returns {number[]} - Difference in RGB values
-   */
   diffColor(color1, color2) {
     return color1.map((val, index) => val - color2[index]);
   }
 
-  /**
-   * Convert an array to RGB string
-   * @param {number[]} color - RGB color array
-   * @returns {string} - RGB string
-   */
   arrayToRgb(color) {
     return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
   }
 
-  /**
-   * Convert HSL to RGB
-   * @param {number} h - Hue (0-1)
-   * @param {number} s - Saturation (0-1)
-   * @param {number} l - Lightness (0-1)
-   * @returns {number[]} - RGB values
-   */
   hslToRgb(h, s, l) {
     const hue2rgb = (p, q, t) => {
       if (t < 0) t += 1;
@@ -126,23 +90,12 @@ class ColorFunctions {
     return [r * 255, g * 255, b * 255];
   }
 
-  /**
-   * Get the opposite color
-   * @param {number[]} color - RGB color
-   * @returns {number[]} - Opposite RGB color
-   */
   getOppositeColor(color) {
     return color.map((val) => 255 - val);
   }
 
-  /**
-   * Calculate the average brightness of a color palette
-   * @param {number[][]} palet - Array of RGB colors
-   * @returns {number} - Average brightness value (0-255)
-   */
   averageBrightness(palet) {
     const total = palet.reduce((sum, color) => {
-      // Using the luminance formula: 0.299R + 0.587G + 0.114B
       return sum + (0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2]);
     }, 0);
 

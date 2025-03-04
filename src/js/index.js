@@ -1,4 +1,3 @@
-// DOM Elements class for better organization
 class DOMElements {
   constructor() {
     this.main = document.getElementById("home");
@@ -15,7 +14,6 @@ class DOMElements {
   }
 }
 
-// UI Controller class
 class UIController {
   static showSite(elements, CONFIG) {
     console.log("UIController.showSite called");
@@ -76,7 +74,6 @@ class App {
       );
     }
 
-    // Then try partial name matches with stricter conditions (must start with the language name)
     if (!icon) {
       icon = this.skillIconJSON.find(
         (icon) =>
@@ -121,7 +118,6 @@ class App {
   async updateUserInterface(data) {
     console.log("App.updateUserInterface called with data:", data);
 
-    // Update user information
     this.elements.name.innerHTML = data.name;
     this.elements.username.innerHTML = data.login;
     this.elements.logo.src = data.avatar_url;
@@ -216,16 +212,13 @@ class App {
       socialContainer.appendChild(link);
     });
 
-    // Handle GitHub Repositories
     const repoCarousel = document.getElementById("projects-container");
     const projectsTitle = document.getElementById("projects");
 
-    // Display the number of projects
     projectsTitle.innerHTML = `<i class="bi bi-box"> Projects (${
       data.public_repos || 0
     })</i>`;
 
-    // If no repositories, show a message and adjust styles
     if (!data.repo || data.repo.length === 0) {
       repoCarousel.classList.remove("carousel");
       repoCarousel.classList.add("itemcenter");
@@ -239,13 +232,11 @@ class App {
       );
       repoCarousel.innerHTML = "";
 
-      // Render each project card
       sortedRepos.forEach((repo, index) => {
         const projectElement = document.createElement("div");
         projectElement.classList.add("project");
         projectElement.style.setProperty("--project-index", index.toString());
 
-        // Glass morphism hover effect
         projectElement.addEventListener("mousemove", (e) => {
           const rect = projectElement.getBoundingClientRect();
           const x =
@@ -256,7 +247,6 @@ class App {
           projectElement.style.setProperty("--y", `${y}%`);
         });
 
-        // Project title container with bookmark icon and title
 
         const projectTitleContainer = document.createElement("div");
         projectTitleContainer.classList.add("project-title-container");
@@ -287,7 +277,6 @@ class App {
           projectTitleContainer.appendChild(projectTitle);
         }
 
-        // Project description container with icon and text
         const projectDescriptionContainer = document.createElement("div");
         projectDescriptionContainer.classList.add(
           "project-description-container"
@@ -306,7 +295,6 @@ class App {
           }</span>`;
         projectDescriptionContainer.appendChild(projectDescription);
 
-        // Append title and description with animation sequencing
         [projectTitleContainer, projectDescriptionContainer].forEach(
           (el, i) => {
             el.style.setProperty("--child-nr", (i + 1).toString());
@@ -314,12 +302,10 @@ class App {
           }
         );
 
-        // Stats container (language, stars, forks, and additional info)
         const statsContainer = document.createElement("div");
         statsContainer.classList.add("project-stats");
         statsContainer.style.setProperty("--child-nr", "3");
 
-        // Language info
         let languageInfo = "";
         if (repo.language) {
           const languageIcon = this.findLanguageIcon(repo.language) || "";
@@ -329,7 +315,6 @@ class App {
         }
         statsContainer.innerHTML += languageInfo;
 
-        // Repository size
         let repoSize = "0 KB";
         if (repo.size !== undefined && repo.size !== null) {
           repoSize =
@@ -339,7 +324,6 @@ class App {
         }
         statsContainer.innerHTML += `<span title="Repository size"><i class="bi bi-hdd"></i> ${repoSize}</span>`;
 
-        // Stars count
         let stars =
           repo.stargazers_count !== undefined && repo.stargazers_count !== null
             ? repo.stargazers_count
@@ -348,7 +332,6 @@ class App {
           stars >= 1000 ? (stars / 1000).toFixed(1) + "k" : stars;
         statsContainer.innerHTML += `<span title="Stars"><i class="bi bi-star-fill"></i> ${formattedStars}</span>`;
 
-        // Fork info
         let forksCount =
           repo.forks_count !== undefined && repo.forks_count !== null
             ? repo.forks_count
@@ -359,14 +342,12 @@ class App {
             : forksCount;
         statsContainer.innerHTML += `<span title="Forks"><i class="bi bi-diagram-2-fill"></i> ${formattedForks}</span>`;
 
-        // Fork tag
         if (repo.fork) {
           statsContainer.innerHTML += `<span title="Forked"><i class="bi bi bi-exclamation-circle-fill"></i> Forked</span>`;
         } else {
           statsContainer.innerHTML += `<span title="Original"><i class="bi bi bi-exclamation-circle-fill"></i> Original</span>`;
         }
 
-        // Last updated info
         let timeAgo = "N/A";
         if (repo.updated_at) {
           const updateDate = new Date(repo.updated_at);
@@ -374,7 +355,6 @@ class App {
         }
         statsContainer.innerHTML += `<span title="Last updated"><i class="bi bi-clock-history"></i> ${timeAgo}</span>`;
 
-        // Helper function to calculate relative time
         function getTimeAgo(date) {
           const diffDays = Math.floor(
             (Date.now() - date) / (1000 * 60 * 60 * 24)
@@ -387,7 +367,6 @@ class App {
           return `${Math.floor(diffDays / 365)}y ago`;
         }
 
-        // Repository link with enhanced styling
         const repoLink = document.createElement("a");
         repoLink.href = repo.html_url;
         repoLink.target = "_blank";
@@ -395,11 +374,9 @@ class App {
         repoLink.innerHTML = `<i class="bi bi-box-arrow-up-right"> View Project</i>`;
         repoLink.style.setProperty("--child-nr", "4");
 
-        // Append stats and link to project card and then add to the carousel
         projectElement.append(statsContainer, repoLink);
         repoCarousel.appendChild(projectElement);
 
-        // Apply staggered animation delay
         projectElement.style.animationDelay = `${index * 0.1}s`;
       });
 
@@ -454,7 +431,6 @@ class App {
 }
 
 async function loadPage() {
-  // Constants
   console.log("loadPage called");
   const config = await fetch("./src/config/setting.json")
     .then((response) => response.json())

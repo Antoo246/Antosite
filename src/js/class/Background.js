@@ -62,7 +62,6 @@ class Background {
   }
 
   handleResize() {
-    // Check for transition between fullscreen and non-fullscreen
     const currentFullScreen = this.checkFullScreen();
     if (currentFullScreen !== this.isFullScreen) {
       this.isFullScreen = currentFullScreen;
@@ -79,7 +78,6 @@ class Background {
     this.height = this.canvas.height;
   }
 
-  // Generate brush splashes with irregular shapes
   generateBrushSplashes() {
     this.brushSplashes = [];
     const { splashCount, minVertices, maxVertices } = this.settings;
@@ -87,43 +85,36 @@ class Background {
     const baseRadiusMin = minDim / 25;
     const baseRadiusMax = minDim / 8;
 
-    // Create distribution zones for better splash placement
     const gridSize = Math.sqrt(splashCount);
     const cellWidth = this.width / gridSize;
     const cellHeight = this.height / gridSize;
 
     for (let i = 0; i < splashCount; i++) {
-      // Grid-based positioning with random offset
       const gridX = i % gridSize;
       const gridY = Math.floor(i / gridSize);
       const x = gridX * cellWidth + Math.random() * cellWidth * 0.8;
       const y = gridY * cellHeight + Math.random() * cellHeight * 0.8;
 
-      // Enhanced radius calculation with golden ratio variation
       const baseRadius =
         baseRadiusMin + Math.random() * (baseRadiusMax - baseRadiusMin);
       const phase = Math.random() * Math.PI * 2;
 
-      // Improved color selection with weighted randomization
       const colorIndex = Math.min(
         this.palette.length - 1,
         Math.floor(Math.random() * (this.palette.length - 1))
       );
       const color = this.palette[colorIndex];
 
-      // Dynamic vertices calculation
       const vertices =
         minVertices +
         Math.floor(Math.random() * (maxVertices - minVertices + 1));
 
-      // Smoother multipliers with controlled variation
       const multipliers = Array.from({ length: vertices }, (_, index) => {
         const base = 0.85 + Math.random() * 0.3;
         const angle = (index / vertices) * Math.PI * 2;
         return base + 0.1 * Math.sin(angle);
       });
 
-      // Add movement properties
       const movePhase = Math.random() * Math.PI * 2;
       const moveSpeed = this.settings.moveSpeed * (0.5 + Math.random());
       const originalX = x;
@@ -145,24 +136,27 @@ class Background {
     }
   }
 
-  // Update splash positions for movement
   updateSplashPositions() {
     const time = this.time * 0.15;
-    
-    this.brushSplashes.forEach(splash => {
+
+    this.brushSplashes.forEach((splash) => {
       // Calculate new position based on time
-      splash.x = splash.originalX + Math.sin(time * splash.moveSpeed + splash.movePhase) * this.settings.maxMovement;
-      splash.y = splash.originalY + Math.cos(time * splash.moveSpeed * 0.7 + splash.movePhase) * this.settings.maxMovement * 0.8;
+      splash.x =
+        splash.originalX +
+        Math.sin(time * splash.moveSpeed + splash.movePhase) *
+          this.settings.maxMovement;
+      splash.y =
+        splash.originalY +
+        Math.cos(time * splash.moveSpeed * 0.7 + splash.movePhase) *
+          this.settings.maxMovement *
+          0.8;
     });
   }
 
-  // Draw splashes as irregular shapes
   drawSplashes() {
-    // Set global composite operation for better blending
     this.ctx.globalCompositeOperation = "screen";
 
     this.brushSplashes.forEach((splash) => {
-      // Enhanced dynamic radius with smoother animation
       const time = this.time * 0.015;
       const dynamicRadius =
         splash.baseRadius +
@@ -170,13 +164,11 @@ class Background {
           (Math.sin(time + splash.phase) * 0.7 +
             Math.sin(time * 1.3 + splash.phase) * 0.3);
 
-      // Improved opacity animation with multiple frequencies
       const opacity =
         0.7 +
         0.15 * Math.sin(time * 0.7 + splash.phase) +
         0.05 * Math.cos(time * 1.1 + splash.phase);
 
-      // Create and optimize gradient
       const gradient = this.ctx.createRadialGradient(
         splash.x,
         splash.y,
@@ -189,7 +181,6 @@ class Background {
       gradient.addColorStop(0.6, `rgba(${splash.color}, ${opacity * 0.5})`);
       gradient.addColorStop(1, `rgba(${splash.color}, 0)`);
 
-      // Optimized path drawing
       this.ctx.beginPath();
       const angleStep = (Math.PI * 2) / splash.vertices;
 
@@ -206,17 +197,14 @@ class Background {
       this.ctx.fill();
     });
 
-    // Reset composite operation
     this.ctx.globalCompositeOperation = "source-over";
   }
 
   render() {
-    // Fill background with the darkest color from the palette (assumed to be the first one)
     this.ctx.globalCompositeOperation = "source-over";
     this.ctx.fillStyle = `rgb(${this.palette[0]})`;
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    // Update positions and then draw
     this.updateSplashPositions();
     this.drawSplashes();
   }
