@@ -1,93 +1,98 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- Meta -->
-        <meta charset="UTF-8">
-        <meta name="author" content="Anto426">
-        <!-- Title -->
-        <title>Anto's Site</title>
-        <!-- Icon -->
-        <link rel="icon" href="./src/multimedia/icon.ico">
-        <!-- CSS -->
-        <link rel="stylesheet" href="./src/css/style.css">
-        <link rel="stylesheet" href="./src/css/responsive.css">
-        <!-- devicon icon -->
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
-        <!-- Bootstrap Icons -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-        <!--  Color Thief-->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.6.0/color-thief.umd.js"></script>
-        <!-- JS -->
-        <script src="./src/js/class/Background.js"></script>
-        <script src="./src/js/class/DynamicColor.js"></script>
-        <script src="./src/js/class/Color.js"></script>
-        <script src="./src/js/class/FetchData.js"></script>
-        <script src="./src/js/class/Text.js"></script>
-        <script src="./src/js/index.js"></script>
-    </head>
-    <!-- Body -->
-    <body onload="loadPage()">
-        <main class="main">
-            <!-- Loading -->
-            <div id="loading" class="loading-container show">
-                <div class="loader"></div>
-            </div>
-            <!-- Error  -->
-            <div id="error" class="error-content hide">
-                <i class="bi-exclamation-triangle-fill error-icon" style="font-size: 3rem;"></i>
-                <h1 id="title-error" class="title">Connection Error</h1>
-                <p id="message-error" class="text">
-                    Oops! We couldn't load the data. Please check your internet
-                    connection and try again.
-                </p>
-                <button onclick="location.reload()">
-                    <i class="bi-arrow-clockwise"></i>
-                    Reload Page
-                </button>
-            </div>
-            <!-- Main Container -->
-            <div id="home" class="maincontainer hide">
-                <div class="logocontainer">
-                    <img
-                        id="logo"
-                        class="logo"
-                        alt="Logo"
-                        crossorigin="anonymous"
-                    >
-                    <div class="text-logo">
-                        <h3 id="username"></h3>
-                        <p id="tag"></p>
-                        <i class="bi-heart-fill"></i>
-                    </div>
-                </div>
-                <div class="othercontainer">
-                    <h3 id="question" class="title">
-                        <i class="bi-person-fill"> About me</i>
-                    </h3>
-                    <p id="aboutme" class="text text-writer"></p>
-                </div>
-                <div class="othercontainer">
-                    <h3 id="skills" class="title">
-                        <i class="bi-tools"> Skills</i>
-                    </h3>
-                    <div class="carousel-container">
-                        <div id="skills-container" class="carousel"></div>
-                    </div>
-                </div>
-                <div class="othercontainer">
-                    <h3 id="projects" class="title">Projects</h3>
-                    <div class="carousel-container">
-                        <div id="projects-container" class="carousel"></div>
-                    </div>
-                </div>
-                <div class="othercontainer">
-                    <h3 id="social" class="title">
-                        <i class="bi-people-fill"> Social</i>
-                    </h3>
-                    <div id="social-container" class="links"></div>
-                </div>
-            </div>
-        </main>
-        <canvas id="backgroundCanvas" class="background"></canvas>
-    </body>
+  <head>
+    <!-- Meta -->
+    <meta charset="UTF-8" />
+    <meta name="author" content="Anto426" />
+    <!-- Title -->
+    <title>Anto's Site</title>
+    <!-- Icon -->
+    <link rel="icon" href="./src/multimedia/icon.ico" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="./src/css/style.css" />
+    <link rel="stylesheet" href="./src/css/responsive.css" />
+    <!-- devicon icon -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <!--  Color Thief-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.6.0/color-thief.umd.js"></script>
+    <!-- JS -->
+    <script src="./src/js/class/Background.js"></script>
+    <script src="./src/js/class/DynamicColor.js"></script>
+    <script src="./src/js/class/Color.js"></script>
+    <script src="./src/js/class/FetchData.js"></script>
+    <script src="./src/js/class/Text.js"></script>
+    <script src="./src/js/index.js"></script>
+  </head>
+  <!-- Body -->
+  <body onload="loadPage()">
+    <main class="main">
+      <!-- Loading -->
+      <div id="loading" class="loading-container show">
+        <div class="loader"></div>
+      </div>
+      <!-- Error  -->
+      <div id="error" class="error-content hide">
+        <i
+          class="bi-exclamation-triangle-fill error-icon"
+          style="font-size: 3rem"
+        ></i>
+        <h1 id="title-error" class="title">Connection Error</h1>
+        <p id="message-error" class="text">
+          Oops! We couldn't load the data. Please check your internet connection
+          and try again.
+        </p>
+        <button onclick="location.reload()">
+          <i class="bi-arrow-clockwise"></i>
+          Reload Page
+        </button>
+      </div>
+      <!-- Main Container -->
+      <div id="home" class="maincontainer hide">
+        <div class="logocontainer">
+          <img id="logo" class="logo" alt="Logo" crossorigin="anonymous" />
+          <div class="text-logo">
+            <h3 id="username"></h3>
+            <p id="tag"></p>
+            <i class="bi-heart-fill"></i>
+          </div>
+        </div>
+        <div class="othercontainer">
+          <h3 id="question" class="title">
+            <i class="bi-person-fill"> About me</i>
+          </h3>
+          <p id="aboutme" class="text text-writer"></p>
+        </div>
+        <div class="othercontainer">
+          <h3 id="skills" class="title">
+            <i class="bi-tools"> Skills</i>
+          </h3>
+          <div class="carousel-container">
+            <div id="skills-container" class="carousel"></div>
+          </div>
+        </div>
+        <div class="othercontainer">
+          <h3 id="projects" class="title">Projects</h3>
+          <div class="carousel-container">
+            <div id="projects-container" class="carousel"></div>
+          </div>
+        </div>
+        <div class="othercontainer">
+          <h3 id="social" class="title">
+            <i class="bi-people-fill"> Social</i>
+          </h3>
+          <div id="social-container" class="links"></div>
+        </div>
+      </div>
+    </main>
+    <canvas id="backgroundCanvas" class="background"></canvas>
+  </body>
 </html>
