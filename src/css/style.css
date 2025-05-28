@@ -1,18 +1,25 @@
 /* Root Variables */
 :root {
-  /* Color System */
-  --primary-color: #1a0037;
-  --secondary-color: #3b0156;
-  --accent-color: #4f0082;
+  /* Color System - Slightly Brighter & RGB versions */
+  --primary-color: #1f004d;
+  --primary-color-rgb: 31, 0, 77;
+  --secondary-color: #4a0170;
+  --secondary-color-rgb: 74, 1, 112;
+  --accent-color: #6f00aa;
+  --accent-color-rgb: 111, 0, 170;
   --text-color: #ffffff;
-  --text-color-secondary: rgba(255, 255, 255, 0.8);
-  --dark-overlay: rgba(0, 0, 0, 0.3);
+  --text-color-rgb: 255, 255, 255;
+  --text-color-secondary: rgba(255, 255, 255, 0.75); /* Slightly more opaque */
+  --dark-overlay: rgba(0, 0, 0, 0.25); /* Slightly adjusted */
 
-  /* Glass Morphism */
-  --glass-bg: rgba(255, 255, 255, 0.12);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: clamp(10px, 2vw, 20px);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  /* Glass Morphism - Refined */
+  --glass-bg: rgba(
+    var(--primary-color-rgb),
+    0.2
+  ); /* Darker, theme-aligned base */
+  --glass-border: rgba(255, 255, 255, 0.07); /* More subtle border */
+  --glass-blur: clamp(12px, 2.5vw, 22px); /* Slightly increased blur */
+  --glass-shadow: 0 8px 28px rgba(0, 0, 0, 0.22); /* Softer glass shadow */
 
   /* Margin */
   --margin-xs: clamp(0.5rem, 1vw, 0.75rem);
@@ -36,12 +43,14 @@
   --transition-medium: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   --bounce: cubic-bezier(0.34, 1.3, 0.64, 1);
 
-  /* Shadows */
-  --shadow-sm: 0 2px 8px var(--dark-overlay);
-  --shadow-md: 0 10px 30px var(--dark-overlay),
-    0 0 20px rgba(255, 255, 255, 0.1);
-  --shadow-lg: 0 15px 50px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(255, 255, 255, 0.15);
+  /* Shadows - Softer and more layered */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.18),
+    0 2px 8px rgba(var(--accent-color-rgb), 0.1);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.22),
+    0 4px 12px rgba(var(--accent-color-rgb), 0.15);
+  --shadow-normal: var(--shadow-sm);
+  --shadow-hover: var(--shadow-md);
 
   /* Layout */
   --container-padding: clamp(1.5rem, 4vw, 3rem);
@@ -53,18 +62,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap&text=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
 
 /* Base Styles */
+/* Consider adding html { height: 100%; box-sizing: border-box; } and *, *::before, *::after { box-sizing: inherit; } globally */
 body {
   font-family: "Source Sans Pro", sans-serif;
   color: var(--text-color);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  min-height: 100%;
-  min-width: 100%;
+  min-height: 100vh; /* Use vh for full viewport height */
+  /* min-width: 100%; is often not needed, block elements will take full width. overflow-x: hidden handles potential overflow. */
   line-height: 1.7;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--primary-color);
 }
 
 /* Background */
@@ -72,11 +83,12 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  min-height: 100%;
-  min-width: 100%;
+  height: 100vh; /* Use vh and vw for full viewport coverage */
+  width: 100vw;
   z-index: -1;
   background-size: cover;
   transform-origin: center center;
+  /* background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%); */
 }
 
 /* Main Container */
@@ -84,10 +96,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  min-height: 100vh; /* Ensure it can fill the viewport height */
   width: 100%;
   position: relative;
-  padding: 1.25rem;
+  padding: 1.25rem; /* Consider box-sizing: border-box globally */
 }
 /* Common Containers */
 .maincontainer,
@@ -106,28 +118,26 @@ body {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 
-  /* Visual styling */
+  /* Visual styling - Updated */
   background: var(--glass-bg);
   background-image: radial-gradient(
-    circle at var(--x, 50%) var(--y, 50%),
-    rgba(255, 255, 255, 0.12) 0%,
-    var(--glass-bg) 50%,
-    rgba(255, 255, 255, 0.03) 100%
-  );
+      circle at var(--x, 50%) var(--y, 50%),
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 55%
+    ),
+    var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-normal, 0 0 0);
+  box-shadow: var(--glass-shadow);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
 
-  /* Reduced width properties */
-  max-width: 70%;
-  width: fit-content;
+  /* width and max-width are set by specific rules below */
 
   /* Optimized transitions */
-  transition: all 0.5s var(--bounce);
-  will-change: transform, box-shadow;
-  animation: floatContainer 4s ease-in-out infinite;
+  transition: all 0.4s var(--bounce);
+  will-change: transform, box-shadow, border-color, background-image;
+  animation: floatContainer 6s ease-in-out infinite;
 }
 
 /* Hide scrollbars but maintain functionality */
@@ -139,7 +149,7 @@ body {
 
 .maincontainer::-webkit-scrollbar-thumb,
 .error-content::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
@@ -154,22 +164,21 @@ body {
   width: clamp(350px, 80vw, 1100px);
   height: clamp(420px, 80vh, 900px);
   padding: clamp(1.2rem, 2.5vw, 2rem);
-  justify-content: center;
+  justify-content: center; /* Centers flex items along the main (vertical) axis */
 }
 
-/* Hover effects */
+/* Hover effects - Updated */
 .maincontainer:hover,
 .error-content:hover {
-  --glow-intensity: 1;
-  transform: translate(-50%, -50%) scale(1.01);
-  box-shadow: var(--shadow-hover);
-  border-color: rgba(255, 255, 255, 0.25);
+  transform: translate(-50%, -50%) scale(1.015);
+  box-shadow: var(--shadow-hover), 0 0 30px rgba(var(--accent-color-rgb), 0.15);
+  border-color: rgba(var(--accent-color-rgb), 0.25);
   background-image: radial-gradient(
-    circle at var(--x, 50%) var(--y, 50%),
-    rgba(255, 255, 255, 0.18) 0%,
-    var(--glass-bg) 50%,
-    rgba(255, 255, 255, 0.06) 100%
-  );
+      circle at var(--x, 50%) var(--y, 50%),
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 65%
+    ),
+    var(--glass-bg);
 }
 
 /* Animation for children elements with optimized cascade */
@@ -178,7 +187,7 @@ body {
   opacity: 0;
   transform: translateY(15px);
   animation: fadeInUp 0.45s var(--bounce) forwards;
-  animation-delay: calc(var(--child-nr, 0) * 0.12s);
+  animation-delay: calc(var(--child-nr, 0) * 0.1s);
 }
 
 /* Mobile optimization */
@@ -201,12 +210,12 @@ body {
   .maincontainer,
   .error-content {
     animation: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
   }
 
   .maincontainer > *,
   .error-content > * {
-    animation: fadeIn 0.3s ease forwards;
+    animation: fadeIn 0.3s ease forwards; /* Ensure fadeIn is defined */
   }
 }
 
@@ -217,15 +226,15 @@ body {
     transform: translate(-50%, -50%) translateY(0);
   }
   50% {
-    transform: translate(-50%, -50%) translateY(-8px);
+    transform: translate(-50%, -50%) translateY(-6px);
   }
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
-    filter: blur(5px);
+    transform: translateY(18px);
+    filter: blur(4px);
   }
   to {
     opacity: 1;
@@ -234,14 +243,23 @@ body {
   }
 }
 
+/* Added fadeIn definition for reduced motion */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 /* Logo Container */
 .logocontainer {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: clamp(1.5rem, 4vw, 2.5rem);
-  padding: clamp(2rem, 5vw, 3rem);
-  transition: all 0.6s var(--bounce);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  transition: all 0.5s var(--bounce);
   will-change: transform, opacity;
   position: relative;
   perspective: 1000px;
@@ -253,7 +271,7 @@ body {
   align-items: center;
   gap: clamp(0.3rem, 1vw, 0.5rem);
   transform-style: preserve-3d;
-  animation: fadeIn 0.8s var(--bounce);
+  animation: fadeIn 0.7s var(--bounce); /* Assuming fadeIn here is different or defined elsewhere */
 }
 
 .text-logo p,
@@ -263,11 +281,15 @@ body {
   color: var(--text-color);
   text-align: center;
   position: relative;
-  text-shadow: 0 2px 12px rgba(255, 255, 255, 0.25);
-  transition: all 0.5s var(--bounce);
-  letter-spacing: 1.5px;
-  will-change: transform, text-shadow;
-  background: var(--text-color);
+  text-shadow: 0 2px 10px rgba(var(--text-color-rgb), 0.2);
+  transition: all 0.4s var(--bounce);
+  letter-spacing: 1.2px;
+  will-change: transform, text-shadow, letter-spacing;
+  background: linear-gradient(
+    45deg,
+    var(--text-color),
+    rgba(var(--text-color-rgb), 0.8)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -284,137 +306,144 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    var(--text-color) 20%,
-    rgba(255, 255, 255, 0.8) 50%,
-    var(--text-color) 80%,
+    rgba(var(--accent-color-rgb), 0.8) 20%,
+    rgba(var(--accent-color-rgb), 1) 50%,
+    rgba(var(--accent-color-rgb), 0.8) 80%,
     transparent
   );
-  transition: all 0.6s var(--bounce);
+  transition: all 0.5s var(--bounce);
   transform: translateX(-50%);
 }
 
 .text-logo p:hover,
 .text-logo h3:hover {
-  transform: translateY(-5px) translateZ(30px);
-  text-shadow: 0 4px 25px rgba(255, 255, 255, 0.5);
-  letter-spacing: 2.5px;
-  filter: brightness(1.2);
+  transform: translateY(-4px) translateZ(25px);
+  text-shadow: 0 3px 18px rgba(var(--accent-color-rgb), 0.4);
+  letter-spacing: 2px;
+  filter: brightness(1.1);
 }
 
 .text-logo p:hover::after,
 .text-logo h3:hover::after {
-  width: 100%;
-  box-shadow: 0 0 20px var(--text-color);
-  height: 3px;
+  width: 90%;
+  box-shadow: 0 0 15px rgba(var(--accent-color-rgb), 0.5);
+  height: 2.5px;
 }
 
 .text-logo h3 {
   font-size: clamp(1.5rem, 3vw, 1.75rem);
   font-weight: 700;
-  animation: slideUp 0.6s var(--bounce) 0.2s both;
+  animation: slideUp 0.5s var(--bounce) 0.15s both; /* Assuming slideUp is defined */
 }
 
 .text-logo p {
   font-size: clamp(0.9rem, 2vw, 1rem);
   font-weight: 600;
-  animation: slideUp 0.6s var(--bounce) both;
+  animation: slideUp 0.5s var(--bounce) both; /* Assuming slideUp is defined */
 }
 
-/* Logo Styles */
+/* Logo Styles - Updated */
 .logo {
   display: inline-block;
-  width: 150px;
-  height: 150px;
+  width: clamp(120px, 15vw, 150px);
+  height: clamp(120px, 15vw, 150px);
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid var(--glass-border);
+  border: 2.5px solid var(--glass-border);
   box-shadow: var(--shadow-normal);
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-    border-color 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  will-change: transform;
+  backdrop-filter: blur(
+    calc(var(--glass-blur) * 0.8)
+  );
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow, border-color;
 }
 
 .logo:hover {
-  transform: rotate(15deg) scale(1.15);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--text-color);
+  transform: rotate(8deg) scale(1.12);
+  box-shadow: var(--shadow-hover), 0 0 20px rgba(var(--accent-color-rgb), 0.2);
+  border-color: rgba(var(--accent-color-rgb), 0.6);
 }
 
 .logo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: drop-shadow(0 2px 15px rgba(255, 255, 255, 0.3));
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-    filter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  will-change: transform;
+  filter: drop-shadow(
+    0 2px 12px rgba(var(--accent-color-rgb), 0.25)
+  );
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, filter;
 }
 
 .logo:hover img {
-  transform: scale(1.15) rotate(-15deg);
-  filter: drop-shadow(0 4px 25px rgba(255, 255, 255, 0.6));
+  transform: scale(1.12) rotate(-8deg);
+  filter: drop-shadow(0 4px 20px rgba(var(--accent-color-rgb), 0.45));
 }
 
 /* Other Containers */
 .othercontainer {
   width: 85%;
   margin: var(--margin-xs) auto;
-  padding: 2rem;
+  padding: clamp(1.5rem, 2.5vw, 2rem);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-sm);
+  background: rgba(var(--primary-color-rgb), 0.05);
   transition: transform var(--transition-fast),
-    box-shadow var(--transition-fast), border-color var(--transition-fast);
+    box-shadow var(--transition-fast), border-color var(--transition-fast),
+    background var(--transition-fast); /* Explicit transitions are fine */
 }
 
 .othercontainer:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(var(--accent-color-rgb), 0.3);
+  background: rgba(var(--primary-color-rgb), 0.1);
 }
 
 .text {
   margin: 0 auto;
   display: grid;
-  gap: clamp(1.5rem, 2rem, 2rem);
+  gap: clamp(1.2rem, 1.8vw, 1.8rem);
   text-align: center;
   position: relative;
   z-index: 1;
-  padding: 1.5rem;
+  padding: 1.2rem;
   max-width: 800px;
   transform-origin: center;
   opacity: 0;
-  animation: textAppear 0.8s var(--bounce) forwards;
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-    gap 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-    filter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  will-change: transform, opacity, filter;
+  animation: textAppear 0.7s var(--bounce) forwards; /* Assuming textAppear is defined */
+  transition: transform 0.5s var(--bounce), filter 0.5s var(--bounce); /* Removed non-transitionable 'gap' */
+  will-change: transform, opacity, filter; /* Removed 'gap' */
 }
 
 .text:hover {
-  transform: translateY(-8px) scale(1.03);
-  gap: 2.5rem;
-  filter: drop-shadow(0 8px 25px rgba(255, 255, 255, 0.15));
+  transform: translateY(-6px) scale(1.02);
+  gap: 2.2rem; /* Gap change will be instant */
+  filter: drop-shadow(
+    0 6px 20px rgba(var(--accent-color-rgb), 0.1)
+  );
   cursor: pointer;
 }
 
 .text * {
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.35s var(--bounce);
   will-change: transform;
 }
 
 .text:hover * {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
 }
 
 @keyframes textAppear {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
-    filter: blur(10px);
+    transform: translateY(25px) scale(0.96);
+    filter: blur(8px);
   }
   to {
     opacity: 1;
@@ -424,21 +453,21 @@ body {
 }
 
 .title {
-  font-size: 2.5rem; /* Slightly increased for better impact */
+  font-size: clamp(2rem, 5vw, 2.4rem);
   font-weight: 700;
   color: var(--text-color);
   margin: 0;
-  padding: 1rem;
+  padding: 0.8rem;
   position: relative;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  text-shadow: 0 2px 12px rgba(255, 255, 255, 0.25);
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-    letter-spacing 0.5s, text-shadow 0.5s;
-  letter-spacing: 1.5px;
-  will-change: transform, letter-spacing;
+  gap: 0.8rem;
+  text-shadow: 0 2px 10px rgba(var(--text-color-rgb), 0.2);
+  transition: transform 0.4s var(--bounce), letter-spacing 0.4s var(--bounce),
+    text-shadow 0.4s var(--bounce);
+  letter-spacing: 1.2px;
+  will-change: transform, letter-spacing, text-shadow;
 }
 
 .title::after {
@@ -447,178 +476,136 @@ body {
   bottom: 0;
   left: 50%;
   width: 0;
-  height: 3px;
+  height: 2.5px;
   background: linear-gradient(
     90deg,
     transparent,
-    var(--text-color),
+    var(--accent-color),
     transparent
   );
-  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: width 0.5s var(--bounce), box-shadow 0.5s var(--bounce);
   transform: translateX(-50%);
 }
 
 .title:hover {
-  transform: scale(1.18) translateY(-5px);
-  text-shadow: 0 4px 25px rgba(255, 255, 255, 0.5);
-  letter-spacing: 2.5px;
+  transform: scale(1.12) translateY(-4px);
+  text-shadow: 0 3px 18px rgba(var(--accent-color-rgb), 0.45);
+  letter-spacing: 2px;
 }
 
 .title:hover::after {
-  width: 85%;
-  box-shadow: 0 0 20px var(--text-color);
+  width: 80%;
+  box-shadow: 0 0 15px var(--accent-color);
 }
 
 .links {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
-  gap: clamp(0.5rem, 2vw, 1.5rem);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 180px), 1fr)
+  );
+  gap: clamp(0.8rem, 1.8vw, 1.2rem);
   width: 100%;
   max-width: 800px;
-  margin: 1rem auto;
+  margin: 0.8rem auto;
   padding: clamp(0.5rem, 1.5vw, 1rem);
   justify-items: center;
   justify-content: center;
   align-items: stretch;
-  transition: all 0.5s var(--bounce);
+  transition: all 0.4s var(--bounce); /* Transition on grid properties like gap might not be smooth */
 }
 
 @media (min-width: 640px) {
   .links {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: clamp(1.25rem, 3vw, 2.25rem);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(1rem, 2.5vw, 2rem);
   }
 }
 
 @media (min-width: 1024px) {
   .links {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: clamp(1.5rem, 4vw, 2.5rem);
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(1.2rem, 3.5vw, 2.2rem);
   }
 }
 
 .links:only-child {
-  grid-template-columns: repeat(auto-fit, minmax(200px, 280px));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 260px));
 }
 
 .itemcenter {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 .link,
-button {
-  display: inline-block;
-  padding: 1rem 2.5rem;
-  font-size: 1rem;
-  font-weight: 700;
+button,
+.skill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   color: var(--text-color);
   text-decoration: none;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
-  border: 2px solid var(--glass-border);
-  border-radius: var(--border-radius-md);
-  background: linear-gradient(
-    145deg,
-    var(--accent-color),
-    var(--secondary-color)
-  );
-  backdrop-filter: blur(5px);
-  box-shadow: var(--shadow-normal);
-  transition: transform 0.5s var(--bounce), box-shadow 0.5s var(--bounce),
-    background 0.5s var(--bounce), letter-spacing 0.5s var(--bounce);
-  will-change: transform, box-shadow, letter-spacing;
-}
-
-.link::before,
-button::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  background: linear-gradient(
-    220deg,
-    transparent 0%,
-    var(--text-color) 50%,
-    transparent 100%
-  );
-  opacity: 0;
-  z-index: -1;
-  transition: opacity 0.3s ease;
-}
-
-.link::after,
-button::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.2) 0%,
-    transparent 60%
-  );
-  transform: rotate(45deg) translateY(-100%);
-  transition: all 0.8s ease;
-  z-index: -1;
+  border: 1px solid rgba(var(--accent-color-rgb), 0.4);
+  border-radius: var(--border-radius-sm);
+  background: rgba(var(--accent-color-rgb), 0.15);
+  backdrop-filter: blur(4px);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast); /* Uses easing from --transition-fast */
+  will-change: transform, box-shadow, background, border-color, letter-spacing;
 }
 
 /* Hover states */
 .link:hover,
-button:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.2);
-  border-color: var(--text-color);
-  letter-spacing: 3px;
-  background: linear-gradient(
-    145deg,
-    var(--secondary-color),
-    var(--primary-color)
-  );
-}
-
-.link:hover::before,
-button:hover::before {
-  opacity: 0.2;
-}
-
-.link:hover::after,
-button:hover::after {
-  transform: rotate(45deg) translateY(0);
+button:hover,
+.skill:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md), 0 0 10px rgba(var(--accent-color-rgb), 0.1);
+  background: rgba(var(--accent-color-rgb), 0.25);
+  border-color: rgba(var(--accent-color-rgb), 0.6);
+  letter-spacing: 1.2px;
 }
 
 /* Active states */
 .link:active,
-button:active {
-  transform: translateY(-2px) scale(0.98);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+button:active,
+.skill:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: var(--shadow-sm);
+  background: rgba(var(--accent-color-rgb), 0.35);
   transition-duration: 0.1s;
 }
 
 /* Focus states */
 .link:focus,
-button:focus {
+button:focus,
+.skill:focus {
   outline: none;
-  box-shadow: 0 0 0 3px var(--accent-color), 0 0 0 6px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.6),
+    0 0 0 5px rgba(var(--accent-color-rgb), 0.5);
 }
 
 /* Disabled states */
 .link:disabled,
-button:disabled {
-  opacity: 0.6;
+button:disabled,
+.skill:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  background: rgba(var(--secondary-color-rgb), 0.3);
 }
 
-/* Loading Animation */
+/* Loading Animation - Updated */
 .loading-container {
   position: fixed;
   inset: 0;
@@ -628,11 +615,11 @@ button:disabled {
   z-index: 9999;
   background: radial-gradient(
     circle at center,
-    var(--glass-bg) 0%,
-    rgba(26, 0, 55, 0.95) 100%
+    rgba(var(--primary-color-rgb), 0.5) 0%,
+    rgba(var(--primary-color-rgb), 0.9) 100%
   );
-  backdrop-filter: blur(var(--glass-blur));
-  animation: containerFade 1s var(--bounce);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
+  animation: containerFade 0.8s var(--bounce); /* Assuming containerFade is defined */
 }
 
 .loader {
@@ -640,11 +627,13 @@ button:disabled {
   color: var(--text-color);
   font-family: Consolas, Menlo, Monaco, monospace;
   font-weight: bold;
-  font-size: 96px;
-  perspective: 1200px;
+  font-size: clamp(50px, 12vw, 72px);
+  perspective: 1000px;
   transform-style: preserve-3d;
-  filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.3));
-  animation: loaderFloat 4s var(--bounce) infinite;
+  filter: drop-shadow(
+    0 0 18px rgba(var(--accent-color-rgb), 0.45)
+  );
+  animation: loaderFloat 4.5s ease-in-out infinite; /* Assuming loaderFloat is defined */
 }
 
 .loader::before,
@@ -652,90 +641,81 @@ button:disabled {
   content: "";
   display: inline-block;
   position: relative;
-  opacity: 0.9;
-  text-shadow: 0 0 30px var(--text-color);
-  filter: drop-shadow(0 0 20px var(--text-color));
-  animation: bracketPulse 1.5s var(--bounce) infinite alternate;
+  opacity: 0.85;
+  text-shadow: 0 0 18px rgba(var(--accent-color-rgb), 0.6);
+  filter: drop-shadow(0 0 12px rgba(var(--accent-color-rgb), 0.4));
+  animation: bracketPulse 1.8s ease-in-out infinite alternate; /* Assuming bracketPulse is defined */
 }
 
 .loader::before {
   content: "{";
-  margin-right: 20px;
+  margin-right: 15px;
   transform-origin: right center;
-  animation-delay: 0.3s;
+  animation-delay: 0.2s;
 }
 
 .loader::after {
   content: "}";
-  margin-left: 20px;
+  margin-left: 15px;
   transform-origin: left center;
-  animation-delay: 0.6s;
+  animation-delay: 0.4s;
 }
 
-/* Keyframes for bracket pulse animation */
 @keyframes bracketPulse {
   0% {
     transform: scale(1) rotate(0deg) translateZ(0);
-    opacity: 0.9;
-    text-shadow: 0 0 40px var(--text-color);
-    filter: hue-rotate(0deg) brightness(1);
+    opacity: 0.8;
+    filter: brightness(0.95);
   }
   50% {
-    transform: scale(1.4) rotate(12deg) translateZ(60px);
+    transform: scale(1.1) rotate(4deg) translateZ(15px);
     opacity: 1;
-    text-shadow: 0 0 60px var(--text-color);
-    filter: hue-rotate(180deg) brightness(1.2);
+    filter: brightness(1.1) hue-rotate(15deg);
   }
   100% {
-    transform: scale(0.7) rotate(-12deg) translateZ(-40px);
-    opacity: 0.8;
-    text-shadow: 0 0 30px var(--text-color);
-    filter: hue-rotate(360deg) brightness(0.9);
+    transform: scale(0.92) rotate(-4deg) translateZ(-8px);
+    opacity: 0.75;
+    filter: brightness(0.85);
   }
 }
 
-/* Keyframes for loader floating effect */
 @keyframes loaderFloat {
   0%,
   100% {
     transform: translateY(0) rotateX(0) rotateY(0);
   }
-  25% {
-    transform: translateY(-30px) rotateX(20deg) rotateY(10deg);
-  }
   50% {
-    transform: translateY(0) rotateX(0) rotateY(0);
-  }
-  75% {
-    transform: translateY(30px) rotateX(-20deg) rotateY(-10deg);
+    transform: translateY(-8px) rotateX(4deg) rotateY(2.5deg);
   }
 }
 
-/* Keyframes for container fade-in effect */
 @keyframes containerFade {
   0% {
     opacity: 0;
     backdrop-filter: blur(0);
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
   100% {
     opacity: 1;
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(
+      calc(var(--glass-blur) * 0.8)
+    );
     transform: scale(1);
   }
 }
+
 @keyframes devPulse {
   0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 10px var(--accent-color);
+    transform: scale(0.98);
+    box-shadow: 0 0 8px rgba(var(--accent-color-rgb), 0.8);
   }
   50% {
     transform: scale(1);
-    box-shadow: 0 0 20px var(--accent-color);
+    box-shadow: 0 0 16px rgba(var(--accent-color-rgb), 1);
   }
   100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 10px var(--accent-color);
+    transform: scale(0.98);
+    box-shadow: 0 0 8px rgba(var(--accent-color-rgb), 0.8);
   }
 }
 
@@ -745,20 +725,20 @@ button:disabled {
     transform: translate(0);
   }
   20% {
-    clip-path: inset(10% 0 30% 0);
-    transform: translate(-2px, -2px);
+    clip-path: inset(8% 0 25% 0);
+    transform: translate(-1.5px, -1.5px);
   }
   40% {
-    clip-path: inset(30% 0 10% 0);
-    transform: translate(2px, 2px);
+    clip-path: inset(25% 0 8% 0);
+    transform: translate(1.5px, 1.5px);
   }
   60% {
-    clip-path: inset(15% 0 25% 0);
-    transform: translate(-2px, 2px);
+    clip-path: inset(12% 0 20% 0);
+    transform: translate(-1.5px, 1.5px);
   }
   80% {
-    clip-path: inset(25% 0 15% 0);
-    transform: translate(2px, -2px);
+    clip-path: inset(20% 0 12% 0);
+    transform: translate(1.5px, -1.5px);
   }
   100% {
     clip-path: inset(0 0 0 0);
@@ -768,13 +748,13 @@ button:disabled {
 
 .programming-animation {
   font-family: "Source Code Pro", monospace;
-  background: rgba(0, 0, 0, 0.85);
-  color: #0f0;
-  padding: 1rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: #00dd00;
+  padding: 0.8rem;
   border-radius: var(--border-radius-sm);
   position: relative;
   overflow: hidden;
-  animation: devPulse 2s infinite;
+  animation: devPulse 2.2s infinite; /* Assuming devPulse is defined */
 }
 
 .programming-animation::after {
@@ -784,38 +764,36 @@ button:disabled {
   left: 0;
   width: 100%;
   height: 100%;
-  color: #0f0;
+  color: #00dd00;
   background: transparent;
-  animation: glitch 1.5s infinite;
+  animation: glitch 1.8s infinite; /* Assuming glitch is defined */
   pointer-events: none;
 }
-/* Page Load Animation */
-/* Hide state */
+
+/* Page Load Animation - Updated */
 .hide {
   opacity: 0;
   visibility: hidden;
-  filter: blur(15px);
-  transition: opacity 0.8s var(--bounce), filter 0.8s var(--bounce),
-    visibility 0s linear 0.8s;
+  filter: blur(12px);
+  transition: opacity 0.7s var(--bounce), filter 0.7s var(--bounce),
+    visibility 0s linear 0.7s;
   will-change: opacity, filter, visibility;
 }
 
-/* When hiding is complete, remove from layout */
 .hide.animated {
   display: none;
 }
 
-/* Show state */
 .show {
   opacity: 1;
   visibility: visible;
   filter: blur(0);
-  transition: opacity 0.8s var(--bounce), filter 0.8s var(--bounce);
-  display: flex;
+  transition: opacity 0.7s var(--bounce), filter 0.7s var(--bounce);
+  display: flex; /* Or appropriate display type */
 }
 
 .page-load {
-  animation: pageReveal 1.5s cubic-bezier(0.25, 1.8, 0.5, 1) forwards;
+  animation: pageReveal 0.9s cubic-bezier(0.25, 0.8, 0.5, 1) forwards; /* Assuming pageReveal is defined */
   will-change: opacity, transform, filter;
   position: relative;
   overflow: hidden;
@@ -834,12 +812,12 @@ button:disabled {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.12) 50%,
     transparent 100%
   );
   transform: skewX(-25deg);
-  animation: shimmerEffect 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  filter: blur(5px);
+  animation: shimmerEffect 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.15s; /* Assuming shimmerEffect is defined */
+  filter: blur(4px);
 }
 
 .page-load::after {
@@ -848,24 +826,19 @@ button:disabled {
   inset: 0;
   background: radial-gradient(
     circle at center,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 70%
+    rgba(var(--accent-color-rgb), 0.08) 0%,
+    transparent 68%
   );
   opacity: 0;
-  animation: glowPulse 3s ease-in-out infinite;
+  animation: glowPulse 2.2s ease-in-out infinite 0.4s; /* Assuming glowPulse is defined */
 }
 
 @keyframes pageReveal {
   0% {
     opacity: 0;
-    transform: translateY(40px) scale(0.92);
-    filter: blur(15px) brightness(0.8);
+    transform: translateY(25px) scale(0.96);
+    filter: blur(12px) brightness(0.85);
   }
-
-  50% {
-    filter: blur(8px) brightness(0.9);
-  }
-
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -873,189 +846,215 @@ button:disabled {
   }
 }
 
-@keyframes shimmerEffect {
-  0% {
-    left: -100%;
-  }
+/* text-writer, text-reveal, carousel, project, and text-scrolling styles follow */
+/* Ensure all other keyframes like shimmerEffect, glowPulse, shine, typing, glowText, slideUp are defined in your project */
 
-  100% {
-    left: 200%;
-  }
-}
-
-@keyframes glowPulse {
-  0%,
-  100% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-}
 .text-writer {
   position: relative;
   display: inline-block;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: clamp(0.9rem, 1.8vw, 1.05rem); /* Slightly increased max font-size */
+  font-weight: 500; /* Slightly lighter weight */
   color: var(--text-color);
-  padding: 0.8rem 1.5rem;
+  padding: 0.75rem 1.4rem; /* Adjusted padding */
   margin: var(--margin-xs) auto;
   overflow: hidden;
   white-space: nowrap;
-  letter-spacing: calc(1.5px + var(--hover-state, 0) * 0.5px);
-  text-shadow: 0 0 10px var(--text-shadow-color);
+  letter-spacing: calc(1.2px + var(--hover-state, 0) * 0.5px); /* Enhanced hover letter-spacing */
+  text-shadow: 0 0 8px var(--text-shadow-color, rgba(var(--accent-color-rgb), 0.25));
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.02) 0%,
-    rgba(255, 255, 255, calc(0.05 + var(--hover-state, 0) * 0.1)) 50%,
-    rgba(255, 255, 255, 0.02) 100%
+    rgba(var(--text-color-rgb), 0.02) 0%,
+    rgba(var(--text-color-rgb), calc(0.05 + var(--hover-state, 0) * 0.08)) 50%,
+    rgba(var(--text-color-rgb), 0.02) 100%
   );
   border: 1px solid
-    rgba(255, 255, 255, calc(0.05 + var(--hover-state, 0) * 0.2));
+    rgba(var(--text-color-rgb), calc(0.08 + var(--hover-state, 0) * 0.18));
   border-radius: var(--border-radius-sm);
   transform: translateY(calc(var(--hover-state, 0) * -3px))
-    scale(calc(1 + var(--hover-state, 0) * 0.02)) perspective(800px)
+    scale(calc(1 + var(--hover-state, 0) * 0.02))
+    perspective(900px)
     rotateX(calc(var(--hover-state, 0) * 2deg));
-  box-shadow: 0 calc(2px + var(--hover-state, 0) * 5px)
-    calc(10px + var(--hover-state, 0) * 10px) rgba(0, 0, 0, 0.1);
-  will-change: transform, letter-spacing;
-  transition: all 0.4s var(--bounce), text-shadow 0.5s var(--bounce),
-    border-color 0.4s ease;
+  box-shadow: 0 calc(2.5px + var(--hover-state, 0) * 5px)
+    calc(9px + var(--hover-state, 0) * 10px) rgba(0, 0, 0, calc(0.07 + var(--hover-state, 0) * 0.05));
+  
+  will-change: transform, letter-spacing, box-shadow, background, border-color, text-shadow;
+  transition: 
+    transform 0.35s var(--bounce),
+    letter-spacing 0.35s var(--bounce),
+    box-shadow 0.35s var(--bounce),
+    text-shadow 0.4s var(--bounce),
+    border-color 0.35s ease,
+    background 0.35s ease;
 
-  /* Variabili per animazioni */
-  --typing-speed: 3.5s;
-  --cursor-blink-speed: 1.2s;
-  --shine-duration: 4s;
-  --text-shadow-color: rgba(255, 255, 255, 0.3);
-  --hover-state: 0;
+  --typing-speed: 3s;
+  --cursor-blink-speed: 1.0s; /* Slightly faster blink */
+  --shine-duration: 3.2s;
+  --text-shadow-color: rgba(var(--accent-color-rgb), 0.25);
+  --hover-state: 0; /* Drives hover effects */
 }
 
-/* Effetto shine */
-.text-writer::before {
+.text-writer::before { /* Shine effect */
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, calc(0.2 + var(--hover-state, 0) * 0.2)),
-    transparent
+    100deg,
+    transparent 20%,
+    rgba(var(--text-color-rgb), calc(0.1 + var(--hover-state, 0) * 0.1)) 50%,
+    transparent 80%
   );
-  transform: translateX(-100%) skewX(-20deg);
-  animation: shine var(--shine-duration) ease-in-out infinite;
-  filter: blur(calc(1px + var(--hover-state, 0) * 3px));
-  will-change: transform;
-  z-index: 1;
+  transform: translateX(-110%) skewX(-25deg);
+  opacity: calc(0.6 + var(--hover-state, 0) * 0.3); /* Shine opacity increases on hover */
+  filter: blur(calc(1.5px + var(--hover-state, 0) * 2px));
+  animation: shine var(--shine-duration) ease-in-out infinite 0.2s; /* 'shine' keyframes assumed defined elsewhere */
+  will-change: transform, filter, opacity;
+  z-index: 0; /* Behind text cursor */
+  pointer-events: none;
 }
 
-/* Animazione cursore */
-.text-writer::after {
+.text-writer::after { /* Cursor */
   content: "|";
   position: relative;
   margin-left: 2px;
-  color: var(--text-color);
-  font-weight: 700;
+  color: var(--accent-color);
+  font-weight: 600;
   opacity: calc(0.8 + var(--hover-state, 0) * 0.2);
-  text-shadow: 0 0 calc(8px + var(--hover-state, 0) * 8px) var(--text-color);
+  text-shadow: 0 0 calc(7px + var(--hover-state, 0) * 7px) var(--accent-color);
   transform-origin: bottom;
   animation: blinkCursor var(--cursor-blink-speed) steps(2) infinite;
-  will-change: opacity, transform;
+  will-change: opacity, transform, text-shadow;
+  z-index: 1; /* Above shine */
 }
 
-/* Animazione lampeggio cursore */
+/* Refined blink animation for the cursor */
 @keyframes blinkCursor {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
     transform: scaleY(1) translateY(0);
   }
   50% {
-    opacity: 0;
-    transform: scaleY(0.8) translateY(2px);
+    opacity: 0.15; /* Softer blink */
+    transform: scaleY(0.9) translateY(1px); /* Subtle movement */
   }
 }
 
-/* Animazione shine */
-@keyframes shine {
-  0% {
-    transform: translateX(-150%) skewX(-20deg);
-  }
-  15%,
-  100% {
-    transform: translateX(100%) skewX(-20deg);
-  }
-}
-
-/* Stato hover */
 .text-writer:hover {
-  --hover-state: 1;
-  transform: translateY(-4px) scale(1.03) perspective(800px) rotateX(2deg);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(255, 255, 255, 0.1);
+  --hover-state: 1; /* Activate hover effects via CSS variable */
+  box-shadow: 0 7px 22px rgba(0, 0, 0, 0.18),
+              0 0 15px rgba(var(--accent-color-rgb), 0.15); /* Enhanced hover shadow */
   cursor: pointer;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.18) 50%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
-  text-shadow: 0 0 15px var(--text-color), 0 0 30px rgba(255, 255, 255, 0.2);
+  text-shadow: 0 0 14px var(--accent-color),
+               0 0 30px rgba(var(--accent-color-rgb), 0.2); /* Enhanced text glow */
 }
 
-/* Stato attivo */
 .text-writer:active {
-  --hover-state: 0.5;
-  transform: translateY(-1px) scale(0.98) perspective(800px) rotateX(1deg);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
+  --hover-state: 0.6; /* Slightly subdued active state */
+  /* Snappy transitions for active state */
+  transition: 
+    transform 0.1s ease-out,
+    letter-spacing 0.1s ease-out,
+    box-shadow 0.1s ease-out,
+    text-shadow 0.1s ease-out,
+    border-color 0.1s ease-out,
+    background 0.1s ease-out;
+  /* Transform values will also use the updated --hover-state */
 }
 
-/* Stato focus (accessibilità) */
+/* Using :focus-visible for better accessibility */
+.text-writer:focus-visible {
+  outline: 2.5px solid var(--accent-color);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2.5px rgba(var(--primary-color-rgb), 0.75),
+              0 0 0 4.5px var(--accent-color), /* Ensure this matches outline for consistency */
+              0 5px 15px rgba(0, 0, 0, 0.15);
+}
 .text-writer:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px var(--accent-color), 0 5px 15px rgba(0, 0, 0, 0.2);
+  outline: none; /* Remove default outline if :focus-visible is styled */
 }
 
-/* Animazione di digitazione dinamica */
 .typing {
-  width: 0;
+  display: inline-block; /* Ensures width animation works as expected */
+  width: 0; /* Initial state for typing animation */
+  overflow: hidden; /* Clips text during typing */
+  white-space: nowrap; /* Prevents wrapping */
+  vertical-align: bottom; /* Aligns with cursor if they are siblings */
   animation: typing var(--typing-speed) steps(var(--char-count, 40)) forwards;
+  /* 'typing' keyframes (e.g., from { width: 0; } to { width: 100%; }) assumed defined elsewhere */
 }
 
-/* Animazione di rivelazione del testo */
 .text-reveal {
   position: relative;
+  display: inline-block; /* For correct ::before positioning */
   opacity: 0;
-  filter: blur(10px);
-  text-shadow: 0 0 10px var(--text-color);
-  transition: all 0.4s var(--bounce);
-  animation: textReveal 1s var(--bounce) forwards,
-    glowText 2s ease-in-out infinite;
+  filter: blur(6px); /* Slightly reduced initial blur */
+  text-shadow: 0 0 10px rgba(var(--accent-color-rgb), 0.5);
+  
+  animation: textReveal 0.8s var(--bounce) forwards, /* 'textReveal' keyframes assumed defined elsewhere */
+             glowText 2.5s ease-in-out infinite 0.5s; /* 'glowText' keyframes assumed defined elsewhere, delayed start */
+  
+  transition: filter 0.35s var(--bounce), text-shadow 0.35s var(--bounce);
+  will-change: opacity, filter, text-shadow;
 }
 
-.text-reveal::before {
+.text-reveal::before { /* Underline effect */
   content: "";
   position: absolute;
-  bottom: -2px;
+  bottom: -3px; /* Positioned slightly below the text */
   left: 0;
-  width: 0;
-  height: 2px;
+  width: 0; /* Initial state, animates on hover */
+  height: 2px; /* Thickness of the underline */
   background: linear-gradient(
     90deg,
     transparent,
-    var(--text-color),
+    var(--accent-color) 30%,
+    var(--accent-color) 70%,
     transparent
   );
-  transition: width 0.6s var(--bounce);
+  opacity: 0.8;
+  transition: width 0.45s var(--bounce), opacity 0.45s var(--bounce);
+  will-change: width, opacity;
 }
 
-/* Carousel */
+.text-reveal:hover::before {
+  width: 100%; /* Underline appears on hover */
+  opacity: 1;
+}
+
+.text-reveal:hover {
+  /* filter: blur(0); Implicitly handled by textReveal animation if it ends with blur(0) */
+  text-shadow: 0 0 15px rgba(var(--accent-color-rgb), 0.7), /* Enhanced glow on hover */
+               0 0 5px rgba(var(--accent-color-rgb), 0.3);
+}
+
+/* 
+  Ensure the following keyframes (or similar) are defined in your CSS:
+
+  @keyframes shine {
+    to { transform: translateX(110%) skewX(-25deg); }
+  }
+
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; } // Or a specific width based on text content
+  }
+
+  @keyframes textReveal {
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  @keyframes glowText {
+    0%, 100% { text-shadow: 0 0 10px rgba(var(--accent-color-rgb), 0.5), 0 0 2px rgba(var(--accent-color-rgb), 0.2); }
+    50% { text-shadow: 0 0 20px rgba(var(--accent-color-rgb), 0.8), 0 0 5px rgba(var(--accent-color-rgb), 0.4); }
+  }
+*/
+
+/* Carousel - Updated */
 .carousel-container {
   width: 100%;
   overflow: hidden;
@@ -1063,291 +1062,163 @@ button:disabled {
   margin: var(--margin-xs) 0;
   padding: var(--space-xs) 0;
   border-radius: var(--border-radius-md);
-
-  /* Hide scrollbar but keep functionality */
   -ms-overflow-style: none;
   scrollbar-width: none;
-
-  /* Improve hardware acceleration */
   transform: translateZ(0);
   backface-visibility: hidden;
-  will-change: transform;
+  will-change: scroll-position;
 }
 
 .carousel-container::-webkit-scrollbar {
   display: none;
 }
 
-/* Carousel Base */
 .carousel {
   display: flex;
-  gap: var(--space-sm);
+  gap: clamp(var(--space-sm), 1.5vw, var(--space-md));
   width: max-content;
   padding: var(--space-xs) var(--space-md);
   position: relative;
   flex-wrap: nowrap;
-
-  /* Optimized animation properties */
-  animation: scrollCarousel 80s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite
-    alternate;
-  animation-delay: -40s; /* Start from middle for smoother loop */
+  animation: scrollCarousel 70s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate; /* Assuming scrollCarousel is defined */
+  animation-delay: -35s;
   will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
   white-space: nowrap;
-  perspective: 1000px;
+  perspective: 1200px;
 }
 
-/* Carousel Track */
 .carousel-track {
   display: flex;
-  gap: var(--space-sm);
+  gap: inherit;
   flex-shrink: 0;
   padding: 0 var(--space-xs);
 }
 
-/* Pause and enhance on hover with reduced operations */
 .carousel:hover {
   animation-play-state: paused;
-  filter: brightness(1.15);
-  transition: filter 0.4s var(--bounce);
+  filter: brightness(1.1);
+  transition: filter 0.35s var(--bounce);
 }
 
-/* More efficient keyframes with fewer transformation operations */
 @keyframes scrollCarousel {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0.3deg);
+    transform: translate3d(0, 0, 0) rotate(0.1deg);
   }
   25% {
-    transform: translate3d(-25%, 8px, 0) rotate(-0.2deg) scale(0.99);
+    transform: translate3d(-25%, 5px, 0) rotate(-0.05deg) scale(0.995);
   }
   50% {
-    transform: translate3d(-45%, -5px, 0) rotate(0.1deg) scale(1.01);
+    transform: translate3d(-45%, -3px, 0) rotate(0.05deg) scale(1.005);
   }
   75% {
-    transform: translate3d(-65%, 6px, 0) rotate(-0.2deg) scale(0.995);
+    transform: translate3d(-65%, 4px, 0) rotate(-0.05deg) scale(0.998);
   }
   100% {
-    transform: translate3d(-80%, -7px, 0) rotate(0.3deg) scale(1.005);
+    transform: translate3d(-80%, -4px, 0) rotate(0.1deg) scale(1.002);
   }
 }
 
-/* Carousel Items with optimized transitions */
 .item {
-  min-width: 200px;
-  height: 100px;
+  min-width: clamp(180px, 25vw, 220px);
+  height: clamp(90px, 12vh, 100px);
   padding: var(--space-sm);
   text-align: center;
   border-radius: var(--border-radius-md);
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2vw, 1.1rem);
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   color: var(--text-color);
-  background: var(--glass-bg);
+  background: rgba(var(--primary-color-rgb), 0.12);
   border: 1px solid var(--glass-border);
-
-  /* Optimize transitions to GPU-accelerated properties */
-  transition: transform 0.5s var(--bounce), box-shadow 0.5s var(--bounce),
-    border-color 0.5s var(--bounce);
-
+  transition: transform 0.4s var(--bounce), box-shadow 0.4s var(--bounce),
+              border-color 0.4s var(--bounce), background 0.4s ease; /* 'ease' for background is specific */
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.6));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.6));
   user-select: none;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-  /* Stagger animation based on item index */
-  animation: itemPulse 6s infinite alternate;
-  animation-delay: calc(var(--item-index, 0) * 0.4s);
+  box-shadow: 0 3.5px 11px rgba(0, 0, 0, 0.08);
+  animation: itemPulse 7s infinite alternate; /* Assuming itemPulse is defined */
+  animation-delay: calc(var(--item-index, 0) * 0.45s);
+  will-change: transform, box-shadow, border-color, background;
 }
 
-/* Simplified overlay with reduced complexity */
 .item::before {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 100%
+    rgba(var(--accent-color-rgb), 0.15) 0%,
+    transparent 70%
   );
   opacity: 0;
-  transform: translate3d(-100%, -100%, 0);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: translate3d(-80%, -80%, 0) scale(1.2);
+  transition: opacity 0.35s ease, transform 0.35s ease;
   z-index: 1;
-  filter: blur(3px);
+  filter: blur(2.5px);
 }
 
 .item:hover {
-  transform: translateY(-6px) scale(1.02);
-  background: var(--glass-bg);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5.5px) scale(1.028);
+  background: rgba(var(--primary-color-rgb), 0.18);
+  border-color: rgba(var(--accent-color-rgb), 0.3);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12),
+    0 0 12px rgba(var(--accent-color-rgb), 0.12);
   z-index: 2;
 }
 
 .item:hover::before {
-  opacity: 0.5;
-  transform: translate3d(0, 0, 0);
+  opacity: 0.4;
+  transform: translate3d(-40%, -40%, 0) scale(1.4);
 }
 
-/* Reduce motion for accessibility */
 @media (prefers-reduced-motion) {
-  .carousel {
-    animation: none;
-  }
-
+  .carousel,
   .item {
     animation: none;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   }
 }
 
-/* Item Pulse Animation */
 @keyframes itemPulse {
   0%,
   100% {
     transform: translateY(0) scale(1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3.5px 11px rgba(0, 0, 0, 0.08);
   }
   50% {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3.5px) scale(1.018);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
   }
 }
 
-/* Shimmer Effect Animation */
-@keyframes shimmerEffect {
-  0% {
-    opacity: 0.2;
-    transform: rotate(45deg) translateY(0) translateX(-20%);
-  }
-  50% {
-    opacity: 1;
-    transform: rotate(45deg) translateY(0) translateX(0%);
-  }
-  100% {
-    opacity: 0.2;
-    transform: rotate(45deg) translateY(0) translateX(20%);
-  }
-}
-
-/* Mobile: Enable manual scrolling and scroll-snap */
 @media (max-width: 768px) {
   .carousel-container {
     overflow-x: auto;
   }
-
   .carousel {
     animation: none;
     padding: var(--space-xs);
-    flex-wrap: nowrap;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
   }
-
   .carousel::-webkit-scrollbar {
     display: none;
   }
 }
 
-.skill {
-  display: inline-block;
-  padding: 1rem 2.5rem;
-  font-size: 1rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--text-color);
-  text-decoration: none;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  border: 2px solid var(--glass-border);
-  border-radius: var(--border-radius-md);
-  background: linear-gradient(
-    145deg,
-    var(--accent-color),
-    var(--secondary-color)
-  );
-  backdrop-filter: blur(5px);
-  box-shadow: var(--shadow-normal);
-  transition: transform 0.5s var(--bounce), box-shadow 0.5s var(--bounce),
-    background 0.5s var(--bounce), letter-spacing 0.5s var(--bounce);
-  will-change: transform, box-shadow, letter-spacing;
-}
-
-.skill::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  background: linear-gradient(
-    220deg,
-    transparent 0%,
-    var(--text-color) 50%,
-    transparent 100%
-  );
-  opacity: 0;
-  z-index: -1;
-  transition: opacity 0.3s ease;
-}
-
-.skill::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.2) 0%,
-    transparent 60%
-  );
-  transform: rotate(45deg) translateY(-100%);
-  transition: all 0.8s ease;
-  z-index: -1;
-}
-
-.skill:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.2);
-  border-color: var(--text-color);
-  letter-spacing: 3px;
-  background: linear-gradient(
-    145deg,
-    var(--secondary-color),
-    var(--primary-color)
-  );
-}
-
-.skill:hover::before {
-  opacity: 0.2;
-}
-
-.skill:hover::after {
-  transform: rotate(45deg) translateY(0);
-}
-
-.skill:active {
-  transform: translateY(-2px) scale(0.98);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  transition-duration: 0.1s;
-}
-
-.skill:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--accent-color), 0 0 0 6px rgba(255, 255, 255, 0.2);
-}
-
 @keyframes skillAppear {
   0% {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateX(40px);
   }
   100% {
     opacity: 1;
@@ -1356,134 +1227,109 @@ button:disabled {
 }
 
 .skills-container > *:hover {
-  transform: translateY(-10px) scale(1.1);
+  transform: translateY(-6px) scale(1.05);
   z-index: 2;
 }
 
-@keyframes textReveal {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-    filter: blur(10px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-@keyframes glowText {
-  0%,
-  100% {
-    text-shadow: 0 0 10px var(--text-color);
-  }
-
-  50% {
-    text-shadow: 0 0 20px var(--text-color), 0 0 30px var(--text-color);
-  }
-}
-
-@keyframes typing {
-  from {
-    width: 0;
-  }
-
-  to {
-    width: 100%;
-  }
-}
-
-/* Project Card Styles */
+/* Project Card Styles - Updated & Enhanced */
 .project {
-  width: clamp(220px, 45vw, 300px);
-  min-height: 240px;
-  padding: var(--space-sm) calc(var(--space-sm) * 1) calc(var(--space-sm) * 1.4);
-  background: rgba(255, 255, 255, 0.015);
+  width: clamp(230px, 42vw, 320px);
+  min-height: 250px;
+  padding: var(--space-sm) calc(var(--space-sm) * 0.9)
+    calc(var(--space-sm) * 1.3);
+  background: rgba(var(--primary-color-rgb), 0.12); /* Slightly adjusted base */
   background-image: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.005) 0%,
-    rgba(255, 255, 255, 0.015) 45%,
-    rgba(255, 255, 255, 0.005) 100%
+    rgba(var(--text-color-rgb), 0.015) 0%, /* Subtler gradient */
+    rgba(var(--text-color-rgb), 0.035) 45%,
+    rgba(var(--text-color-rgb), 0.015) 100%
   );
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-md);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: space-between;
   position: relative;
   color: var(--text-color);
   overflow: hidden;
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.8));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.75)); /* Slightly more blur */
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.75));
   box-shadow: var(--shadow-sm);
-  transition: transform 0.5s var(--bounce), box-shadow 0.3s ease,
-    border-color 0.5s var(--bounce);
+  transition: transform 0.4s var(--bounce), box-shadow 0.4s ease,
+              border-color 0.4s ease, background 0.4s ease;
   transform-style: preserve-3d;
-  perspective: 1000px;
-  animation: projectAppear 0.8s var(--bounce) both;
-  animation-delay: calc(var(--project-index, 0) * 0.12s + 0.1s);
-  will-change: transform, box-shadow;
+  perspective: 1200px;
+  animation: projectAppear 0.7s var(--bounce) both;
+  animation-delay: calc(var(--project-index, 0) * 0.1s + 0.08s);
+  will-change: transform, box-shadow, border-color, background;
   contain: content;
 }
 
 .project:hover {
-  transform: translateY(-12px) scale(1.05) perspective(800px) rotateX(4deg)
-    translateZ(15px);
-  box-shadow: var(--shadow-md), 0 12px 30px rgba(79, 0, 130, 0.2);
-  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-12px) scale(1.04) rotateX(3deg) rotateY(-2deg); /* More dynamic 3D tilt */
+  box-shadow: var(--shadow-lg), 0 14px 38px rgba(var(--accent-color-rgb), 0.26), 0 0 1px rgba(var(--accent-color-rgb),0.35) inset; /* Enhanced shadow & subtle inset border */
+  border-color: rgba(var(--accent-color-rgb), 0.45); /* Brighter border */
+  background: rgba(var(--primary-color-rgb), 0.18); /* More distinct background */
   z-index: 5;
 }
 
 .project:focus-within {
   outline: none;
-  box-shadow: 0 0 0 2px var(--accent-color), var(--shadow-md);
-  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 0 0 2.5px rgba(var(--primary-color-rgb), 0.75), /* Slightly thicker focus rings */
+    0 0 0 4.5px var(--accent-color), var(--shadow-lg);
+  transform: translateY(-6px) scale(1.02); /* Consistent with hover but less intense */
 }
 
-.project::before {
+.project::before { /* Top subtle glow */
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
   background: radial-gradient(
-    circle at 50% 10%,
-    rgba(255, 255, 255, 0.1),
+    ellipse at 50% -10%, /* Positioned slightly above */
+    rgba(var(--accent-color-rgb), 0.12) 0%,
     transparent 70%
   );
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transform: scaleY(0.8);
+  transition: opacity 0.45s ease, transform 0.45s ease;
   z-index: 0;
   pointer-events: none;
 }
 
 .project:hover::before {
   opacity: 0.7;
+  transform: scaleY(1.1) scaleX(1.05);
 }
 
-.project::after {
+.project::after { /* Sweeping shine effect */
   content: "";
   position: absolute;
-  top: -120%;
-  left: -120%;
-  width: 300%;
-  height: 300%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.08) 0%,
-    transparent 70%
+  top: 0;
+  left: -150%; /* Start off-screen */
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    100deg, /* Angle of the shine */
+    transparent 25%,
+    rgba(var(--text-color-rgb), 0.08) 50%, /* Shine color and intensity */
+    transparent 75%
   );
-  transform: rotate(45deg) translateY(-100%);
-  transition: transform 0.8s ease, opacity 0.8s ease;
+  transform: skewX(-25deg); /* Skew for a dynamic look */
   opacity: 0;
+  transition: transform 0.75s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.75s cubic-bezier(0.23, 1, 0.32, 1) 0.1s; /* Smooth easeOutExpo-like transition, slight delay for opacity */
   z-index: 0;
+  pointer-events: none;
 }
 
 .project:hover::after {
-  transform: rotate(45deg) translateY(60%);
-  opacity: 0.4;
+  transform: translateX(250%) skewX(-25deg); /* Move across the card */
+  opacity: 0.6; /* Make shine visible */
 }
+
 
 .project > * {
   position: relative;
@@ -1495,7 +1341,7 @@ button:disabled {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 0.5rem;
+  gap: 0.4rem;
   width: 100%;
 }
 
@@ -1503,66 +1349,66 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 90%;
-  font-size: clamp(1.6rem, 2.5vw, 2rem);
-  color: var(--accent-color);
-  opacity: 0.8;
+  width: 100%;
+  font-size: clamp(1.5rem, 2.2vw, 1.8rem);
+  color: rgba(var(--accent-color-rgb), 0.75); /* Slightly brighter base */
+  opacity: 0.9;
   cursor: pointer;
-  transition: all 0.35s var(--bounce);
+  transition: all 0.35s var(--bounce); /* Smoother transition */
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
   transform-origin: center;
   position: relative;
   z-index: 2;
-  margin: 0 auto;
+  margin: 0 auto 0.3rem;
 }
 
 .project-bookmark:hover {
-  transform: translateY(-4px) scale(1.12) rotate(3deg);
-  color: var(--text-color);
+  transform: translateY(-4px) scale(1.12) rotate(3deg); /* Enhanced hover */
+  color: var(--accent-color);
   opacity: 1;
-  filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.25));
+  filter: drop-shadow(0 4.5px 14px rgba(var(--accent-color-rgb), 0.4)); /* Stronger shadow */
 }
 
 .project-bookmark:active {
   transform: scale(0.92) rotate(-2deg);
-  transition-duration: 0.15s;
+  transition-duration: 0.1s;
 }
 
 .project-bookmark::after {
   content: "";
   position: absolute;
-  bottom: -6px;
+  bottom: -6px; /* Slightly lower */
   left: 50%;
   width: 0;
-  height: 2px;
-  background: var(--text-color);
+  height: 2px; /* Thicker underline */
+  background: var(--accent-color);
   transform: translateX(-50%);
   transition: width 0.3s var(--bounce), opacity 0.3s ease;
   opacity: 0;
 }
 
 .project-bookmark:hover::after {
-  width: 70%;
+  width: 65%; /* Wider underline */
   opacity: 0.8;
 }
 
 .project-title {
-  font-size: 1.4rem !important;
+  font-size: 1.3rem !important;
   font-weight: 700 !important;
-  letter-spacing: 1.2px !important;
+  letter-spacing: 1px !important;
   position: relative;
-  padding-bottom: 0.4rem;
-  transition: color 0.3s ease, transform 0.3s ease;
+  padding-bottom: 0.3rem;
+  transition: color 0.35s ease, transform 0.35s var(--bounce), text-shadow 0.35s ease;
   text-align: left;
   white-space: nowrap;
   max-width: 100%;
+  color: var(--text-color-secondary);
 }
 
 .project:hover .project-title {
-  transform: translateY(-4px);
-  color: var(--text-color);
-  text-shadow: 0 3px 12px rgba(255, 255, 255, 0.5);
-  letter-spacing: 1.2px;
+  transform: translateY(-5px) translateZ(15px); /* Lift effect */
+  color: var(--accent-color); /* More vibrant */
+  text-shadow: 0 3px 12px rgba(var(--accent-color-rgb), 0.5),  0 0 5px rgba(var(--accent-color-rgb),0.2); /* Enhanced shadow */
 }
 
 .project-description-container {
@@ -1571,52 +1417,53 @@ button:disabled {
   align-items: flex-start;
   overflow: hidden;
   width: 100%;
-  height: 120px;
+  height: clamp(100px, 15vh, 120px);
+  margin-bottom: var(--space-xs);
 }
 
 .project-description {
-  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
-  margin: 0.6rem 0;
-  padding: 0.5rem;
-  line-height: 1.6;
+  font-size: clamp(0.8rem, 1.4vw, 0.9rem);
+  margin: var(--space-xs) 0;
+  padding: var(--space-xs) var(--space-xs) var(--space-xs) 0;
+  line-height: 1.6; /* Slightly increased for readability */
   text-align: left;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+  /* -webkit-line-clamp: 3; */ /* Keep this commented or set a value */
   overflow: hidden;
+  text-overflow: ellipsis;
   border-radius: var(--border-radius-sm);
   white-space: normal;
   word-break: break-word;
-  color: var(--text-color-primary);
-  transition: transform 0.4s var(--bounce), background 0.4s var(--bounce),
-    color 0.4s var(--bounce);
+  color: var(--text-color-secondary);
+  transition: transform 0.35s var(--bounce), background 0.35s ease,
+    color 0.35s ease, box-shadow 0.35s ease;
 }
 
-
-
-.project:hover .description-icon {
-  transform: scale(1.2) translateY(-2px);
-  color: var(--text-color);
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+.project:hover .description-icon { /* Assuming .description-icon exists in HTML */
+  transform: scale(1.2) translateY(-2px) rotate(-5deg); /* More playful icon hover */
+  color: var(--accent-color);
+  text-shadow: 0 0 8px rgba(var(--accent-color-rgb), 0.35);
 }
 
 .project:hover .project-description {
-  color: var(--text-color);
-  background: rgba(255, 255, 255, 0.05);
-  transform: translateY(-2px);
+  color: var(--text-color); /* Full opacity text */
+  background: rgba(var(--text-color-rgb), 0.03); /* Subtle background highlight */
+  transform: translateY(-2.5px);
+  box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.05) inset; /* Subtle inner shadow */
 }
 
 .project-stats {
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center; /* Aligns items to the center */
-  gap: 0.75rem;
-  margin-top: 0.8rem;
-  padding: 0.6rem 0 0.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.85rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem; /* Slightly more gap */
+  margin-top: auto;
+  padding: 0.6rem 0 0.5rem; /* Adjusted padding */
+  border-top: 1px solid rgba(var(--text-color-rgb), 0.08); /* Slightly more visible border */
+  font-size: 0.8rem;
   color: var(--text-color-secondary);
+  align-items: stretch;
 }
 
 .project-stats span {
@@ -1624,121 +1471,110 @@ button:disabled {
   align-items: center;
   justify-content: center;
   gap: 0.3rem;
-  transition: transform 0.3s var(--bounce), background 0.3s var(--bounce),
-    color 0.3s var(--bounce);
-  padding: 0.25rem 0.5rem;
-  border-radius: 1rem;
-  will-change: transform, background, color;
+  transition: transform 0.3s var(--bounce), background 0.3s ease,
+    color 0.3s ease, box-shadow 0.3s ease;
+  padding: 0.25rem 0.5rem; /* Adjusted padding */
+  border-radius: var(--border-radius-sm); /* Consistent border radius */
+  will-change: transform, background, color, box-shadow;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-basis: auto;
-  min-width: 70px;
+  min-width: 65px;
+  background: rgba(var(--text-color-rgb), 0.035);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .project-stats span:hover {
-  transform: translateY(-3px) scale(1.05);
-  color: var(--text-color);
-  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-3px) scale(1.06); /* Enhanced hover */
+  color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb), 0.12);
   z-index: 1;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Media query for responsive layouts */
-@media (min-width: 481px) {
-  .project-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    gap: 0.5rem;
-    align-items: stretch;
-  }
-  
-  .project-stats span {
-    width: 100%;
-    flex: 1 1 auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .project-stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-  }
-  
-  .project-stats span {
-    width: 100%;
-  }
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14), 0 0 6px rgba(var(--accent-color-rgb),0.1); /* Refined shadow */
 }
 
 .project-stats i {
-  font-size: 0.95rem;
-  transition: transform 0.3s ease;
+  font-size: 0.95rem; /* Slightly larger icon */
+  transition: transform 0.3s var(--bounce); /* Use bounce for consistency */
   will-change: transform;
   flex-shrink: 0;
 }
 
 .project-stats span:hover i {
-  transform: scale(1.2);
-  color: var(--accent-color);
+  transform: scale(1.18) rotate(-3deg); /* More dynamic icon hover */
+}
+
+@media (min-width: 481px) {
+  .project-stats {
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr)); /* Slightly larger minmax */
+  }
 }
 
 .project-link {
   display: inline-flex;
-  gap: 0.2rem !important;
-  justify-content: center !important;
-  align-items: center !important;
-  margin: 1rem auto !important; /* increased margin */
-  padding: 0.6rem 1.2rem !important; /* bigger padding */
-  border-radius: var(--border-radius-md) !important;
-  text-decoration: none !important;
-  color: var(--text-color) !important;
-  backdrop-filter: blur(3px) !important;
-  transition: all 0.3s var(--bounce) !important;
+  gap: 0.45rem; /* Slightly more gap */
+  justify-content: center;
+  align-items: center;
+  margin: var(--space-sm) auto 0;
+  padding: 0.65rem 1.3rem; /* Adjusted padding */
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-color);
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid rgba(var(--accent-color-rgb), 0.45); /* Slightly stronger border */
+  border-radius: var(--border-radius-sm);
+  background: rgba(var(--accent-color-rgb), 0.28); /* Slightly adjusted background */
+  backdrop-filter: blur(4px);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast) cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Standard ease-out-quad */
+  will-change: transform, box-shadow, background, border-color, opacity, letter-spacing;
 }
 
 .project-link:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2.5px) scale(1.02); /* Added subtle scale */
+  box-shadow: var(--shadow-md), 0 0 10px rgba(var(--accent-color-rgb), 0.12);
+  background: rgba(var(--accent-color-rgb), 0.45); /* More intense background */
+  border-color: rgba(var(--accent-color-rgb), 0.7);
+  letter-spacing: 1.1px; /* Subtle letter spacing change */
+}
+
+.project-link:active {
+  transform: translateY(0px) scale(0.97); /* Slightly more pronounced active state */
   box-shadow: var(--shadow-sm);
-  opacity: 0.9;
+  background: rgba(var(--accent-color-rgb), 0.55);
+  transition-duration: 0.08s; /* Quicker active transition */
+}
+
+.project-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 2.5px rgba(var(--primary-color-rgb), 0.7), /* Adjusted focus ring */
+    0 0 0 4.5px rgba(var(--accent-color-rgb), 0.55), var(--shadow-sm);
 }
 
 @keyframes projectAppear {
   0% {
     opacity: 0;
-    transform: translateY(40px) scale(0.8);
+    transform: translateY(35px) scale(0.88) rotateX(-5deg); /* Added slight rotation */
     filter: blur(12px) brightness(0.8);
-  }
-  70% {
-    filter: blur(5px) brightness(0.9);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotateX(0deg);
     filter: blur(0) brightness(1);
   }
 }
 
 @media (max-width: 768px) {
   .project {
-    width: calc(100% - 2rem);
-    min-width: 280px;
-    max-width: 400px;
-    min-height: 220px;
+    width: clamp(280px, 88vw, 420px); /* Adjusted width for mobile */
+    min-height: 235px; /* Adjusted min-height */
   }
   .project:hover {
-    transform: translateY(-8px) scale(1.03);
-  }
-}
-
-@media (max-width: 480px) {
-  .project-stats {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .project-stats span {
-    width: 100%;
-    justify-content: center;
+    transform: translateY(-8px) scale(1.03); /* Slightly adjusted mobile hover */
   }
 }
 
@@ -1746,24 +1582,27 @@ button:disabled {
   display: block;
   overflow: hidden;
   white-space: nowrap;
-  width: 100%; /* Assicura che il contenitore prenda tutta la larghezza disponibile */
+  width: 100%;
+  padding: var(--space-xs) 0;
 }
 
 .text-scrolling {
   display: inline-block;
-  padding-right: 50px; /* Space between repeated text */
+  padding-right: 40px;
   white-space: nowrap;
-  animation: textScroll 20s linear infinite;
+  animation: textScroll 22s linear infinite; /* Assuming textScroll is defined */
   cursor: grab;
-  transition: all 0.3s var(--bounce);
-  will-change: transform;
+  transition: all 0.25s var(--bounce);
+  will-change: transform, color, text-shadow;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text-color-secondary);
 }
 
 .text-scrolling:hover {
   animation-play-state: paused;
   color: var(--accent-color);
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  transform: scale(1.05);
+  text-shadow: 0 0 8px rgba(var(--accent-color-rgb), 0.4);
+  transform: scale(1.03);
 }
 
 .text-scrolling:active {
@@ -1779,9 +1618,8 @@ button:disabled {
   }
 }
 
-/* Support for reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .text-scrolling {
-    animation-duration: 30s;
+    animation-duration: 35s;
   }
 }
