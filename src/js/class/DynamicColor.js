@@ -111,49 +111,59 @@ class DynamicColor {
   }
 
   async updateGradient(palette) {
-    const textColor = this.calculateTextColor(palette);
-    const paletteColors = palette.map(
-      (color) => `rgb(${color[0]}, ${color[1]}, ${color[2]})`
-    );
+    if (!palette || palette.length === 0) {
+      console.error("UpdateGradient called with empty or invalid palette. Cannot apply theme.");
+      // Optionally, set all CSS variables to default safe values here
+      return;
+    }
 
-    document.documentElement.style.setProperty(
-      "--default-item-color",
-      this.colorFunctions.arrayToRgb(textColor)
-    );
+    const textColor = this.calculateTextColor(palette); // Expected: [r, g, b]
+    const textColorRgbString = this.colorFunctions.arrayToRgb(textColor); // Expected: "rgb(r,g,b)"
+    const textColorRgbValues = textColor.join(", "); // Expected: "r, g, b"
 
-    document.documentElement.style.setProperty(
-      "--accent-color",
-      paletteColors[length - 1]
-    );
+    document.documentElement.style.setProperty("--text-color", textColorRgbString);
+    document.documentElement.style.setProperty("--text-color-rgb", textColorRgbValues);
+    document.documentElement.style.setProperty("--text-color-secondary", `rgba(${textColorRgbValues}, 0.75)`);
+    document.documentElement.style.setProperty("--default-item-color", textColorRgbString);
 
-    document.documentElement.style.setProperty(
-      "--secondary-color",
-      paletteColors[1]
-    );
+    // Helper to get a color array [r,g,b] from palette by index.
+    // Falls back to palette[0] if index is out of bounds, or to black if palette is empty (though checked above).
+    const _getColorArray = (index, fallbackColor = [0, 0, 0]) => {
+      return palette[index] || palette[0] || fallbackColor;
+    };
+    
+    const numPaletteColors = palette.length;
 
-    document.documentElement.style.setProperty(
-      "--primary-color",
-      paletteColors[2]
-    );
+    // Define base RGB arrays for theme colors.
+    // Palette is sorted from darkest (index 0) to brightest.
+    const colorForDarkOverlayArray = _getColorArray(0);
+    const colorForSecondaryArray = numPaletteColors > 1 ? _getColorArray(1) : colorForDarkOverlayArray;
+    const colorForPrimaryArray = numPaletteColors > 2 ? _getColorArray(2) : colorForSecondaryArray;
+    const colorForAccentArray = numPaletteColors > 0 ? _getColorArray(numPaletteColors - 1) : colorForPrimaryArray; // Brightest or last available
 
-    document.documentElement.style.setProperty(
-      "--dark-overlay",
-      paletteColors[0]
-    );
+    // Set --primary-color and --primary-color-rgb
+    document.documentElement.style.setProperty("--primary-color", this.colorFunctions.arrayToRgb(colorForPrimaryArray));
+    document.documentElement.style.setProperty("--primary-color-rgb", colorForPrimaryArray.join(", "));
 
-    document.documentElement.style.setProperty(
-      "--highlight-color",
-      paletteColors[0]
-    );
+    // Set --secondary-color and --secondary-color-rgb
+    document.documentElement.style.setProperty("--secondary-color", this.colorFunctions.arrayToRgb(colorForSecondaryArray));
+    document.documentElement.style.setProperty("--secondary-color-rgb", colorForSecondaryArray.join(", "));
 
+    // Set --accent-color and --accent-color-rgb
+    document.documentElement.style.setProperty("--accent-color", this.colorFunctions.arrayToRgb(colorForAccentArray));
+    document.documentElement.style.setProperty("--accent-color-rgb", colorForAccentArray.join(", "));
+
+    // Set --dark-overlay (using the darkest color from palette with specified alpha)
+    document.documentElement.style.setProperty("--dark-overlay", `rgba(${colorForDarkOverlayArray.join(", ")}, 0.25)`);
+    
+    // Set --highlight-color (using the darkest color as a solid color, similar to original logic)
+    document.documentElement.style.setProperty("--highlight-color", this.colorFunctions.arrayToRgb(colorForDarkOverlayArray));
+
+    // Set --default-bg-gradient using all colors from the palette
+    const paletteRgbStrings = palette.map(color => `rgb(${color.join(", ")})`);
     document.documentElement.style.setProperty(
       "--default-bg-gradient",
-      `linear-gradient(to right, ${paletteColors.join(", ")})`
-    );
-
-    document.documentElement.style.setProperty(
-      "--text-color",
-      this.colorFunctions.arrayToRgb(textColor)
+      `linear-gradient(to right, ${paletteRgbStrings.join(", ")})`
     );
   }
 
