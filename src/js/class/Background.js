@@ -1,5 +1,28 @@
 class Background {
-  constructor(canvasId, palette) {
+  static DEFAULT_PALETTE = [
+    "26, 0, 55",
+    "59, 1, 86",
+    "79, 0, 130",
+    "147, 0, 255",
+    "68, 0, 255",
+  ];
+  static DEFAULT_SETTINGS = {
+    splashCount: 30,
+    minVertices: 6,
+    maxVertices: 12,
+    amplitude: 10,
+    fps: 30,
+    moveSpeed: 7,
+    maxMovement: 100,
+  };
+  static FULLSCREEN_EVENTS = [
+    "fullscreenchange",
+    "webkitfullscreenchange",
+    "mozfullscreenchange",
+    "MSFullscreenChange",
+  ];
+
+  constructor(canvasId, palette, userSettings = {}) {
     this.canvas = document.getElementById(canvasId);
     if (!(this.canvas instanceof HTMLCanvasElement)) {
       throw new Error(
@@ -11,16 +34,11 @@ class Background {
     this.palette =
       Array.isArray(palette) && palette.length
         ? palette
-        : ["26, 0, 55", "59, 1, 86", "79, 0, 130", "147, 0, 255", "68, 0, 255"];
+        : Background.DEFAULT_PALETTE;
 
     this.settings = {
-      splashCount: 30,
-      minVertices: 6,
-      maxVertices: 12,
-      amplitude: 10,
-      fps: 30,
-      moveSpeed: 7,
-      maxMovement: 100,
+      ...Background.DEFAULT_SETTINGS,
+      ...userSettings,
     };
 
     this.time = 0;
@@ -32,6 +50,7 @@ class Background {
     this.lastWidth = window.innerWidth;
     this.lastHeight = window.innerHeight;
 
+    // Re-assign handleResize to its debounced version
     this.handleResize = this.debounce(this.handleResize.bind(this), 250);
 
     this.initializeCanvas();
@@ -53,7 +72,7 @@ class Background {
     let timeout;
     return (...args) => {
       clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
+      timeout = setTimeout(() => func.apply(this, args), wait);
     };
   }
 
@@ -107,9 +126,9 @@ class Background {
         Math.floor(Math.random() * (maxVertices - minVertices + 1));
       const multipliers = [];
       for (let v = 0; v < vertices; v++) {
-        const base = 0.95 + Math.random() * 0.1; // più coerente
+        const base = 0.95 + Math.random() * 0.1;
         const wave = Math.sin((v / vertices) * Math.PI * 2);
-        multipliers.push(base + 0.05 * wave); // lieve "ondulazione" regolare
+        multipliers.push(base + 0.05 * wave);
       }
 
       this.brushSplashes.push({
@@ -144,91 +163,93 @@ class Background {
     }
   }
 
-drawSplashes() {
-  const ctx = this.ctx;
-  const t = this.time * 0.015;
-  ctx.globalCompositeOperation = "screen";
+  drawSplashes() {
+    const ctx = this.ctx;
+    const t = this.time * 0.015;
+    ctx.globalCompositeOperation = "screen";
 
-  for (const splash of this.brushSplashes) {
-    const dynamicRadius =
-      splash.baseRadius +
-      this.settings.amplitude *
-        (Math.sin(t + splash.phase) * 0.7 +
-          Math.sin(t * 1.3 + splash.phase) * 0.3);
+    for (const splash of this.brushSplashes) {
+      const dynamicRadius =
+        splash.baseRadius +
+        this.settings.amplitude *
+          (Math.sin(t + splash.phase) * 0.7 +
+            Math.sin(t * 1.3 + splash.phase) * 0.3);
 
-    const opacity =
-      0.7 +
-      0.15 * Math.sin(t * 0.7 + splash.phase) +
-      0.05 * Math.cos(t * 1.1 + splash.phase);
+      const opacity =
+        0.7 +
+        0.15 * Math.sin(t * 0.7 + splash.phase) +
+        0.05 * Math.cos(t * 1.1 + splash.phase);
 
-    const gradient = ctx.createRadialGradient(
-      splash.x,
-      splash.y,
-      0,
-      splash.x,
-      splash.y,
-      dynamicRadius
-    );
-    gradient.addColorStop(0, `rgba(${splash.color}, ${opacity})`);
-    gradient.addColorStop(0.6, `rgba(${splash.color}, ${opacity * 0.5})`);
-    gradient.addColorStop(1, `rgba(${splash.color}, 0)`);
+      const gradient = ctx.createRadialGradient(
+        splash.x,
+        splash.y,
+        0,
+        splash.x,
+        splash.y,
+        dynamicRadius
+      );
+      gradient.addColorStop(0, `rgba(${splash.color}, ${opacity})`);
+      gradient.addColorStop(0.6, `rgba(${splash.color}, ${opacity * 0.5})`);
+      gradient.addColorStop(1, `rgba(${splash.color}, 0)`);
 
-    ctx.beginPath();
-    const angleStep = (Math.PI * 2) / splash.vertices;
+      ctx.beginPath();
+      const angleStep = (Math.PI * 2) / splash.vertices;
 
-    let prevX, prevY;
-    for (let i = 0; i <= splash.vertices; i++) {
-      const idx = i % splash.vertices;
-      const angle = idx * angleStep;
-      const r = dynamicRadius * splash.multipliers[idx];
-      const x = splash.x + r * Math.cos(angle);
-      const y = splash.y + r * Math.sin(angle);
+      let prevX, prevY;
+      for (let i = 0; i <= splash.vertices; i++) {
+        const idx = i % splash.vertices;
+        const angle = idx * angleStep;
+        const r = dynamicRadius * splash.multipliers[idx];
+        const x = splash.x + r * Math.cos(angle);
+        const y = splash.y + r * Math.sin(angle);
 
-      if (i === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        const cpx = (prevX + x) / 2;
-        const cpy = (prevY + y) / 2;
-        ctx.quadraticCurveTo(prevX, prevY, cpx, cpy);
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          const cpx = (prevX + x) / 2;
+          const cpy = (prevY + y) / 2;
+          ctx.quadraticCurveTo(prevX, prevY, cpx, cpy);
+        }
+        prevX = x;
+        prevY = y;
       }
+      ctx.closePath();
 
-      prevX = x;
-      prevY = y;
+      ctx.fillStyle = gradient;
+      ctx.fill();
     }
-    ctx.closePath();
 
-    ctx.fillStyle = gradient;
-    ctx.fill();
+    ctx.globalCompositeOperation = "source-over";
   }
-
-  ctx.globalCompositeOperation = "source-over";
-}
-
 
   render() {
     this.ctx.globalCompositeOperation = "source-over";
-    this.renderBackgroundGradient(); // sfondo dinamico
+    this.renderBackgroundGradient();
     this.updateSplashPositions();
     this.drawSplashes();
   }
 
   renderBackgroundGradient() {
-    const time = this.time * 0.05;
+    const time = this.time * 0.05; // Controls speed of gradient animation
+
+    // Select up to 3 colors, cycling through the palette if necessary
     const color1 = `rgb(${this.palette[0]})`;
-    const color2 = `rgb(${this.palette[1] || this.palette[0]})`;
+    const color2 = `rgb(${this.palette[1 % this.palette.length]})`;
+    const color3 = `rgb(${this.palette[2 % this.palette.length]})`;
 
-    const gradientX = Math.sin(time) * 0.5 + 0.5; // da 0 a 1
-    const gradientY = Math.cos(time * 0.6) * 0.5 + 0.5;
+    // Animate gradient start and end points for a more dynamic effect
+    // Points will move across the canvas based on sine/cosine waves
+    const x0 = this.width * (0.5 + 0.5 * Math.sin(time * 0.5));
+    const y0 = this.height * (0.5 + 0.5 * Math.cos(time * 0.3));
+    const x1 = this.width * (0.5 + 0.5 * Math.sin(time * 0.7 + Math.PI)); // Different frequency/phase for x1
+    const y1 = this.height * (0.5 + 0.5 * Math.cos(time * 0.4 + Math.PI / 2)); // Different frequency/phase for y1
 
-    const gradient = this.ctx.createLinearGradient(
-      this.width * gradientX,
-      0,
-      this.width * (1 - gradientX),
-      this.height * gradientY
-    );
+    const gradient = this.ctx.createLinearGradient(x0, y0, x1, y1);
 
+    // Use three color stops for a richer gradient
     gradient.addColorStop(0, color1);
-    gradient.addColorStop(1, color2);
+    gradient.addColorStop(0.5, color2); // Middle color
+    gradient.addColorStop(1, color3);   // End color
 
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.width, this.height);
@@ -236,12 +257,9 @@ drawSplashes() {
 
   addEventListeners() {
     window.addEventListener("resize", this.handleResize);
-    [
-      "fullscreenchange",
-      "webkitfullscreenchange",
-      "mozfullscreenchange",
-      "MSFullscreenChange",
-    ].forEach((event) => document.addEventListener(event, this.handleResize));
+    Background.FULLSCREEN_EVENTS.forEach((event) =>
+      document.addEventListener(event, this.handleResize)
+    );
   }
 
   animate(timestamp) {
@@ -258,15 +276,13 @@ drawSplashes() {
 
   destroy() {
     window.removeEventListener("resize", this.handleResize);
-    [
-      "fullscreenchange",
-      "webkitfullscreenchange",
-      "mozfullscreenchange",
-      "MSFullscreenChange",
-    ].forEach((event) =>
+    Background.FULLSCREEN_EVENTS.forEach((event) =>
       document.removeEventListener(event, this.handleResize)
     );
 
-    cancelAnimationFrame(this.animationFrame);
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+    }
   }
 }
+
