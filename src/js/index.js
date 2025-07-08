@@ -134,7 +134,7 @@ class App {
       let skillIcon = this.findLanguageIcon(skill);
       let skillElement = document.createElement("div");
       skillElement.classList.add("skill");
-      skillElement.innerHTML = skillIcon + " " + skill;
+      skillElement.innerHTML = skillIcon + skill;
       skillsContainer.appendChild(skillElement);
     });
 
@@ -246,7 +246,6 @@ class App {
           projectElement.style.setProperty("--x", `${x}%`);
           projectElement.style.setProperty("--y", `${y}%`);
         });
-
 
         const projectTitleContainer = document.createElement("div");
         projectTitleContainer.classList.add("project-title-container");
