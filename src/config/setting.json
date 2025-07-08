@@ -1,8 +1,8 @@
 {
     "GITHUB_USERNAME": "anto426",
-    "ABOUT_TEXT": "I'm a passionate software developer and high school student 💻✨",
+    "ABOUT_TEXT": "I'm a passionate software developer 💻✨",
     "TIMEOUT_MS": 5000,
-    "NUM_COLORS": 7,
+    "NUM_COLORS": 8,
     "skills": [
         "JavaScript",
         "C",
