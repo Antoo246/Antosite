@@ -101,4 +101,41 @@ class ColorFunctions {
 
     return total / palet.length;
   }
+
+  getBrightness(color) {
+    if (!Array.isArray(color) || color.length !== 3) {
+      throw new TypeError("Color must be an RGB array of 3 values");
+    }
+    return 0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2];
+  }
+
+  getHue(color) {
+    if (!Array.isArray(color) || color.length !== 3) {
+      throw new TypeError("Color must be an RGB array of 3 values");
+    }
+    const [r, g, b] = color.map((val) => val / 255);
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let hue;
+
+    if (max === min) {
+      hue = 0; // achromatic
+    } else {
+      const d = max - min;
+      switch (max) {
+        case r:
+          hue = (g - b) / d + (g < b ? 6 : 0);
+          break;
+        case g:
+          hue = (b - r) / d + 2;
+          break;
+        case b:
+          hue = (r - g) / d + 4;
+          break;
+      }
+      hue /= 6; // normalize to [0, 1]
+    }
+
+    return hue * 360; // convert to degrees
+  }
 }

@@ -52,9 +52,30 @@ class DynamicColor {
 
     const sortedPalette = this.sortPalette(palette);
 
+    if (sortedPalette.length < this.numColors) {
+      console.warn(
+        `Filtered palette has only ${sortedPalette.length} colors. Generating a new gradient.`
+      );
+      const darkest = sortedPalette[0];
+      const lightest = sortedPalette[sortedPalette.length - 1];
+      const newPalette = [darkest];
+      const steps = this.numColors - 1;
+
+      for (let i = 1; i < steps; i++) {
+        const ratio = i / steps;
+        const r = Math.round(darkest[0] + (lightest[0] - darkest[0]) * ratio);
+        const g = Math.round(darkest[1] + (lightest[1] - darkest[1]) * ratio);
+        const b = Math.round(darkest[2] + (lightest[2] - darkest[2]) * ratio);
+        newPalette.push([r, g, b]);
+      }
+
+      newPalette.push(lightest);
+      return newPalette;
+    }
+
     if (!this.requiredFilter) return sortedPalette;
 
-    const filtered = sortedPalette.reduce((acc, color, index, arr) => {
+    let filtered = sortedPalette.reduce((acc, color, index, arr) => {
       if (
         index === 0 ||
         this.colorFunctions.colorDistance(arr[index - 1], color) >
@@ -74,11 +95,19 @@ class DynamicColor {
   }
 
   sortPalette(palette) {
-    return [...palette].sort(
-      (a, b) =>
-        this.colorFunctions.colorDistance([0, 0, 0], a) -
-        this.colorFunctions.colorDistance([0, 0, 0], b)
-    );
+    return [...palette].sort((a, b) => {
+      const brightnessA = this.colorFunctions.getBrightness(a);
+      const brightnessB = this.colorFunctions.getBrightness(b);
+      const brightnessDiff = brightnessA - brightnessB;
+
+      if (Math.abs(brightnessDiff) > 10) {
+        return brightnessDiff;
+      }
+
+      const hueA = this.colorFunctions.getHue(a);
+      const hueB = this.colorFunctions.getHue(b);
+      return hueA - hueB;
+    });
   }
 
   calculateTextColor(palette) {
