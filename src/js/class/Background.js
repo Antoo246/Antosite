@@ -1,9 +1,4 @@
-/**
- * @class Background
- * @description Manages a dynamic, animated canvas background with morphing color splashes.
- */
 class Background {
-  /** @type {string[]} Default color palette for splashes and gradients. */
   static DEFAULT_PALETTE = [
     "26, 0, 55",
     "59, 1, 86",
@@ -12,7 +7,6 @@ class Background {
     "68, 0, 255",
   ];
 
-  /** @type {object} Default settings for the animation. */
   static DEFAULT_SETTINGS = {
     splashCount: 30,
     minVertices: 6,
@@ -23,7 +17,6 @@ class Background {
     maxMovement: 100,
   };
 
-  /** @type {string[]} A list of fullscreen change event names for cross-browser compatibility. */
   static FULLSCREEN_EVENTS = [
     "fullscreenchange",
     "webkitfullscreenchange",
@@ -31,12 +24,6 @@ class Background {
     "MSFullscreenChange",
   ];
 
-  /**
-   * Creates an instance of the Background animation.
-   * @param {string} canvasId The ID of the HTML canvas element.
-   * @param {string[]} [palette] An array of RGB color strings.
-   * @param {object} [userSettings={}] User-defined settings to override defaults.
-   */
   constructor(canvasId, palette, userSettings = {}) {
     this.canvas = document.getElementById(canvasId);
     if (!(this.canvas instanceof HTMLCanvasElement)) {
@@ -57,15 +44,11 @@ class Background {
     this.frameInterval = 1000 / this.settings.fps;
     this.animationFrame = null;
 
-    // Bind and debounce the resize handler
     this.handleResize = this.debounce(this.handleResize.bind(this), 250);
 
     this.init();
   }
 
-  /**
-   * Initializes the canvas, generates splashes, and starts the animation loop.
-   */
   init() {
     this.initializeCanvas();
     this.generateBrushSplashes();
@@ -73,10 +56,6 @@ class Background {
     this.animationFrame = requestAnimationFrame(this.animate.bind(this));
   }
 
-  /**
-   * Checks if the document is currently in fullscreen mode.
-   * @returns {boolean} True if in fullscreen, otherwise false.
-   */
   checkFullScreen() {
     return !!(
       document.fullscreenElement ||
@@ -86,12 +65,6 @@ class Background {
     );
   }
 
-  /**
-   * Creates a debounced function that delays invoking `func` until after `wait` milliseconds.
-   * @param {Function} func The function to debounce.
-   * @param {number} wait The number of milliseconds to delay.
-   * @returns {Function} The new debounced function.
-   */
   debounce(func, wait) {
     let timeout;
     return (...args) => {
@@ -100,17 +73,11 @@ class Background {
     };
   }
 
-  /**
-   * Handles window resize and fullscreen change events by re-initializing the canvas.
-   */
   handleResize() {
     this.initializeCanvas();
     this.generateBrushSplashes();
   }
 
-  /**
-   * Sets canvas dimensions to match the window's inner dimensions.
-   */
   initializeCanvas() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
@@ -118,17 +85,16 @@ class Background {
     this.height = this.canvas.height;
   }
 
-  /**
-   * Generates the initial set of brush splashes with random properties.
-   */
   generateBrushSplashes() {
     this.brushSplashes = [];
     const { splashCount, minVertices, maxVertices, moveSpeed } = this.settings;
     const { width, height, palette } = this;
 
-    const minDim = Math.min(width, height);
-    const baseRadiusMin = minDim / 25;
-    const baseRadiusMax = minDim / 8;
+    const minDimension = Math.min(width, height);
+    const baseRadiusRange = {
+      min: minDimension / 25,
+      max: minDimension / 8,
+    };
 
     const gridSize = Math.ceil(Math.sqrt(splashCount));
     const cellWidth = width / gridSize;
@@ -140,15 +106,18 @@ class Background {
 
       const x = gridX * cellWidth + Math.random() * cellWidth;
       const y = gridY * cellHeight + Math.random() * cellHeight;
-      const baseRadius =
-        baseRadiusMin + Math.random() * (baseRadiusMax - baseRadiusMin);
-      const color = palette[Math.floor(Math.random() * palette.length)];
 
+      const baseRadius =
+        baseRadiusRange.min +
+        Math.random() * (baseRadiusRange.max - baseRadiusRange.min);
+      const color = palette[i % palette.length];
       const vertices =
-        minVertices + Math.floor(Math.random() * (maxVertices - minVertices + 1));
+        minVertices +
+        Math.floor(Math.random() * (maxVertices - minVertices + 1));
+
       const multipliers = Array.from(
         { length: vertices },
-        () => 0.95 + Math.random() * 0.1
+        () => 0.9 + Math.random() * 0.2 // Slightly larger random range for more variation
       );
 
       this.brushSplashes.push({
@@ -160,16 +129,13 @@ class Background {
         color,
         vertices,
         multipliers,
-        phase: Math.random() * Math.PI * 2,
-        movePhase: Math.random() * Math.PI * 2,
-        moveSpeed: moveSpeed * (0.5 + Math.random()),
+        phase: Math.random() * Math.PI * 2, // For radius animation
+        movePhase: Math.random() * Math.PI * 2, // For position animation
+        moveSpeed: moveSpeed * (0.75 + Math.random() * 0.5), // More centered speed variation
       });
     }
   }
 
-  /**
-   * Updates the position of each splash for the current frame.
-   */
   updateSplashPositions() {
     const t = this.time * 0.15;
     const { maxMovement } = this.settings;
@@ -186,24 +152,13 @@ class Background {
     }
   }
 
-  /**
-   * Draws all splashes onto the canvas.
-   */
   drawSplashes() {
     const { ctx, settings, time } = this;
     const t = time * 0.015;
     ctx.globalCompositeOperation = "screen";
 
     for (const splash of this.brushSplashes) {
-      const {
-        x,
-        y,
-        baseRadius,
-        phase,
-        color,
-        vertices,
-        multipliers,
-      } = splash;
+      const { x, y, baseRadius, phase, color, vertices, multipliers } = splash;
 
       const dynamicRadius =
         baseRadius +
@@ -214,33 +169,43 @@ class Background {
         0.15 * Math.sin(t * 0.7 + phase) +
         0.05 * Math.cos(t * 1.1 + phase);
 
-      const gradient = ctx.createRadialGradient(
-        x, y, 0, x, y, dynamicRadius
-      );
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, dynamicRadius);
       gradient.addColorStop(0, `rgba(${color}, ${opacity})`);
       gradient.addColorStop(0.6, `rgba(${color}, ${opacity * 0.5})`);
       gradient.addColorStop(1, `rgba(${color}, 0)`);
 
       ctx.beginPath();
-      const angleStep = (Math.PI * 2) / vertices;
-      for (let i = 0; i <= vertices; i++) {
-        const idx = i % vertices;
-        const angle = idx * angleStep;
-        const r = dynamicRadius * multipliers[idx];
-        const pointX = x + r * Math.cos(angle);
-        const pointY = y + r * Math.sin(angle);
-        i === 0 ? ctx.moveTo(pointX, pointY) : ctx.lineTo(pointX, pointY);
-      }
-      ctx.closePath();
 
+      const angleStep = (Math.PI * 2) / vertices;
+      const points = [];
+
+      for (let i = 0; i < vertices; i++) {
+        const angle = i * angleStep;
+        const r = dynamicRadius * multipliers[i];
+        points.push({
+          x: x + r * Math.cos(angle),
+          y: y + r * Math.sin(angle),
+        });
+      }
+
+      ctx.moveTo(
+        (points[0].x + points[vertices - 1].x) / 2,
+        (points[0].y + points[vertices - 1].y) / 2
+      );
+
+      for (let i = 0; i < vertices; i++) {
+        const p1 = points[i];
+        const p2 = points[(i + 1) % vertices];
+        const midPoint = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+        ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
+      }
+
+      ctx.closePath();
       ctx.fillStyle = gradient;
       ctx.fill();
     }
   }
 
-  /**
-   * Renders a single frame of the animation.
-   */
   render() {
     this.ctx.globalCompositeOperation = "source-over";
     this.renderBackgroundGradient();
@@ -249,9 +214,6 @@ class Background {
     this.ctx.globalCompositeOperation = "source-over";
   }
 
-  /**
-   * Draws an animated linear gradient as the background.
-   */
   renderBackgroundGradient() {
     const { ctx, width, height, palette, time } = this;
     const t = time * 0.05;
@@ -274,9 +236,6 @@ class Background {
     ctx.fillRect(0, 0, width, height);
   }
 
-  /**
-   * Adds necessary event listeners for resize and fullscreen changes.
-   */
   addEventListeners() {
     window.addEventListener("resize", this.handleResize);
     Background.FULLSCREEN_EVENTS.forEach((event) =>
@@ -284,10 +243,6 @@ class Background {
     );
   }
 
-  /**
-   * The main animation loop, throttled to the specified FPS.
-   * @param {number} timestamp The current time provided by requestAnimationFrame.
-   */
   animate(timestamp) {
     this.animationFrame = requestAnimationFrame(this.animate.bind(this));
     const elapsed = timestamp - this.lastFrameTime;
@@ -299,9 +254,6 @@ class Background {
     }
   }
 
-  /**
-   * Cleans up event listeners and stops the animation loop.
-   */
   destroy() {
     window.removeEventListener("resize", this.handleResize);
     Background.FULLSCREEN_EVENTS.forEach((event) =>
