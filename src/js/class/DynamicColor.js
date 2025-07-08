@@ -1,41 +1,47 @@
 class DynamicColor {
   constructor(options = {}) {
     this.img = null;
-    this.threshold = options.threshold || 7;
-    this.numColors = options.numColors || 5;
+    this.threshold = options.threshold ?? 7;
+    this.numColors = options.numColors ?? 5;
     this.requiredFilter = options.requiredFilter ?? true;
     this.colorFunctions = new ColorFunctions();
   }
 
   setConfig({ img, threshold, numColors } = {}) {
-    if (img) this.img = img;
-    if (threshold) this.threshold = threshold;
-    if (numColors) this.numColors = numColors;
+    if (img !== undefined) this.img = img;
+    if (threshold !== undefined) this.threshold = threshold;
+    if (numColors !== undefined) this.numColors = numColors;
   }
 
   async extractPalette() {
-    if (!this.img) {
-      throw new Error("No image has been set");
-    }
+    if (!this.img) throw new Error("No image has been set");
 
     const colorThief = new ColorThief();
 
-    if (this.img.complete) {
-      return colorThief.getPalette(this.img, this.numColors);
-    }
-
     return new Promise((resolve, reject) => {
-      this.img.addEventListener("load", () => {
+      const handleLoad = () => {
         if (this.img.naturalWidth > 0 && this.img.naturalHeight > 0) {
-          resolve(colorThief.getPalette(this.img, this.numColors));
+          try {
+            const palette = colorThief.getPalette(this.img, this.numColors);
+            resolve(palette);
+          } catch (err) {
+            reject(err);
+          }
         } else {
           reject(new Error("Image failed to load properly"));
         }
-      });
+      };
 
-      this.img.addEventListener("error", () => {
-        reject(new Error("Error loading image"));
-      });
+      if (this.img.complete) {
+        handleLoad();
+      } else {
+        this.img.addEventListener("load", handleLoad, { once: true });
+        this.img.addEventListener(
+          "error",
+          () => reject(new Error("Image failed to load")),
+          { once: true }
+        );
+      }
     });
   }
 
@@ -46,9 +52,7 @@ class DynamicColor {
 
     const sortedPalette = this.sortPalette(palette);
 
-    if (!this.requiredFilter) {
-      return sortedPalette;
-    }
+    if (!this.requiredFilter) return sortedPalette;
 
     const filtered = sortedPalette.reduce((acc, color, index, arr) => {
       if (
@@ -62,7 +66,8 @@ class DynamicColor {
     }, []);
 
     if (filtered.length === 0) {
-      throw new Error("No colors left after filtering");
+      console.warn("All colors filtered out. Using first available color.");
+      return [sortedPalette[0]];
     }
 
     return filtered;
@@ -77,31 +82,21 @@ class DynamicColor {
   }
 
   calculateTextColor(palette) {
-    if (!Array.isArray(palette)) {
-      throw new TypeError("Palette must be an array");
+    if (!Array.isArray(palette) || palette.length === 0) {
+      throw new Error("Palette must be a non-empty array of RGB colors");
     }
-    if (palette.length === 0) {
-      throw new Error("Palette cannot be empty");
-    }
-    if (!palette.every((color) => Array.isArray(color) && color.length === 3)) {
+
+    const valid = palette.every(
+      (color) => Array.isArray(color) && color.length === 3
+    );
+    if (!valid) {
       throw new TypeError(
-        "Each color in palette must be an RGB array of 3 values"
+        "Each color in the palette must be an RGB array of 3 values"
       );
     }
 
-    try {
-      const avgBrightness = this.colorFunctions.averageBrightness(palette);
-      if (avgBrightness > 128) {
-        return [0, 0, 0];
-      } else {
-        return [255, 255, 255];
-      }
-    } catch (error) {
-      console.error("Error calculating text color:", error);
-      return this.colorFunctions.averageBrightness(palette) > 128
-        ? [0, 0, 0]
-        : [255, 255, 255];
-    }
+    const avgBrightness = this.colorFunctions.averageBrightness(palette);
+    return avgBrightness > 128 ? [0, 0, 0] : [255, 255, 255];
   }
 
   adjustLightness(l) {
@@ -111,59 +106,82 @@ class DynamicColor {
   }
 
   async updateGradient(palette) {
-    if (!palette || palette.length === 0) {
-      console.error("UpdateGradient called with empty or invalid palette. Cannot apply theme.");
-      // Optionally, set all CSS variables to default safe values here
+    if (!Array.isArray(palette) || palette.length === 0) {
+      console.warn(
+        "updateGradient: palette is empty. Applying fallback styles."
+      );
+      this.applyFallbackCss();
       return;
     }
 
-    const textColor = this.calculateTextColor(palette); // Expected: [r, g, b]
-    const textColorRgbString = this.colorFunctions.arrayToRgb(textColor); // Expected: "rgb(r,g,b)"
-    const textColorRgbValues = textColor.join(", "); // Expected: "r, g, b"
+    const textColor = this.calculateTextColor(palette);
+    const textRgb = textColor.join(", ");
+    const textString = this.colorFunctions.arrayToRgb(textColor);
 
-    document.documentElement.style.setProperty("--text-color", textColorRgbString);
-    document.documentElement.style.setProperty("--text-color-rgb", textColorRgbValues);
-    document.documentElement.style.setProperty("--text-color-secondary", `rgba(${textColorRgbValues}, 0.75)`);
-    document.documentElement.style.setProperty("--default-item-color", textColorRgbString);
+    const root = document.documentElement;
 
-    // Helper to get a color array [r,g,b] from palette by index.
-    // Falls back to palette[0] if index is out of bounds, or to black if palette is empty (though checked above).
-    const _getColorArray = (index, fallbackColor = [0, 0, 0]) => {
-      return palette[index] || palette[0] || fallbackColor;
-    };
-    
-    const numPaletteColors = palette.length;
+    root.style.setProperty("--text-color", textString);
+    root.style.setProperty("--text-color-rgb", textRgb);
+    root.style.setProperty("--text-color-secondary", `rgba(${textRgb}, 0.75)`);
+    root.style.setProperty("--default-item-color", textString);
 
-    // Define base RGB arrays for theme colors.
-    // Palette is sorted from darkest (index 0) to brightest.
-    const colorForDarkOverlayArray = _getColorArray(0);
-    const colorForSecondaryArray = numPaletteColors > 1 ? _getColorArray(1) : colorForDarkOverlayArray;
-    const colorForPrimaryArray = numPaletteColors > 2 ? _getColorArray(2) : colorForSecondaryArray;
-    const colorForAccentArray = numPaletteColors > 0 ? _getColorArray(numPaletteColors - 1) : colorForPrimaryArray; // Brightest or last available
+    const getColor = (index, fallback = [0, 0, 0]) =>
+      palette[index] || palette[0] || fallback;
 
-    // Set --primary-color and --primary-color-rgb
-    document.documentElement.style.setProperty("--primary-color", this.colorFunctions.arrayToRgb(colorForPrimaryArray));
-    document.documentElement.style.setProperty("--primary-color-rgb", colorForPrimaryArray.join(", "));
+    const colorDark = getColor(0);
+    const colorSecondary = getColor(1, colorDark);
+    const colorPrimary = getColor(2, colorSecondary);
+    const colorAccent = getColor(palette.length - 1, colorPrimary);
 
-    // Set --secondary-color and --secondary-color-rgb
-    document.documentElement.style.setProperty("--secondary-color", this.colorFunctions.arrayToRgb(colorForSecondaryArray));
-    document.documentElement.style.setProperty("--secondary-color-rgb", colorForSecondaryArray.join(", "));
+    root.style.setProperty(
+      "--primary-color",
+      this.colorFunctions.arrayToRgb(colorPrimary)
+    );
+    root.style.setProperty("--primary-color-rgb", colorPrimary.join(", "));
+    root.style.setProperty(
+      "--secondary-color",
+      this.colorFunctions.arrayToRgb(colorSecondary)
+    );
+    root.style.setProperty("--secondary-color-rgb", colorSecondary.join(", "));
+    root.style.setProperty(
+      "--accent-color",
+      this.colorFunctions.arrayToRgb(colorAccent)
+    );
+    root.style.setProperty("--accent-color-rgb", colorAccent.join(", "));
+    root.style.setProperty(
+      "--dark-overlay",
+      `rgba(${colorDark.join(", ")}, 0.25)`
+    );
+    root.style.setProperty(
+      "--highlight-color",
+      this.colorFunctions.arrayToRgb(colorDark)
+    );
 
-    // Set --accent-color and --accent-color-rgb
-    document.documentElement.style.setProperty("--accent-color", this.colorFunctions.arrayToRgb(colorForAccentArray));
-    document.documentElement.style.setProperty("--accent-color-rgb", colorForAccentArray.join(", "));
-
-    // Set --dark-overlay (using the darkest color from palette with specified alpha)
-    document.documentElement.style.setProperty("--dark-overlay", `rgba(${colorForDarkOverlayArray.join(", ")}, 0.25)`);
-    
-    // Set --highlight-color (using the darkest color as a solid color, similar to original logic)
-    document.documentElement.style.setProperty("--highlight-color", this.colorFunctions.arrayToRgb(colorForDarkOverlayArray));
-
-    // Set --default-bg-gradient using all colors from the palette
-    const paletteRgbStrings = palette.map(color => `rgb(${color.join(", ")})`);
-    document.documentElement.style.setProperty(
+    const gradient = palette
+      .map((color) => `rgb(${color.join(", ")})`)
+      .join(", ");
+    root.style.setProperty(
       "--default-bg-gradient",
-      `linear-gradient(to right, ${paletteRgbStrings.join(", ")})`
+      `linear-gradient(to right, ${gradient})`
+    );
+  }
+
+  applyFallbackCss() {
+    const root = document.documentElement;
+    root.style.setProperty("--text-color", "#ffffff");
+    root.style.setProperty("--text-color-rgb", "255, 255, 255");
+    root.style.setProperty(
+      "--text-color-secondary",
+      "rgba(255, 255, 255, 0.75)"
+    );
+    root.style.setProperty("--default-item-color", "#ffffff");
+    root.style.setProperty("--primary-color", "#222");
+    root.style.setProperty("--secondary-color", "#444");
+    root.style.setProperty("--accent-color", "#888");
+    root.style.setProperty("--highlight-color", "#111");
+    root.style.setProperty(
+      "--default-bg-gradient",
+      "linear-gradient(to right, #000, #111, #222)"
     );
   }
 
@@ -171,13 +189,12 @@ class DynamicColor {
     try {
       const palette = await this.extractPalette();
       this.requiredFilter = palette.length >= 3;
-
       const filteredPalette = await this.filterPalette(palette);
       await this.updateGradient(filteredPalette);
-
       return filteredPalette;
     } catch (error) {
-      console.error("Error applying theme:", error);
+      console.error("applyTheme error:", error);
+      this.applyFallbackCss();
       throw error;
     }
   }
