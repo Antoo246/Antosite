@@ -1,7 +1,7 @@
 class DynamicColor {
   constructor(options = {}) {
     this.img = null;
-    this.threshold = options.threshold ?? 7;
+    this.threshold = options.threshold ?? 90;
     this.numColors = options.numColors ?? 5;
     this.requiredFilter = options.requiredFilter ?? true;
     this.colorFunctions = new ColorFunctions();
@@ -45,69 +45,162 @@ class DynamicColor {
     });
   }
 
-  async filterPalette(palette) {
-    if (!Array.isArray(palette) || palette.length === 0) {
-      throw new Error("Invalid palette provided");
+  interpolateColor(colorA, colorB, ratio = 0.5) {
+    if (
+      !Array.isArray(colorA) ||
+      !Array.isArray(colorB) ||
+      colorA.length !== 3 ||
+      colorB.length !== 3
+    ) {
+      throw new Error("Invalid colors provided to interpolateColor");
     }
 
-    const sortedPalette = this.sortPalette(palette);
+    const clamp = (v) => Math.min(1, Math.max(0, v));
+    ratio = clamp(ratio);
 
-    if (sortedPalette.length < this.numColors) {
-      console.warn(
-        `Filtered palette has only ${sortedPalette.length} colors. Generating a new gradient.`
-      );
-      const darkest = sortedPalette[0];
-      const lightest = sortedPalette[sortedPalette.length - 1];
-      const newPalette = [darkest];
-      const steps = this.numColors - 1;
+    return [
+      Math.round(colorA[0] + (colorB[0] - colorA[0]) * ratio),
+      Math.round(colorA[1] + (colorB[1] - colorA[1]) * ratio),
+      Math.round(colorA[2] + (colorB[2] - colorA[2]) * ratio),
+    ];
+  }
 
-      for (let i = 1; i < steps; i++) {
-        const ratio = i / steps;
-        const r = Math.round(darkest[0] + (lightest[0] - darkest[0]) * ratio);
-        const g = Math.round(darkest[1] + (lightest[1] - darkest[1]) * ratio);
-        const b = Math.round(darkest[2] + (lightest[2] - darkest[2]) * ratio);
-        newPalette.push([r, g, b]);
-      }
-
-      newPalette.push(lightest);
-      return newPalette;
+  _generateGradientPalette(startColor, endColor, steps) {
+    if (!Array.isArray(startColor) || !Array.isArray(endColor) || steps < 1) {
+      throw new Error("Invalid input to _generateGradientPalette");
     }
 
-    if (!this.requiredFilter) return sortedPalette;
+    if (steps === 1) return [startColor.map(Math.round)];
+    if (steps === 2)
+      return [startColor.map(Math.round), endColor.map(Math.round)];
 
-    let filtered = sortedPalette.reduce((acc, color, index, arr) => {
+    const palette = [];
+    const intervals = steps - 1;
+
+    for (let i = 0; i <= intervals; i++) {
+      const ratio = i / intervals;
+      const color = this.interpolateColor(startColor, endColor, ratio);
+
+      // Verifica che il colore sia abbastanza simile al precedente
       if (
-        index === 0 ||
-        this.colorFunctions.colorDistance(arr[index - 1], color) >
-          this.threshold
+        palette.length === 0 ||
+        ColorFunctions.colorDistance(palette[palette.length - 1], color) <=
+          this.threshold ||
+        i === intervals
       ) {
-        acc.push(color);
+        palette.push(color);
       }
-      return acc;
-    }, []);
+    }
 
-    if (filtered.length === 0) {
-      console.warn("All colors filtered out. Using first available color.");
-      return [sortedPalette[0]];
+    // Se la palette è troppo corta, riempi con copie del colore finale
+    while (palette.length < steps) {
+      palette.push(endColor.map(Math.round));
+    }
+
+    // Se troppo lunga, riduci equamente
+    if (palette.length > steps) {
+      const reduced = [];
+      const step = (palette.length - 1) / (steps - 1);
+      for (let i = 0; i < steps; i++) {
+        reduced.push(palette[Math.round(i * step)]);
+      }
+      return reduced;
+    }
+
+    return palette;
+  }
+
+  filterPalette(palette) {
+    if (!Array.isArray(palette) || palette.length === 0) {
+      console.warn("Invalid or empty palette provided for filtering.");
+      throw new Error("Invalid or empty palette provided for filtering");
+    }
+
+    const sorted = this.sortPalette(palette);
+
+    if (!this.requiredFilter) {
+      console.warn("Filtering disabled, returning sorted palette.");
+      return sorted;
+    }
+
+    console.warn(`Filtering palette with threshold: ${this.threshold}`);
+    const filtered = [sorted[0]];
+
+    for (let i = 1; i < sorted.length; i++) {
+      const prev = filtered[filtered.length - 1];
+      const current = sorted[i];
+      const distance = this.colorFunctions.colorDistance(prev, current);
+
+      if (distance < this.threshold) {
+        console.warn(
+          `Distance ${distance.toFixed(2)} < threshold, keeping color.`
+        );
+        filtered.push(current);
+      } else {
+        console.warn(
+          `Distance ${distance.toFixed(2)} >= threshold, interpolating...`
+        );
+        const mid = this.interpolateColor(prev, current);
+        filtered.push(mid);
+      }
+    }
+
+    if (filtered.length < this.numColors) {
+      console.warn(
+        `Filtered palette has ${filtered.length} colors, generating gradient to fill up to ${this.numColors} colors.`
+      );
+      const needed = this.numColors - filtered.length;
+      const fill = this._generateGradientPalette(
+        filtered[0],
+        filtered[filtered.length - 1],
+        needed + 2
+      ).slice(1, -1);
+      return [...filtered, ...fill.slice(0, needed)];
+    }
+
+    if (filtered.length > this.numColors) {
+      const reduced = [];
+      const step = (filtered.length - 1) / (this.numColors - 1);
+      for (let i = 0; i < this.numColors; i++) {
+        reduced.push(filtered[Math.round(i * step)]);
+      }
+      console.debug(`Reduced palette to ${this.numColors} colors.`);
+      return reduced;
     }
 
     return filtered;
   }
 
   sortPalette(palette) {
-    return [...palette].sort((a, b) => {
+    return palette.slice().sort((a, b) => {
       const brightnessA = this.colorFunctions.getBrightness(a);
       const brightnessB = this.colorFunctions.getBrightness(b);
-      const brightnessDiff = brightnessA - brightnessB;
-
-      if (Math.abs(brightnessDiff) > 10) {
-        return brightnessDiff;
-      }
-
-      const hueA = this.colorFunctions.getHue(a);
-      const hueB = this.colorFunctions.getHue(b);
-      return hueA - hueB;
+      return brightnessA - brightnessB;
     });
+  }
+
+  _generateGradientPalette(startColor, endColor, steps) {
+    if (steps <= 1) {
+      return [startColor];
+    }
+    const palette = [startColor];
+    const stepCount = steps - 1;
+
+    for (let i = 1; i < stepCount; i++) {
+      const ratio = i / stepCount;
+      const r = Math.round(
+        startColor[0] + (endColor[0] - startColor[0]) * ratio
+      );
+      const g = Math.round(
+        startColor[1] + (endColor[1] - startColor[1]) * ratio
+      );
+      const b = Math.round(
+        startColor[2] + (endColor[2] - startColor[2]) * ratio
+      );
+      palette.push([r, g, b]);
+    }
+    palette.push(endColor);
+    return palette;
   }
 
   calculateTextColor(palette) {
@@ -217,7 +310,6 @@ class DynamicColor {
   async applyTheme() {
     try {
       const palette = await this.extractPalette();
-      this.requiredFilter = palette.length >= 3;
       const filteredPalette = await this.filterPalette(palette);
       await this.updateGradient(filteredPalette);
       return filteredPalette;
