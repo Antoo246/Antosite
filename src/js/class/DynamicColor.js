@@ -81,10 +81,9 @@ class DynamicColor {
       const ratio = i / intervals;
       const color = this.interpolateColor(startColor, endColor, ratio);
 
-      // Verifica che il colore sia abbastanza simile al precedente
       if (
         palette.length === 0 ||
-        ColorFunctions.colorDistance(palette[palette.length - 1], color) <=
+        this.colorFunctions.colorDistance(palette[palette.length - 1], color) <=
           this.threshold ||
         i === intervals
       ) {
@@ -179,52 +178,54 @@ class DynamicColor {
     });
   }
 
-  _generateGradientPalette(startColor, endColor, steps) {
-    if (steps <= 1) {
-      return [startColor];
-    }
-    const palette = [startColor];
-    const stepCount = steps - 1;
-
-    for (let i = 1; i < stepCount; i++) {
-      const ratio = i / stepCount;
-      const r = Math.round(
-        startColor[0] + (endColor[0] - startColor[0]) * ratio
-      );
-      const g = Math.round(
-        startColor[1] + (endColor[1] - startColor[1]) * ratio
-      );
-      const b = Math.round(
-        startColor[2] + (endColor[2] - startColor[2]) * ratio
-      );
-      palette.push([r, g, b]);
-    }
-    palette.push(endColor);
-    return palette;
-  }
 
   calculateTextColor(palette) {
     if (!Array.isArray(palette) || palette.length === 0) {
-      throw new Error("Palette must be a non-empty array of RGB colors");
-    }
-
-    const valid = palette.every(
-      (color) => Array.isArray(color) && color.length === 3
-    );
-    if (!valid) {
-      throw new TypeError(
-        "Each color in the palette must be an RGB array of 3 values"
-      );
+      console.error("Empty palette in calculateTextColor.");
+      throw new Error("Palette must be a non-empty array.");
     }
 
     const avgBrightness = this.colorFunctions.averageBrightness(palette);
-    return avgBrightness > 128 ? [0, 0, 0] : [255, 255, 255];
+    const textColor = palette[palette.length - 1];
+    const adjustedTextColor = this.adjustLightness(textColor, avgBrightness);
+
+    console.log(
+      `Average brightness: ${avgBrightness.toFixed(2)}. ` +
+        `Text color (before adjustment): ${this.colorFunctions.arrayToRgb(
+          textColor
+        )}.`
+    );
+
+    const brightnessString = avgBrightness < 0.5 ? "light text" : "dark text";
+    console.warn(
+      `Brightness: ${avgBrightness.toFixed(2)}. Chosen ${brightnessString}.`
+    );
+
+    return adjustedTextColor;
   }
 
-  adjustLightness(l) {
-    if (l > 0.7) return Math.max(0, l - 0.3);
-    if (l < 0.3) return Math.min(1, l + 0.3);
-    return l > 0.5 ? Math.max(0, l - 0.2) : Math.min(1, l + 0.2);
+  adjustLightness(color, avgBrightness, options = {}) {
+    const {
+      lightnessThreshold = 0.5,
+      targetContrastLight = 0.8,
+      targetContrastDark = 0.2,
+    } = options;
+
+    const currentLightness = this.colorFunctions.getLightness(color);
+
+    let targetLightness;
+    if (avgBrightness < lightnessThreshold) {
+      targetLightness = Math.max(currentLightness, targetContrastLight);
+    } else {
+      targetLightness = Math.min(currentLightness, targetContrastDark);
+    }
+
+    const newLightness =
+      currentLightness + (targetLightness - currentLightness) * 0.8;
+
+    const clampedLightness = Math.max(0, Math.min(1, newLightness));
+
+    return this.colorFunctions.setLightness(color, clampedLightness);
   }
 
   async updateGradient(palette) {
@@ -237,6 +238,7 @@ class DynamicColor {
     }
 
     const textColor = this.calculateTextColor(palette);
+
     const textRgb = textColor.join(", ");
     const textString = this.colorFunctions.arrayToRgb(textColor);
 
