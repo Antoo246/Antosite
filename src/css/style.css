@@ -302,7 +302,7 @@ body {
     90deg,
     transparent,
     rgba(var(--accent-color-rgb), 0.8) 20%,
-    rgba(var(--accent-color-rgb), 1) 50%,
+    var(--accent-color) 50%,
     rgba(var(--accent-color-rgb), 0.8) 80%,
     transparent
   );
@@ -393,6 +393,13 @@ body {
   box-shadow: var(--shadow-md);
   border-color: rgba(var(--accent-color-rgb), 0.3);
   background: rgba(var(--primary-color-rgb), 0.1);
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .text {
@@ -530,8 +537,8 @@ body {
   gap: 0.5rem;
   padding: clamp(1rem, 2vw, 1.25rem);
   width: 100%;
-  min-width: 180px;
-  max-width: 300px;
+  min-width: 200px;
+  max-width: 400px;
   min-height: 120px;
   text-align: center;
   color: var(--text-color-secondary);
@@ -975,9 +982,9 @@ button:disabled {
   }
 }
 
-/* text-writer, text-reveal, carousel, project, and text-scrolling styles follow */
-/* Ensure all other keyframes like shimmerEffect, glowPulse, shine, typing, glowText, slideUp are defined in your project */
 
+
+/* Text Writer Effect - Refined for Cohesion */
 .text-writer {
   position: relative;
   display: inline-block;
@@ -985,114 +992,72 @@ button:disabled {
   max-width: 100%;
   font-size: clamp(0.9rem, 1.8vw, 1.05rem);
   font-weight: 500;
-  color: var(--text-color);
-  padding: 0.75rem 1.4rem;
+  color: var(--text-color-secondary);
+  padding: clamp(0.6rem, 1.2vw, 0.8rem) clamp(1rem, 2vw, 1.2rem);
   margin: var(--margin-xs) auto;
   overflow: hidden;
   white-space: nowrap;
-  letter-spacing: calc(1.2px + var(--hover-state, 0) * 0.5px);
-  text-shadow: 0 0 8px
-    var(--text-shadow-color, rgba(var(--accent-color-rgb), 0.25));
-  background: linear-gradient(
-    90deg,
-    rgba(var(--text-color-rgb), 0.02) 0%,
-    rgba(var(--text-color-rgb), calc(0.05 + var(--hover-state, 0) * 0.08)) 50%,
-    rgba(var(--text-color-rgb), 0.02) 100%
-  );
-  border: 1px solid
-    rgba(var(--text-color-rgb), calc(0.08 + var(--hover-state, 0) * 0.18));
-  border-radius: var(--border-radius-sm);
-  transform: translateY(calc(var(--hover-state, 0) * -3px))
-    scale(calc(1 + var(--hover-state, 0) * 0.02)) perspective(900px)
-    rotateX(calc(var(--hover-state, 0) * 2deg));
-  box-shadow: 0 calc(2.5px + var(--hover-state, 0) * 5px)
-    calc(9px + var(--hover-state, 0) * 10px)
-    rgba(0, 0, 0, calc(0.07 + var(--hover-state, 0) * 0.05));
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 
-  will-change: transform, letter-spacing, box-shadow, background, border-color,
-    text-shadow;
-  transition: transform 0.35s var(--bounce), letter-spacing 0.35s var(--bounce),
-    box-shadow 0.35s var(--bounce), text-shadow 0.4s var(--bounce),
-    border-color 0.35s ease, background 0.35s ease;
+  /* Consistent Glassmorphism Style */
+  background: rgba(var(--primary-color-rgb), 0.1);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-sm);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5));
+  box-shadow: var(--shadow-sm);
+
+  /* Standardized Transitions */
+  transition: transform var(--transition-fast) var(--bounce),
+    box-shadow var(--transition-fast) var(--bounce),
+    border-color var(--transition-fast) ease,
+    background var(--transition-fast) ease, color var(--transition-fast) ease;
+  will-change: transform, box-shadow, border-color, background, color;
 
   --typing-speed: 3s;
-  --cursor-blink-speed: 1s;
-  --shine-duration: 3.2s;
-  --text-shadow-color: rgba(var(--accent-color-rgb), 0.25);
-  --hover-state: 0; /* Drives hover effects */
+  --cursor-blink-speed: 0.9s;
 }
 
-.text-writer::before {
-  /* Shine effect */
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    100deg,
-    transparent 20%,
-    rgba(var(--text-color-rgb), calc(0.1 + var(--hover-state, 0) * 0.1)) 50%,
-    transparent 80%
-  );
-  transform: translateX(-110%) skewX(-25deg);
-  opacity: calc(0.6 + var(--hover-state, 0) * 0.3);
-  filter: blur(calc(1.5px + var(--hover-state, 0) * 2px));
-  animation: shine var(--shine-duration) ease-in-out infinite 0.2s;
-  will-change: transform, filter, opacity;
-  z-index: 0;
-  pointer-events: none;
-}
-
+/* Blinking Cursor */
 .text-writer::after {
-  /* Cursor */
   content: "|";
   position: relative;
-  margin-left: 2px;
+  margin-left: 3px;
   color: var(--accent-color);
-  font-weight: 600;
-  opacity: calc(0.8 + var(--hover-state, 0) * 0.2);
-  text-shadow: 0 0 calc(7px + var(--hover-state, 0) * 7px) var(--accent-color);
-  transform-origin: bottom;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(var(--accent-color-rgb), 0.5);
   animation: blinkCursor var(--cursor-blink-speed) steps(2) infinite;
-  will-change: opacity, transform, text-shadow;
-  z-index: 1;
+  will-change: opacity;
 }
 
-/* Refined blink animation for the cursor */
 @keyframes blinkCursor {
-  50% {
-    opacity: 0.15; /* Softer blink */
-    transform: scaleY(0.9) translateY(1px); /* Subtle movement */
+  to {
+    opacity: 0;
   }
 }
 
+/* Hover State */
 .text-writer:hover {
-  --hover-state: 1; /* Activate hover effects via CSS variable */
-  box-shadow: 0 7px 22px rgba(0, 0, 0, 0.18),
-    0 0 15px rgba(var(--accent-color-rgb), 0.15);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(var(--accent-color-rgb), 0.3);
+  background: rgba(var(--primary-color-rgb), 0.15);
+  color: var(--text-color);
   cursor: pointer;
-  text-shadow: 0 0 14px var(--accent-color),
-    0 0 30px rgba(var(--accent-color-rgb), 0.2);
 }
 
-.text-writer:active {
-  --hover-state: 0.6; /* Slightly subdued active state */
-  /* Snappy transitions for active state */
-  transition: transform 0.1s ease-out, letter-spacing 0.1s ease-out,
-    box-shadow 0.1s ease-out, text-shadow 0.1s ease-out,
-    border-color 0.1s ease-out, background 0.1s ease-out;
-}
-
-/* Using :focus-visible for better accessibility */
+/* Focus State for Accessibility */
 .text-writer:focus {
   outline: none;
 }
 .text-writer:focus-visible {
-  outline: 2.5px solid var(--accent-color);
+  outline: 2px solid var(--accent-color);
   outline-offset: 3px;
-  box-shadow: 0 0 0 2.5px rgba(var(--primary-color-rgb), 0.75),
-    0 0 0 4.5px var(--accent-color), 0 5px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-hover);
 }
 
+/* Typing Animation Container */
 .typing {
   display: inline-block;
   width: 0;
@@ -1102,74 +1067,40 @@ button:disabled {
   animation: typing var(--typing-speed) steps(var(--char-count, 40)) forwards;
 }
 
-.text-reveal {
-  position: relative;
-  display: inline-block;
-  opacity: 0;
-  filter: blur(6px);
-  text-shadow: 0 0 10px rgba(var(--accent-color-rgb), 0.5);
-
-  animation: textReveal 0.8s var(--bounce) forwards,
-    glowText 2.5s ease-in-out infinite 0.5s;
-
-  transition: filter 0.35s var(--bounce), text-shadow 0.35s var(--bounce);
-  will-change: opacity, filter, text-shadow;
-}
-
-.text-reveal::before {
-  /* Underline effect */
-  content: "";
-  position: absolute;
-  bottom: -3px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--accent-color) 30%,
-    var(--accent-color) 70%,
-    transparent
-  );
-  opacity: 0.8;
-  transition: width 0.45s var(--bounce), opacity 0.45s var(--bounce);
-  will-change: width, opacity;
-}
-
-.text-reveal:hover::before {
-  width: 100%;
-  opacity: 1;
-}
-
-.text-reveal:hover {
-  text-shadow: 0 0 15px rgba(var(--accent-color-rgb), 0.7),
-    0 0 5px rgba(var(--accent-color-rgb), 0.3);
-}
-
-/* 
-  Keyframes for shine, typing, textReveal, and glowText are assumed to be defined.
-  Example definitions:
-*/
-@keyframes shine {
-  to {
-    transform: translateX(110%) skewX(-25deg);
-  }
-}
 @keyframes typing {
   to {
     width: 100%;
   }
 }
+
+/* Alternative Text Reveal Effect */
+.text-reveal {
+  position: relative;
+  display: inline-block;
+  opacity: 0;
+  filter: blur(5px);
+  text-shadow: 0 0 10px rgba(var(--accent-color-rgb), 0.4);
+  animation: textReveal 0.8s var(--bounce) forwards,
+    glowText 2.5s ease-in-out infinite alternate 0.5s;
+  will-change: opacity, filter, text-shadow;
+  transition: text-shadow 0.3s ease;
+}
+
+.text-reveal:hover {
+  text-shadow: 0 0 18px rgba(var(--accent-color-rgb), 0.7);
+}
+
 @keyframes textReveal {
   to {
     opacity: 1;
     filter: blur(0);
   }
 }
+
 @keyframes glowText {
-  50% {
-    text-shadow: 0 0 20px rgba(var(--accent-color-rgb), 0.8),
-      0 0 5px rgba(var(--accent-color-rgb), 0.4);
+  to {
+    text-shadow: 0 0 15px rgba(var(--accent-color-rgb), 0.6),
+      0 0 3px rgba(var(--accent-color-rgb), 0.2);
   }
 }
 
@@ -1339,113 +1270,157 @@ button:disabled {
   z-index: 2;
 }
 
-/* Project Card Styles - Updated & Enhanced */
 .project {
+  /* Dimensionamento responsivo per la larghezza, con limiti min/max */
   width: clamp(230px, 42vw, 320px);
-  min-height: 250px;
+  min-height: 250px; /* Altezza minima per garantire coerenza visiva */
+
+  /* Padding con scalatura dinamica basata su variabili */
   padding: var(--space-sm) calc(var(--space-sm) * 0.9)
     calc(var(--space-sm) * 1.3);
+
+  /* Sfondo: combinazione di colore primario semitrasparente e un gradiente sottile */
   background: rgba(var(--primary-color-rgb), 0.12);
   background-image: linear-gradient(
     145deg,
     rgba(var(--text-color-rgb), 0.015) 0%,
     rgba(var(--text-color-rgb), 0.035) 45%,
-    rgba(var(--text-color-rgb), 0.015) 100%
+    /* Leggera enfasi al centro */ rgba(var(--text-color-rgb), 0.015) 100%
   );
-  border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-md);
+
+  /* Bordo effetto vetro */
+  border: 1px solid var(--glass-border); /* Utilizza variabile per coerenza */
+  border-radius: var(--border-radius-md); /* Bordo arrotondato */
+
+  /* Layout Flexbox per allineamento e distribuzione del contenuto */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  position: relative;
-  color: var(--text-color);
-  overflow: hidden;
+  justify-content: space-between; /* Spinge link/statistiche in fondo */
+
+  position: relative; /* Per pseudo-elementi e z-index */
+  color: var(--text-color); /* Colore del testo principale */
+  overflow: hidden; /* Nasconde overflow per effetti come gli pseudo-elementi */
+
+  /* Effetto Glassmorphism */
   backdrop-filter: blur(calc(var(--glass-blur) * 0.75));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.75));
+  -webkit-backdrop-filter: blur(
+    calc(var(--glass-blur) * 0.75)
+  ); /* Per compatibilità Safari */
+
+  /* Ombreggiatura leggera */
   box-shadow: var(--shadow-sm);
+
+  /* Transizioni eleganti per animazioni fluide */
   transition: transform 0.4s var(--bounce), box-shadow 0.4s ease,
     border-color 0.4s ease, background 0.4s ease;
+
+  /* Abilita trasformazioni 3D per effetti di profondità */
   transform-style: preserve-3d;
-  perspective: 1200px;
+  perspective: 1200px; /* Per una prospettiva più marcata nelle rotazioni */
+
+  /* Animazione di ingresso della scheda */
   animation: projectAppear 0.7s var(--bounce) both;
+  /* Ritardo dell'animazione per un effetto a cascata */
   animation-delay: calc(var(--project-index, 0) * 0.1s + 0.08s);
+
+  /* Ottimizzazione delle prestazioni con will-change e contain */
   will-change: transform, box-shadow, border-color, background;
-  contain: content;
+  contain: content; /* Migliora le prestazioni di rendering isolando il contenuto */
 }
 
+/* Stato al passaggio del mouse (hover) */
 .project:hover {
+  /* Trasformazioni 3D più accentuate per un effetto di "sollevamento" */
   transform: translateY(-12px) scale(1.04) rotateX(3deg) rotateY(-2deg);
+  /* Ombreggiatura più profonda con tocco di colore accentuato */
   box-shadow: var(--shadow-lg), 0 14px 38px rgba(var(--accent-color-rgb), 0.26),
-    0 0 1px rgba(var(--accent-color-rgb), 0.35) inset;
+    0 0 1px rgba(var(--accent-color-rgb), 0.35) inset; /* Bordo interno sottile */
+  /* Bordo che si illumina con il colore accentuato */
   border-color: rgba(var(--accent-color-rgb), 0.45);
+  /* Sfondo leggermente più scuro/opaco */
   background: rgba(var(--primary-color-rgb), 0.18);
-  z-index: 5;
+  z-index: 5; /* Solleva la scheda sopra le altre */
 }
 
+/* Stato al focus interno (per accessibilità - tastiera) */
 .project:focus-within {
-  outline: none;
+  outline: none; /* Rimuove l'outline predefinito del browser */
+  /* Ombreggiatura con bordo esterno visibile per indicare il focus */
   box-shadow: 0 0 0 2.5px rgba(var(--primary-color-rgb), 0.75),
     0 0 0 4.5px var(--accent-color), var(--shadow-lg);
+  /* Leggero sollevamento per feedback visivo */
   transform: translateY(-6px) scale(1.02);
 }
 
+/* ================================================ */
+/* --- Pseudo-elementi: Effetti Visivi Aggiuntivi --- */
+/* ================================================ */
+
+/* Pseudo-elemento ::before: Bagliore sottile dall'alto */
 .project::before {
-  /* Top subtle glow */
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 60%;
+  height: 60%; /* Copre la parte superiore della scheda */
   background: radial-gradient(
     ellipse at 50% -10%,
-    rgba(var(--accent-color-rgb), 0.12) 0%,
+    /* Parte da poco fuori dal bordo superiore */
+      rgba(var(--accent-color-rgb), 0.12) 0%,
     transparent 70%
   );
-  opacity: 0;
-  transform: scaleY(0.8);
+  opacity: 0; /* Inizialmente invisibile */
+  transform: scaleY(0.8); /* Leggermente compresso inizialmente */
   transition: opacity 0.45s ease, transform 0.45s ease;
-  z-index: 0;
-  pointer-events: none;
+  z-index: 0; /* Sotto il contenuto principale */
+  pointer-events: none; /* Non interferisce con gli eventi del mouse */
 }
 
 .project:hover::before {
-  opacity: 0.7;
-  transform: scaleY(1.1) scaleX(1.05);
+  opacity: 0.7; /* Diventa visibile al hover */
+  transform: scaleY(1.1) scaleX(1.05); /* Si espande leggermente */
 }
 
+/* Pseudo-elemento ::after: Effetto "luce che scorre" */
 .project::after {
-  /* Sweeping shine effect */
   content: "";
   position: absolute;
   top: 0;
-  left: -150%;
+  left: -150%; /* Inizia ben fuori dallo schermo a sinistra */
   width: 100%;
   height: 100%;
   background: linear-gradient(
     100deg,
-    transparent 25%,
+    /* Angolo del gradiente */ transparent 25%,
     rgba(var(--text-color-rgb), 0.08) 50%,
-    transparent 75%
+    /* La parte "luccicante" */ transparent 75%
   );
-  transform: skewX(-25deg);
-  opacity: 0;
+  transform: skewX(-25deg); /* Inclinazione per l'effetto di sweep */
+  opacity: 0; /* Inizialmente invisibile */
+  /* Transizione con ritardo per l'opacità */
   transition: transform 0.75s cubic-bezier(0.23, 1, 0.32, 1),
-    opacity 0.75s cubic-bezier(0.23, 1, 0.32, 1) 0.1s;
-  z-index: 0;
+    /* Curva di easing personalizzata */ opacity 0.75s
+      cubic-bezier(0.23, 1, 0.32, 1) 0.1s;
+  z-index: 0; /* Sotto il contenuto principale */
   pointer-events: none;
 }
 
 .project:hover::after {
-  transform: translateX(250%) skewX(-25deg);
-  opacity: 0.6;
+  transform: translateX(250%) skewX(-25deg); /* Si sposta da sinistra a destra */
+  opacity: 0.6; /* Diventa visibile al hover */
 }
 
+/* Assicura che il contenuto sia sopra i pseudo-elementi */
 .project > * {
   position: relative;
   z-index: 1;
 }
+
+/* ========================================= */
+/* --- Sezione Elementi Interni della Scheda --- */
+/* ========================================= */
 
 .project-title-container {
   display: flex;
@@ -1456,56 +1431,67 @@ button:disabled {
   width: 100%;
 }
 
+/* Stile dell'icona del segnalibro (Bookmark) */
 .project-bookmark {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 100%; /* Occupa tutta la larghezza per il centering */
   font-size: clamp(1.5rem, 2.2vw, 1.8rem);
-  color: rgba(var(--accent-color-rgb), 0.75);
+  color: rgba(
+    var(--accent-color-rgb),
+    0.75
+  ); /* Colore accentuato semi-trasparente */
   opacity: 0.9;
   cursor: pointer;
   transition: transform 0.35s var(--bounce), color 0.35s var(--bounce),
     opacity 0.35s var(--bounce), filter 0.35s var(--bounce);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
-  transform-origin: center;
+  filter: drop-shadow(
+    0 2px 4px rgba(0, 0, 0, 0.15)
+  ); /* Ombreggiatura per l'icona */
+  transform-origin: center; /* Centro per le trasformazioni */
   position: relative;
-  z-index: 2;
-  margin: 0 auto 0.3rem;
+  z-index: 2; /* Sopra la scheda */
+  margin: 0 auto 0.3rem; /* Centra orizzontalmente e aggiunge margine inferiore */
 }
 
+/* Hover e active states per il segnalibro */
 .project-bookmark:hover {
-  transform: translateY(-4px) scale(1.12) rotate(3deg);
-  color: var(--accent-color);
+  transform: translateY(-4px) scale(1.12) rotate(3deg); /* Effetto "galleggiamento" */
+  color: var(--accent-color); /* Colore accentuato pieno */
   opacity: 1;
-  filter: drop-shadow(0 4.5px 14px rgba(var(--accent-color-rgb), 0.4));
+  filter: drop-shadow(
+    0 4.5px 14px rgba(var(--accent-color-rgb), 0.4)
+  ); /* Ombreggiatura più intensa */
 }
 
 .project-bookmark:active {
-  transform: scale(0.92) rotate(-2deg);
-  transition-duration: 0.1s;
+  transform: scale(0.92) rotate(-2deg); /* Effetto "click" */
+  transition-duration: 0.1s; /* Transizione più rapida al click */
 }
 
+/* Linea sottile sotto il segnalibro al hover */
 .project-bookmark::after {
   content: "";
   position: absolute;
-  bottom: -6px;
+  bottom: -6px; /* Posizionata sotto l'icona */
   left: 50%;
-  width: 0;
+  width: 0; /* Inizialmente invisibile */
   height: 2px;
   background: var(--accent-color);
-  transform: translateX(-50%);
+  transform: translateX(-50%); /* Centra la linea */
   transition: width 0.3s var(--bounce), opacity 0.3s ease;
   opacity: 0;
 }
 
 .project-bookmark:hover::after {
-  width: 65%;
+  width: 65%; /* La linea appare e si espande */
   opacity: 0.8;
 }
 
+/* Stile del titolo del progetto */
 .project-title {
-  font-size: 1.3rem !important;
+  font-size: 1.3rem !important; /* Forza la dimensione del font */
   font-weight: 700 !important;
   letter-spacing: 1px !important;
   position: relative;
@@ -1513,110 +1499,133 @@ button:disabled {
   transition: color 0.35s ease, transform 0.35s var(--bounce),
     text-shadow 0.35s ease;
   text-align: left;
-  white-space: nowrap;
+  white-space: nowrap; /* Previene il wrap del testo */
   max-width: 100%;
-  color: var(--text-color-secondary);
+  color: var(--text-color-secondary); /* Colore secondario di default */
+  /* Aggiunta: Linea sottile al di sotto del titolo (se non è già presente nel JS) */
+  /* border-bottom: 1px solid rgba(var(--text-color-rgb), 0.1); */
 }
 
+/* Hover state per il titolo del progetto */
 .project:hover .project-title {
-  transform: translateY(-5px) translateZ(15px);
-  color: var(--accent-color);
+  transform: translateY(-5px) translateZ(15px); /* Si solleva e si avvicina */
+  color: var(--accent-color); /* Cambia colore con l'accento */
   text-shadow: 0 3px 12px rgba(var(--accent-color-rgb), 0.5),
-    0 0 5px rgba(var(--accent-color-rgb), 0.2);
+    0 0 5px rgba(var(--accent-color-rgb), 0.2); /* Ombra luminosa */
 }
 
+/* Contenitore della descrizione */
 .project-description-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  overflow: hidden;
+  overflow: hidden; /* Importante per l'effetto ellipsis */
   width: 100%;
-  height: clamp(100px, 15vh, 120px);
+  height: clamp(100px, 15vh, 120px); /* Altezza vincolata per coerenza */
   margin-bottom: var(--space-xs);
 }
 
+/* Stile della descrizione del progetto */
 .project-description {
   font-size: clamp(0.8rem, 1.4vw, 0.9rem);
   margin: var(--space-xs) 0;
   padding: var(--space-xs) var(--space-xs) var(--space-xs) 0;
   line-height: 1.6;
   text-align: left;
+  /* Proprietà per il troncamento del testo multi-linea */
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5; /* Limita a 5 linee, puoi aggiungerlo se non l'hai già */
   overflow: hidden;
   text-overflow: ellipsis;
   border-radius: var(--border-radius-sm);
   white-space: normal;
-  word-break: break-word;
+  word-break: break-word; /* Permette il "break" delle parole lunghe */
   color: var(--text-color-secondary);
   transition: transform 0.35s var(--bounce), background 0.35s ease,
     color 0.35s ease, box-shadow 0.35s ease;
+  /* Aggiunto per maggiore leggibilità: */
+  text-rendering: optimizeLegibility;
 }
 
+/* Hover state per l'icona all'interno della descrizione (se esiste) */
 .project:hover .description-icon {
+  /* Assumo esista un'icona dentro la descrizione */
   transform: scale(1.2) translateY(-2px) rotate(-5deg);
   color: var(--accent-color);
   text-shadow: 0 0 8px rgba(var(--accent-color-rgb), 0.35);
 }
 
+/* Hover state per la descrizione del progetto */
 .project:hover .project-description {
-  color: var(--text-color);
-  background: rgba(var(--text-color-rgb), 0.03);
-  transform: translateY(-2.5px);
-  box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.05) inset;
+  color: var(--text-color); /* Testo più brillante al hover */
+  background: rgba(
+    var(--text-color-rgb),
+    0.03
+  ); /* Sfondo leggermente evidenziato */
+  transform: translateY(-2.5px); /* Leggero sollevamento */
+  box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.05) inset; /* Ombra interna sottile */
 }
 
+/* Sezione statistiche del progetto (linguaggio, stelle, fork) */
 .project-stats {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr); /* Due colonne di default */
   gap: 0.5rem;
-  margin-top: auto;
+  margin-top: auto; /* Spinge in fondo se la descrizione è corta */
   padding: 0.6rem 0 0.5rem;
-  border-top: 1px solid rgba(var(--text-color-rgb), 0.08);
+  border-top: 1px solid rgba(var(--text-color-rgb), 0.08); /* Separatore sottile */
   font-size: 0.8rem;
   color: var(--text-color-secondary);
-  align-items: stretch;
+  align-items: stretch; /* Allinea gli elementi verticalmente */
 }
 
+/* Stile per ogni singola statistica (es. "Stars", "Forks") */
 .project-stats span {
-  display: inline-flex;
+  display: inline-flex; /* Per allineare icona e testo */
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* Centra il contenuto */
   gap: 0.3rem;
   transition: transform 0.3s var(--bounce), background 0.3s ease,
     color 0.3s ease, box-shadow 0.3s ease;
   padding: 0.25rem 0.5rem;
   border-radius: var(--border-radius-sm);
   will-change: transform, background, color, box-shadow;
-  white-space: nowrap;
+  white-space: nowrap; /* Previene il wrap del testo */
   overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 65px;
-  background: rgba(var(--text-color-rgb), 0.035);
-  width: 100%;
+  text-overflow: ellipsis; /* Aggiunge i puntini se il testo è troppo lungo */
+  min-width: 65px; /* Larghezza minima per le statistiche */
+  background: rgba(var(--text-color-rgb), 0.035); /* Sfondo molto sottile */
+  width: 100%; /* Occupa tutta la larghezza disponibile nella griglia */
+  /* Aggiunta: Bordo sottile per un effetto più "scheda" */
+  border: 1px solid rgba(var(--text-color-rgb), 0.05);
 }
 
+/* Hover state per le statistiche */
 .project-stats span:hover {
-  transform: translateY(-3px) scale(1.06);
-  color: var(--accent-color);
-  background: rgba(var(--accent-color-rgb), 0.12);
-  z-index: 1;
+  transform: translateY(-3px) scale(1.06); /* Effetto "galleggiamento" */
+  color: var(--accent-color); /* Colore accentuato */
+  background: rgba(var(--accent-color-rgb), 0.12); /* Sfondo con accento */
+  z-index: 1; /* Solleva leggermente */
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14),
-    0 0 6px rgba(var(--accent-color-rgb), 0.1);
+    0 0 6px rgba(var(--accent-color-rgb), 0.1); /* Ombra più pronunciata */
 }
 
+/* Icone all'interno delle statistiche */
 .project-stats i {
   font-size: 0.95rem;
   transition: transform 0.3s var(--bounce);
   will-change: transform;
-  flex-shrink: 0;
+  flex-shrink: 0; /* Impedisce che l'icona si rimpicciolisca */
 }
 
+/* Hover state per le icone all'interno delle statistiche */
 .project-stats span:hover i {
-  transform: scale(1.18) rotate(-3deg);
+  transform: scale(1.18) rotate(-3deg); /* Effetto "pop" e rotazione */
 }
 
+/* Media query per la sezione statistiche */
 @media (min-width: 481px) {
   .project-stats {
     grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
@@ -1635,34 +1644,40 @@ button:disabled {
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-color);
-  text-decoration: none;
+  text-decoration: none; /* Rimuove la sottolineatura */
   cursor: pointer;
   position: relative;
-  border: 1px solid rgba(var(--accent-color-rgb), 0.45);
+  border: 1px solid rgba(var(--accent-color-rgb), 0.45); /* Bordo con colore accento */
   border-radius: var(--border-radius-sm);
-  background: rgba(var(--accent-color-rgb), 0.28);
-  backdrop-filter: blur(4px);
+  background: rgba(
+    var(--accent-color-rgb),
+    0.28
+  ); /* Sfondo leggermente accentuato */
+  backdrop-filter: blur(4px); /* Blur aggiuntivo per il bottone */
   box-shadow: var(--shadow-sm);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease,
     border-color 0.3s ease, letter-spacing 0.3s ease;
   will-change: transform, box-shadow, background, border-color, letter-spacing;
 }
 
+/* Hover state per il link del progetto */
 .project-link:hover {
-  transform: translateY(-2.5px) scale(1.02);
-  box-shadow: var(--shadow-md), 0 0 10px rgba(var(--accent-color-rgb), 0.12);
-  background: rgba(var(--accent-color-rgb), 0.45);
-  border-color: rgba(var(--accent-color-rgb), 0.7);
-  letter-spacing: 1.1px;
+  transform: translateY(-2.5px) scale(1.02); /* Leggero sollevamento e ingrandimento */
+  box-shadow: var(--shadow-md), 0 0 10px rgba(var(--accent-color-rgb), 0.12); /* Ombreggiatura più ampia */
+  background: rgba(var(--accent-color-rgb), 0.45); /* Sfondo più opaco */
+  border-color: rgba(var(--accent-color-rgb), 0.7); /* Bordo più vivido */
+  letter-spacing: 1.1px; /* Leggero aumento della spaziatura tra le lettere */
 }
 
+/* Active state per il link del progetto (al click) */
 .project-link:active {
-  transform: translateY(0px) scale(0.97);
+  transform: translateY(0px) scale(0.97); /* Effetto "pressato" */
   box-shadow: var(--shadow-sm);
   background: rgba(var(--accent-color-rgb), 0.55);
-  transition-duration: 0.08s;
+  transition-duration: 0.08s; /* Transizione più rapida al click */
 }
 
+/* Focus state per accessibilità del link */
 .project-link:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2.5px rgba(var(--primary-color-rgb), 0.7),
@@ -1684,11 +1699,55 @@ button:disabled {
 
 @media (max-width: 768px) {
   .project {
-    width: clamp(280px, 88vw, 420px);
+    width: clamp(
+      280px,
+      88vw,
+      420px
+    ); /* Larghezza maggiore su schermi più piccoli */
     min-height: 235px;
   }
   .project:hover {
-    transform: translateY(-8px) scale(1.03);
+    transform: translateY(-8px) scale(1.03); /* Animazione hover meno aggressiva sui piccoli schermi */
+  }
+}
+
+/* Aggiunta: Media query per schermi molto piccoli o modalità orizzontale */
+@media (max-width: 480px) {
+  .project {
+    padding: var(--space-xs); /* Padding ridotto */
+    min-height: 220px;
+  }
+
+  .project-title {
+    font-size: 1.2rem !important; /* Font size leggermente più piccolo */
+  }
+
+  .project-description {
+    font-size: 0.85rem;
+  }
+
+  .project-link {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Aggiunta: Media query per schermi ad alta risoluzione o molto grandi */
+@media (min-width: 1920px) {
+  .project {
+    width: 380px; /* Larghezza fissa maggiore */
+    min-height: 280px;
+    padding: var(--space-md);
+  }
+  .project-title {
+    font-size: 1.5rem !important;
+  }
+  .project-description {
+    font-size: 1rem;
+  }
+  .project-link {
+    font-size: 0.95rem;
+    padding: 0.75rem 1.5rem;
   }
 }
 
