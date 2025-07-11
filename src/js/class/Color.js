@@ -109,16 +109,6 @@ class ColorFunctions {
     return [255 - r, 255 - g, 255 - b];
   }
 
-  getLightness(color) {
-    const [r, g, b] = this.#normalizeRGB(color);
-    return (Math.max(r, g, b) + Math.min(r, g, b)) / 2;
-  }
-
-  setLightness(color, newL) {
-    const [h, s] = this.rgbToHsl(...color);
-    return this.hslToRgb(h, s, newL);
-  }
-
   getHue(color) {
     const [h] = this.rgbToHsl(...color);
     return h;

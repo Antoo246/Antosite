@@ -91,12 +91,10 @@ class DynamicColor {
       }
     }
 
-    // Se la palette è troppo corta, riempi con copie del colore finale
     while (palette.length < steps) {
       palette.push(endColor.map(Math.round));
     }
 
-    // Se troppo lunga, riduci equamente
     if (palette.length > steps) {
       const reduced = [];
       const step = (palette.length - 1) / (steps - 1);
@@ -178,7 +176,6 @@ class DynamicColor {
     });
   }
 
-
   calculateTextColor(palette) {
     if (!Array.isArray(palette) || palette.length === 0) {
       console.error("Empty palette in calculateTextColor.");
@@ -204,28 +201,36 @@ class DynamicColor {
     return adjustedTextColor;
   }
 
-  adjustLightness(color, avgBrightness, options = {}) {
-    const {
-      lightnessThreshold = 0.5,
-      targetContrastLight = 0.8,
-      targetContrastDark = 0.2,
-    } = options;
+  adjustLightness(color, avgBrightness) {
+    const [r, g, b] = color;
+    const [h, s, l] = this.colorFunctions.rgbToHsl(r, g, b);
 
-    const currentLightness = this.colorFunctions.getLightness(color);
+    const BRIGHTNESS_THRESHOLD = 128;
+    const TARGET_LIGHTNESS_DARK_BG = 0.85;
+    const TARGET_LIGHTNESS_LIGHT_BG = 0.15;
+    const SATURATION_THRESHOLD = 0.1;
+    const LIGHTNESS_ADJUST_THRESHOLD_DARK = 0.65;
+    const LIGHTNESS_ADJUST_THRESHOLD_LIGHT = 0.35;
 
-    let targetLightness;
-    if (avgBrightness < lightnessThreshold) {
-      targetLightness = Math.max(currentLightness, targetContrastLight);
-    } else {
-      targetLightness = Math.min(currentLightness, targetContrastDark);
+    const isDarkBg = avgBrightness < BRIGHTNESS_THRESHOLD;
+
+    if (s < SATURATION_THRESHOLD) {
+      return isDarkBg ? [255, 255, 255] : [0, 0, 0];
     }
 
-    const newLightness =
-      currentLightness + (targetLightness - currentLightness) * 0.8;
+    let newLightness = l;
+    if (isDarkBg) {
+      if (l < LIGHTNESS_ADJUST_THRESHOLD_DARK) {
+        newLightness = TARGET_LIGHTNESS_DARK_BG;
+      }
+    } else {
+      if (l > LIGHTNESS_ADJUST_THRESHOLD_LIGHT) {
+        newLightness = TARGET_LIGHTNESS_LIGHT_BG;
+      }
+    }
 
-    const clampedLightness = Math.max(0, Math.min(1, newLightness));
-
-    return this.colorFunctions.setLightness(color, clampedLightness);
+    const [newR, newG, newB] = this.colorFunctions.hslToRgb(h, s, newLightness);
+    return [Math.round(newR), Math.round(newG), Math.round(newB)];
   }
 
   async updateGradient(palette) {
