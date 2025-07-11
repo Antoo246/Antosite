@@ -95,7 +95,7 @@ class App {
 
     if (!icon) {
       console.warn(`No icon found for language: ${language}`);
-      return '<i class="bi bi-question-circle" title="' + language + '"></i>';
+      return '<i class="bi bi-code-slash" title="' + language + '"></i>';
     } else {
       console.log(
         "Icon found for language:",
@@ -131,10 +131,12 @@ class App {
     const skillsContainer = document.getElementById("skills-container");
 
     this.CONFIG.skills.forEach((skill) => {
-      let skillIcon = this.findLanguageIcon(skill);
-      let skillElement = document.createElement("div");
-      skillElement.classList.add("skill");
-      skillElement.innerHTML = skillIcon + skill;
+      let skillIcon = this.findLanguageIcon(skill.name);
+      let skillElement = document.createElement("a");
+      skillElement.classList.add("skill", "link");
+      skillElement.href = skill.link;
+      skillElement.target = "_blank";
+      skillElement.innerHTML = skillIcon + skill.name;
       skillsContainer.appendChild(skillElement);
     });
 
@@ -185,7 +187,7 @@ class App {
         element: this.elements.blog,
         username: data.blog && data.blog.startsWith("http") ? data.blog : null,
         baseUrl: "",
-        icon: "bi-link-45deg",
+        icon: "bi-globe",
         text: "Blog ",
       },
     };
@@ -215,7 +217,7 @@ class App {
     const repoCarousel = document.getElementById("projects-container");
     const projectsTitle = document.getElementById("projects");
 
-    projectsTitle.innerHTML = `<i class="bi bi-box"> Projects (${
+    projectsTitle.innerHTML = `<i class="bi bi-archive-fill"> Projects (${
       data.public_repos || 0
     })</i>`;
 
@@ -251,7 +253,7 @@ class App {
         projectTitleContainer.classList.add("project-title-container");
 
         const bookmarkIcon = document.createElement("i");
-        bookmarkIcon.className = "bi bi-bookmark-heart-fill project-bookmark";
+        bookmarkIcon.className = "bi bi-pin-angle-fill project-bookmark";
         projectTitleContainer.appendChild(bookmarkIcon);
 
         const projectTitle = document.createElement("h5");
@@ -261,20 +263,16 @@ class App {
           : "Unnamed Project";
         projectTitle.textContent = titleText;
 
+        const textContainer = document.createElement("div");
+        textContainer.classList.add("text-scrolling-container");
+
         if (titleText.length > 15) {
           console.warn("Long title detected:", titleText);
-
-          const scrollingContainer = document.createElement("div");
-          scrollingContainer.classList.add("text-scrolling-container");
-
           projectTitle.classList.add("text-scrolling");
-          projectTitle.title = titleText;
-
-          scrollingContainer.appendChild(projectTitle);
-          projectTitleContainer.appendChild(scrollingContainer);
-        } else {
-          projectTitleContainer.appendChild(projectTitle);
         }
+
+        textContainer.appendChild(projectTitle);
+        projectTitleContainer.appendChild(textContainer);
 
         const projectDescriptionContainer = document.createElement("div");
         projectDescriptionContainer.classList.add(
@@ -287,7 +285,7 @@ class App {
           repo.description || "No description available";
         projectDescription.innerHTML = `
           <span class="description-icon">
-            <i class="bi bi-file-text"></i>
+            <i class="bi bi-card-text"></i>
           </span>
           <span class="description-text">${
             repo.description || "No description available"
@@ -310,7 +308,7 @@ class App {
           const languageIcon = this.findLanguageIcon(repo.language) || "";
           languageInfo = `<span title="Primary language">${languageIcon} ${repo.language}</span>`;
         } else {
-          languageInfo = `<span title="Primary language"><i class="bi bi-question-circle"></i> N/A</span>`;
+          languageInfo = `<span title="Primary language"><i class="bi bi-code-slash"></i> N/A</span>`;
         }
         statsContainer.innerHTML += languageInfo;
 
@@ -321,7 +319,7 @@ class App {
               ? (repo.size / 1000).toFixed(1) + " MB"
               : repo.size + " KB";
         }
-        statsContainer.innerHTML += `<span title="Repository size"><i class="bi bi-hdd"></i> ${repoSize}</span>`;
+        statsContainer.innerHTML += `<span title="Repository size"><i class="bi bi-database"></i> ${repoSize}</span>`;
 
         let stars =
           repo.stargazers_count !== undefined && repo.stargazers_count !== null
@@ -339,12 +337,12 @@ class App {
           forksCount >= 1000
             ? (forksCount / 1000).toFixed(1) + "k"
             : forksCount;
-        statsContainer.innerHTML += `<span title="Forks"><i class="bi bi-diagram-2-fill"></i> ${formattedForks}</span>`;
+        statsContainer.innerHTML += `<span title="Forks"><i class="bi bi-git"></i> ${formattedForks}</span>`;
 
         if (repo.fork) {
-          statsContainer.innerHTML += `<span title="Forked"><i class="bi bi bi-exclamation-circle-fill"></i> Forked</span>`;
+          statsContainer.innerHTML += `<span title="Forked"><i class="bi bi-sign-turn-right-fill"></i> Forked</span>`;
         } else {
-          statsContainer.innerHTML += `<span title="Original"><i class="bi bi bi-exclamation-circle-fill"></i> Original</span>`;
+          statsContainer.innerHTML += `<span title="Original"><i class="bi bi-gem"></i> Original</span>`;
         }
 
         let timeAgo = "N/A";
