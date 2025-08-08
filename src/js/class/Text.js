@@ -8,11 +8,20 @@ class TextClass {
       throw new Error("Text must be a string");
     }
 
+    // Respect reduced motion preference
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     return new Promise((resolve) => {
       element.innerHTML = "";
 
       if (text.length === 0) {
         console.warn("Text is empty");
+        resolve();
+        return;
+      }
+
+      if (prefersReducedMotion) {
+        element.textContent = text;
         resolve();
         return;
       }

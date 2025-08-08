@@ -122,11 +122,15 @@ class App {
     this.elements.username.innerHTML = data.login;
     this.elements.logo.src = data.avatar_url;
 
-    this.skillIconJSON = await fetch(
-      "https://raw.githubusercontent.com/devicons/devicon/refs/heads/master/devicon.json"
-    )
-      .then((response) => response.json())
-      .then((data) => data);
+    try {
+      this.skillIconJSON = await fetch(
+        "https://raw.githubusercontent.com/devicons/devicon/refs/heads/master/devicon.json",
+        { cache: "force-cache" }
+      ).then((response) => response.json());
+    } catch (e) {
+      console.warn("Devicon JSON fetch failed, using minimal fallback", e);
+      this.skillIconJSON = [];
+    }
 
     const skillsContainer = document.getElementById("skills-container");
 
@@ -204,6 +208,7 @@ class App {
       link.classList.add("link");
       link.href = `${info.baseUrl}${info.username}`;
       link.target = "_blank";
+      link.rel = "noopener noreferrer";
       link.title = info.text;
 
       const icon = document.createElement("i");
@@ -229,9 +234,9 @@ class App {
     } else if (data.repo.length < 3) {
       repoCarousel.classList.remove("carousel");
     } else {
-      const sortedRepos = [...data.repo].sort((a, b) =>
-        a.name.localeCompare(b.name)
-      );
+      const sortedRepos = [...data.repo]
+        .filter((r) => !r.archived)
+        .sort((a, b) => a.name.localeCompare(b.name));
       repoCarousel.innerHTML = "";
 
       sortedRepos.forEach((repo, index) => {
@@ -239,15 +244,22 @@ class App {
         projectElement.classList.add("project");
         projectElement.style.setProperty("--project-index", index.toString());
 
-        projectElement.addEventListener("mousemove", (e) => {
-          const rect = projectElement.getBoundingClientRect();
-          const x =
-            ((e.clientX - rect.left) / projectElement.offsetWidth) * 100;
-          const y =
-            ((e.clientY - rect.top) / projectElement.offsetHeight) * 100;
-          projectElement.style.setProperty("--x", `${x}%`);
-          projectElement.style.setProperty("--y", `${y}%`);
-        });
+        // Throttle mousemove for better perf
+        {
+          let ticking = false;
+          projectElement.addEventListener("mousemove", (e) => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+              const rect = projectElement.getBoundingClientRect();
+              const x = ((e.clientX - rect.left) / rect.width) * 100;
+              const y = ((e.clientY - rect.top) / rect.height) * 100;
+              projectElement.style.setProperty("--x", `${x}%`);
+              projectElement.style.setProperty("--y", `${y}%`);
+              ticking = false;
+            });
+          });
+        }
 
         const projectTitleContainer = document.createElement("div");
         projectTitleContainer.classList.add("project-title-container");
@@ -367,8 +379,9 @@ class App {
         const repoLink = document.createElement("a");
         repoLink.href = repo.html_url;
         repoLink.target = "_blank";
+        repoLink.rel = "noopener noreferrer";
         repoLink.classList.add("project-link", "link");
-        repoLink.innerHTML = `<i class="bi bi-box-arrow-up-right"> View Project</i>`;
+        repoLink.innerHTML = `<i class="bi bi-box-arrow-up-right"></i> View Project`;
         repoLink.style.setProperty("--child-nr", "4");
 
         projectElement.append(statsContainer, repoLink);

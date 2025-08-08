@@ -1,9 +1,9 @@
 class Background {
   static DEFAULT_PALETTE = [
-    "26, 0, 55",
-    "59, 1, 86",
-    "79, 0, 130",
-    "147, 0, 255",
+    getComputedStyle(document.documentElement).getPropertyValue("--primary-color-rgb").trim() || "33, 0, 94",
+    getComputedStyle(document.documentElement).getPropertyValue("--secondary-color-rgb").trim() || "90, 24, 154",
+    getComputedStyle(document.documentElement).getPropertyValue("--accent-color-rgb").trim() || "162, 89, 255",
+    getComputedStyle(document.documentElement).getPropertyValue("--accent-color-2-rgb").trim() || "247, 37, 133",
     "68, 0, 255",
   ];
 
@@ -218,9 +218,10 @@ class Background {
     const { ctx, width, height, palette, time } = this;
     const t = time * 0.05;
 
-    const color1 = `rgb(${palette[0]})`;
-    const color2 = `rgb(${palette[1 % palette.length]})`;
-    const color3 = `rgb(${palette[2 % palette.length]})`;
+    const safe = (i, fallback) => (palette[i] && String(palette[i]).trim()) || fallback;
+    const color1 = `rgb(${safe(0, "33, 0, 94")})`;
+    const color2 = `rgb(${safe(1, "90, 24, 154")})`;
+    const color3 = `rgb(${safe(2, "162, 89, 255")})`;
 
     const x0 = width * (0.5 + 0.5 * Math.sin(t * 0.5));
     const y0 = height * (0.5 + 0.5 * Math.cos(t * 0.3));
