@@ -124,7 +124,7 @@ class App {
 
     try {
       this.skillIconJSON = await fetch(
-        "https://raw.githubusercontent.com/devicons/devicon/refs/heads/master/devicon.json",
+        "https://raw.githubusercontent.com/devicons/devicon/master/devicon.json",
         { cache: "force-cache" }
       ).then((response) => response.json());
     } catch (e) {
