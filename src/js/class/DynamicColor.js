@@ -85,8 +85,7 @@ class DynamicColor {
     const lightestColor = sortedPalette[sortedPalette.length - 1];
     const avgBrightness = this.colorFunctions.averageBrightness(sortedPalette);
     
-    // avgBrightness is normalized [0..1]
-    const baseTextColor = avgBrightness > 0.5 ? darkestColor : lightestColor;
+    const baseTextColor = avgBrightness > 128 ? darkestColor : lightestColor;
     return this.adjustLightness(baseTextColor, avgBrightness);
   }
   
@@ -112,7 +111,15 @@ class DynamicColor {
 
   updateTheme(palette) {
     if (!Array.isArray(palette) || palette.length === 0) {
-      this.applyFallbackTheme();
+      const root = document.documentElement;
+      root.style.setProperty("--text-color", "#ffffff");
+      root.style.setProperty("--text-color-rgb", "255, 255, 255");
+      root.style.setProperty("--text-color-secondary", "rgba(255, 255, 255, 0.75)");
+      root.style.setProperty("--primary-color", "#222222");
+      root.style.setProperty("--secondary-color", "#444444");
+      root.style.setProperty("--accent-color", "#888888");
+      root.style.setProperty("--highlight-color", "#111111");
+      root.style.setProperty("--default-bg-gradient", "linear-gradient(to right, #000, #111, #222)");
       return;
     }
 
@@ -123,54 +130,26 @@ class DynamicColor {
 
     root.style.setProperty("--text-color", `rgb(${textRgb})`);
     root.style.setProperty("--text-color-rgb", textRgb);
-    root.style.setProperty("--text-color-secondary", `rgba(${textRgb}, 0.82)`);
+    root.style.setProperty("--text-color-secondary", `rgba(${textRgb}, 0.75)`);
 
     const colorDark = sortedPalette[0];
     const colorSecondary = sortedPalette[1] || colorDark;
-    const colorPrimary = sortedPalette[2] || colorSecondary;
-    const colorAccent = sortedPalette[sortedPalette.length - 1] || colorPrimary;
-    const colorAccent2 = sortedPalette[sortedPalette.length - 2] || colorAccent;
+    const colorPrimary = this.colorFunctions.averageColor(palette)
+    const colorAccent = sortedPalette[sortedPalette.length - 1];
     
-    const primaryRgb = colorPrimary.join(", ");
-    const secondaryRgb = colorSecondary.join(", ");
-    const accentRgb = colorAccent.join(", ");
-    const accent2Rgb = colorAccent2.join(", ");
-    const darkRgb = colorDark.join(", ");
-    
-    // Set both string and rgb tokens to align with CSS
-    root.style.setProperty("--primary-color", `rgb(${primaryRgb})`);
-    root.style.setProperty("--primary-color-rgb", primaryRgb);
-    root.style.setProperty("--secondary-color", `rgb(${secondaryRgb})`);
-    root.style.setProperty("--secondary-color-rgb", secondaryRgb);
-    root.style.setProperty("--accent-color", `rgb(${accentRgb})`);
-    root.style.setProperty("--accent-color-rgb", accentRgb);
-    root.style.setProperty("--accent-color-2", `rgb(${accent2Rgb})`);
-    root.style.setProperty("--accent-color-2-rgb", accent2Rgb);
-    root.style.setProperty("--dark-overlay", `rgba(${darkRgb}, 0.22)`);
+    root.style.setProperty("--primary-color", this.colorFunctions.arrayToRgb(colorPrimary));
+    root.style.setProperty("--secondary-color", this.colorFunctions.arrayToRgb(colorSecondary));
+    root.style.setProperty("--accent-color", this.colorFunctions.arrayToRgb(colorAccent));
+    root.style.setProperty("--highlight-color", this.colorFunctions.arrayToRgb(colorDark));
+    root.style.setProperty("--dark-overlay", `rgba(${colorDark.join(", ")}, 0.25)`);
 
-    // Background gradient tokens consumed by CSS body
-    root.style.setProperty("--bg-gradient-start", `rgb(${primaryRgb})`);
-    root.style.setProperty("--bg-gradient-end", `rgb(${secondaryRgb})`);
+    const gradient = sortedPalette
+      .map((color) => `rgb(${color.join(", ")})`)
+      .join(", ");
+    root.style.setProperty("--default-bg-gradient", `linear-gradient(to right, ${gradient})`);
   }
   
-  applyFallbackTheme() {
-    const root = document.documentElement;
-    root.style.setProperty("--text-color", "#ffffff");
-    root.style.setProperty("--text-color-rgb", "255, 255, 255");
-    root.style.setProperty("--text-color-secondary", "rgba(255, 255, 255, 0.82)");
-    root.style.setProperty("--primary-color", "#21005e");
-    root.style.setProperty("--primary-color-rgb", "33, 0, 94");
-    root.style.setProperty("--secondary-color", "#5a189a");
-    root.style.setProperty("--secondary-color-rgb", "90, 24, 154");
-    root.style.setProperty("--accent-color", "#a259ff");
-    root.style.setProperty("--accent-color-rgb", "162, 89, 255");
-    root.style.setProperty("--accent-color-2", "#f72585");
-    root.style.setProperty("--accent-color-2-rgb", "247, 37, 133");
-    root.style.setProperty("--dark-overlay", "rgba(20, 0, 40, 0.22)");
-    root.style.setProperty("--bg-gradient-start", "#1a0036");
-    root.style.setProperty("--bg-gradient-end", "#2d006e");
-  }
-  
+
   async applyTheme() {
     try {
       const rawPalette = await this.extractPalette();

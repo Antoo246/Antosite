@@ -1,268 +1,206 @@
+/**
+ * @class Background
+ * @description Versione finale che utilizza una palette di colori statica o
+ * passata tramite costruttore, identica alla logica dell'esempio fornito.
+ *
+ * @author Gemini AI (Revisione)
+ * @version 7.0 - Gestione Palette
+ */
 class Background {
+  /**
+   * ✨ MODIFICA ✨
+   * Palette di default hardcoded, identica all'esempio.
+   * Non legge più dai CSS.
+   */
   static DEFAULT_PALETTE = [
-    getComputedStyle(document.documentElement).getPropertyValue("--primary-color-rgb").trim() || "33, 0, 94",
-    getComputedStyle(document.documentElement).getPropertyValue("--secondary-color-rgb").trim() || "90, 24, 154",
-    getComputedStyle(document.documentElement).getPropertyValue("--accent-color-rgb").trim() || "162, 89, 255",
-    getComputedStyle(document.documentElement).getPropertyValue("--accent-color-2-rgb").trim() || "247, 37, 133",
+    "26, 0, 55",
+    "59, 1, 86",
+    "79, 0, 130",
+    "147, 0, 255",
     "68, 0, 255",
   ];
 
   static DEFAULT_SETTINGS = {
-    splashCount: 30,
-    minVertices: 6,
-    maxVertices: 12,
-    amplitude: 10,
-    fps: 60,
-    moveSpeed: 4,
-    maxMovement: 100,
+    starCount: 250,
+    starSize: { min: 0.5, max: 2.8 },
+    starGlowOpacity: 0.1,
+    moveSpeed: 0.05,
+    connection: {
+      distance: 110,
+      lineWidth: 0.8,
+    },
+    parallaxStrength: 0.5,
+    pulsatingStars: {
+      enabled: true,
+      speed: 0.2,
+      intensity: 0.3,
+    },
+    shootingStars: {
+      enabled: true,
+      probability: 0.001,
+      speed: 15,
+      length: 150,
+      lineWidth: 1.8,
+    },
+    mouseInteraction: {
+      enabled: true,
+      distance: 150,
+    },
   };
 
-  static FULLSCREEN_EVENTS = [
-    "fullscreenchange",
-    "webkitfullscreenchange",
-    "mozfullscreenchange",
-    "MSFullscreenChange",
-  ];
+  static TWO_PI = Math.PI * 2;
 
+  /**
+   * ✨ MODIFICA ✨
+   * Il costruttore ora accetta 'palette' come secondo argomento.
+   */
   constructor(canvasId, palette, userSettings = {}) {
     this.canvas = document.getElementById(canvasId);
-    if (!(this.canvas instanceof HTMLCanvasElement)) {
-      throw new Error(`Canvas element with id '${canvasId}' not found.`);
-    }
+    if (!this.canvas) throw new Error(`Canvas con id '${canvasId}' non trovato.`);
+    
+    this.ctx = this.canvas.getContext('2d');
+    this.settings = { ...Background.DEFAULT_SETTINGS, ...userSettings };
 
-    this.ctx = this.canvas.getContext("2d");
+    /**
+     * ✨ MODIFICA ✨
+     * La palette viene impostata come nell'esempio: o quella passata
+     * o quella di default.
+     */
     this.palette =
       Array.isArray(palette) && palette.length
         ? palette
         : Background.DEFAULT_PALETTE;
 
-    this.settings = { ...Background.DEFAULT_SETTINGS, ...userSettings };
-
-    this.time = 0;
-    this.brushSplashes = [];
-    this.lastFrameTime = 0;
-    this.frameInterval = 1000 / this.settings.fps;
+    this.stars = [];
+    this.shootingStars = [];
     this.animationFrame = null;
-
-    this.handleResize = this.debounce(this.handleResize.bind(this), 250);
-
-    this.init();
+    this.time = 0;
+    this.spatialGrid = new Map();
+    this.gridCellSize = Math.max(this.settings.connection.distance, this.settings.mouseInteraction.distance);
+    this.mouse = { x: null, y: null, active: false };
+    
+    this._init();
   }
 
-  init() {
-    this.initializeCanvas();
-    this.generateBrushSplashes();
-    this.addEventListeners();
-    this.animationFrame = requestAnimationFrame(this.animate.bind(this));
+  _init() {
+    // La lettura dei colori dal CSS è stata rimossa.
+    
+    this.handleResize = this._debounce(this._setupCanvas.bind(this), 250);
+    this._handleMouseMove = this._handleMouseMove.bind(this);
+    this._handleMouseLeave = this._handleMouseLeave.bind(this);
+
+    window.addEventListener('resize', this.handleResize);
+    if (this.settings.mouseInteraction.enabled) {
+      this.canvas.addEventListener('mousemove', this._handleMouseMove);
+      this.canvas.addEventListener('mouseleave', this._handleMouseLeave);
+    }
+
+    this._setupCanvas();
+    this.animate();
   }
+  
+  _handleMouseMove(e) { this.mouse = { ...this.mouse, x: e.clientX, y: e.clientY, active: true }; }
+  _handleMouseLeave() { this.mouse.active = false; }
 
-  checkFullScreen() {
-    return !!(
-      document.fullscreenElement ||
-      document.webkitFullscreenElement ||
-      document.mozFullScreenElement ||
-      document.msFullscreenElement
-    );
-  }
+  // ✨ METODO RIMOSSO ✨
+  // _getColorsFromCSS() non è più necessario.
 
-  debounce(func, wait) {
-    let timeout;
-    return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  }
+  _generateStars() {
+    this.stars = [];
+    for (let i = 0; i < this.settings.starCount; i++) {
+      const depth = Math.pow(Math.random(), 2);
+      const origin = { x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height };
 
-  handleResize() {
-    this.initializeCanvas();
-    this.generateBrushSplashes();
-  }
-
-  initializeCanvas() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-    this.width = this.canvas.width;
-    this.height = this.canvas.height;
-  }
-
-  generateBrushSplashes() {
-    this.brushSplashes = [];
-    const { splashCount, minVertices, maxVertices, moveSpeed } = this.settings;
-    const { width, height, palette } = this;
-
-    const minDimension = Math.min(width, height);
-    const baseRadiusRange = {
-      min: minDimension / 25,
-      max: minDimension / 8,
-    };
-
-    const gridSize = Math.ceil(Math.sqrt(splashCount));
-    const cellWidth = width / gridSize;
-    const cellHeight = height / gridSize;
-
-    for (let i = 0; i < splashCount; i++) {
-      const gridX = i % gridSize;
-      const gridY = Math.floor(i / gridSize);
-
-      const x = gridX * cellWidth + Math.random() * cellWidth;
-      const y = gridY * cellHeight + Math.random() * cellHeight;
-
-      const baseRadius =
-        baseRadiusRange.min +
-        Math.random() * (baseRadiusRange.max - baseRadiusRange.min);
-      const color = palette[i % palette.length];
-      const vertices =
-        minVertices +
-        Math.floor(Math.random() * (maxVertices - minVertices + 1));
-
-      const multipliers = Array.from(
-        { length: vertices },
-        () => 0.9 + Math.random() * 0.2 // Slightly larger random range for more variation
-      );
-
-      this.brushSplashes.push({
-        originalX: x,
-        originalY: y,
-        x,
-        y,
-        baseRadius,
-        color,
-        vertices,
-        multipliers,
-        phase: Math.random() * Math.PI * 2, // For radius animation
-        movePhase: Math.random() * Math.PI * 2, // For position animation
-        moveSpeed: moveSpeed * (0.75 + Math.random() * 0.5), // More centered speed variation
+      this.stars.push({
+        origin: origin,
+        pos: { ...origin },
+        size: this.settings.starSize.min + depth * (this.settings.starSize.max - this.settings.starSize.min),
+        depth: depth,
+        phaseX: Math.random() * Background.TWO_PI,
+        phaseY: Math.random() * Background.TWO_PI,
+        pulsePhase: Math.random() * Background.TWO_PI,
+        opacity: 0.4 + depth * 0.5,
+        /**
+         * ✨ MODIFICA ✨
+         * Il colore viene assegnato ciclando sull'intera palette,
+         * in modo semplice e diretto come nell'esempio.
+         */
+        color: this.palette[i % this.palette.length],
       });
     }
   }
 
-  updateSplashPositions() {
-    const t = this.time * 0.15;
-    const { maxMovement } = this.settings;
-
-    for (const splash of this.brushSplashes) {
-      splash.x =
-        splash.originalX +
-        Math.sin(t * splash.moveSpeed + splash.movePhase) * maxMovement;
-      splash.y =
-        splash.originalY +
-        Math.cos(t * splash.moveSpeed * 0.7 + splash.movePhase) *
-          maxMovement *
-          0.8;
-    }
-  }
-
-  drawSplashes() {
-    const { ctx, settings, time } = this;
-    const t = time * 0.015;
-    ctx.globalCompositeOperation = "screen";
-
-    for (const splash of this.brushSplashes) {
-      const { x, y, baseRadius, phase, color, vertices, multipliers } = splash;
-
-      const dynamicRadius =
-        baseRadius +
-        settings.amplitude *
-          (Math.sin(t + phase) * 0.7 + Math.sin(t * 1.3 + phase) * 0.3);
-      const opacity =
-        0.7 +
-        0.15 * Math.sin(t * 0.7 + phase) +
-        0.05 * Math.cos(t * 1.1 + phase);
-
-      const gradient = ctx.createRadialGradient(x, y, 0, x, y, dynamicRadius);
-      gradient.addColorStop(0, `rgba(${color}, ${opacity})`);
-      gradient.addColorStop(0.6, `rgba(${color}, ${opacity * 0.5})`);
-      gradient.addColorStop(1, `rgba(${color}, 0)`);
-
-      ctx.beginPath();
-
-      const angleStep = (Math.PI * 2) / vertices;
-      const points = [];
-
-      for (let i = 0; i < vertices; i++) {
-        const angle = i * angleStep;
-        const r = dynamicRadius * multipliers[i];
-        points.push({
-          x: x + r * Math.cos(angle),
-          y: y + r * Math.sin(angle),
-        });
-      }
-
-      ctx.moveTo(
-        (points[0].x + points[vertices - 1].x) / 2,
-        (points[0].y + points[vertices - 1].y) / 2
-      );
-
-      for (let i = 0; i < vertices; i++) {
-        const p1 = points[i];
-        const p2 = points[(i + 1) % vertices];
-        const midPoint = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
-        ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-      }
-
-      ctx.closePath();
-      ctx.fillStyle = gradient;
-      ctx.fill();
-    }
-  }
-
-  render() {
-    this.ctx.globalCompositeOperation = "source-over";
-    this.renderBackgroundGradient();
-    this.updateSplashPositions();
-    this.drawSplashes();
-    this.ctx.globalCompositeOperation = "source-over";
-  }
-
-  renderBackgroundGradient() {
-    const { ctx, width, height, palette, time } = this;
+  _drawBackground() {
+    const { ctx, canvas, palette, time } = this;
     const t = time * 0.05;
 
-    const safe = (i, fallback) => (palette[i] && String(palette[i]).trim()) || fallback;
-    const color1 = `rgb(${safe(0, "33, 0, 94")})`;
-    const color2 = `rgb(${safe(1, "90, 24, 154")})`;
-    const color3 = `rgb(${safe(2, "162, 89, 255")})`;
-
-    const x0 = width * (0.5 + 0.5 * Math.sin(t * 0.5));
-    const y0 = height * (0.5 + 0.5 * Math.cos(t * 0.3));
-    const x1 = width * (0.5 - 0.5 * Math.sin(t * 0.7));
-    const y1 = height * (0.5 - 0.5 * Math.cos(t * 0.4));
-
+    // ✨ MODIFICA ✨
+    // Usa l'operatore modulo (%) per selezionare i colori in modo sicuro,
+    // anche se la palette dovesse avere meno di 3 colori.
+    const color1 = `rgb(${palette[0]})`;
+    const color2 = `rgb(${palette[1 % palette.length]})`;
+    const color3 = `rgb(${palette[2 % palette.length]})`;
+    
+    const x0 = canvas.width * (0.5 + 0.5 * Math.sin(t * 0.5));
+    const y0 = canvas.height * (0.5 + 0.5 * Math.cos(t * 0.3));
+    const x1 = canvas.width * (0.5 - 0.5 * Math.sin(t * 0.7));
+    const y1 = canvas.height * (0.5 - 0.5 * Math.cos(t * 0.4));
+    
     const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
     gradient.addColorStop(0, color1);
     gradient.addColorStop(0.5, color2);
     gradient.addColorStop(1, color3);
-
+    
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  addEventListeners() {
-    window.addEventListener("resize", this.handleResize);
-    Background.FULLSCREEN_EVENTS.forEach((event) =>
-      document.addEventListener(event, this.handleResize)
-    );
-  }
+  _drawConnections() {
+    const { distance, lineWidth } = this.settings.connection;
+    this.ctx.lineWidth = lineWidth;
+    
+    // ✨ MODIFICA ✨
+    // Il colore delle connessioni viene preso dalla palette
+    const connectionColor = this.palette[3 % this.palette.length];
 
-  animate(timestamp) {
-    this.animationFrame = requestAnimationFrame(this.animate.bind(this));
-    const elapsed = timestamp - this.lastFrameTime;
+    for (const star1 of this.stars) {
+      // ... logica di ricerca
+      const gridX = Math.floor(star1.pos.x / this.gridCellSize);
+      const gridY = Math.floor(star1.pos.y / this.gridCellSize);
 
-    if (elapsed > this.frameInterval) {
-      this.lastFrameTime = timestamp - (elapsed % this.frameInterval);
-      this.time += 0.01;
-      this.render();
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          const key = `${gridX + dx},${gridY + dy}`;
+          if (this.spatialGrid.has(key)) {
+            for (const star2 of this.spatialGrid.get(key)) {
+              if (star1 === star2) continue;
+              const dist = Math.hypot(star1.pos.x - star2.pos.x, star1.pos.y - star2.pos.y);
+              if (dist < distance) {
+                const opacity = Math.pow(1 - dist / distance, 2) * 0.7;
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = `rgba(${connectionColor}, ${opacity})`;
+                this.ctx.moveTo(star1.pos.x, star1.pos.y);
+                this.ctx.lineTo(star2.pos.x, star2.pos.y);
+                this.ctx.stroke();
+              }
+            }
+          }
+        }
+      }
     }
   }
 
-  destroy() {
-    window.removeEventListener("resize", this.handleResize);
-    Background.FULLSCREEN_EVENTS.forEach((event) =>
-      document.removeEventListener(event, this.handleResize)
-    );
-
-    if (this.animationFrame) {
-      cancelAnimationFrame(this.animationFrame);
-    }
-  }
+  // --- Il resto del codice è invariato e corretto ---
+  
+  _setupCanvas(){this.canvas.width=window.innerWidth;this.canvas.height=window.innerHeight;this._generateStars()}
+  _spawnShootingStar(){let t,e,i;const s=Math.random()<.5,o=Math.random()<.5;s?(t=Math.random()*this.canvas.width,e=o?-200:this.canvas.height+200,i=o?Math.PI*(.25+Math.random()*.5):Math.PI*(1.25+Math.random()*.5)):(t=o?-200:this.canvas.width+200,e=Math.random()*this.canvas.height,i=o?Math.PI*(-.25+Math.random()*.5):Math.PI*(.75+Math.random()*.5));this.shootingStars.push({pos:{x:t,y:e},angle:i,speed:this.settings.shootingStars.speed*(.5+Math.random()*.5),color:this.palette[Math.floor(Math.random()*this.palette.length)]})}
+  _updateSpatialGrid(){this.spatialGrid.clear();for(const t of this.stars){const e=`${Math.floor(t.pos.x/this.gridCellSize)},${Math.floor(t.pos.y/this.gridCellSize)}`;this.spatialGrid.has(e)||this.spatialGrid.set(e,[]),this.spatialGrid.get(e).push(t)}}
+  update(){const t=this.time,e=t*this.settings.moveSpeed;for(const i of this.stars){const s=1+i.depth*this.settings.parallaxStrength,o=Math.sin(e*s+i.phaseX)*20*i.depth,h=Math.cos(e*s+i.phaseY)*20*i.depth;i.pos.x=i.origin.x+o,i.pos.y=i.origin.y+h,i.pos.x<0?i.origin.x+=this.canvas.width:i.pos.x>this.canvas.width&&(i.origin.x-=this.canvas.width),i.pos.y<0?i.origin.y+=this.canvas.height:i.pos.y>this.canvas.height&&(i.origin.y-=this.canvas.height)}this._updateSpatialGrid(),this.settings.shootingStars.enabled&&(Math.random()<this.settings.shootingStars.probability&&this._spawnShootingStar(),this.shootingStars.forEach((t,e)=>{t.pos.x+=Math.cos(t.angle)*t.speed,t.pos.y+=Math.sin(t.angle)*t.speed,(t.pos.x<-200||t.pos.x>this.canvas.width+200||t.pos.y<-200||t.pos.y>this.canvas.height+200)&&this.shootingStars.splice(e,1)}))}
+  draw(){this.ctx.globalCompositeOperation="source-over",this._drawBackground(),this.ctx.globalCompositeOperation="screen",this._drawConnections(),this.settings.mouseInteraction.enabled&&this.mouse.active&&this._drawMouseConnections(),this.settings.shootingStars.enabled&&this.shootingStars.forEach(t=>this._drawShootingStar(t)),this.stars.forEach(t=>this._drawStar(t))}
+  _drawStar(t){const{pos:e,opacity:i,color:s}=t;let o=t.size;const h=this.time;this.settings.pulsatingStars.enabled&&(o*=1+Math.sin(h*this.settings.pulsatingStars.speed+t.pulsePhase)*this.settings.pulsatingStars.intensity*t.depth);const n=o*5,a=this.ctx.createRadialGradient(e.x,e.y,0,e.x,e.y,n);a.addColorStop(0,`rgba(${s}, ${i*this.settings.starGlowOpacity})`),a.addColorStop(1,`rgba(${s}, 0)`),this.ctx.fillStyle=a,this.ctx.beginPath(),this.ctx.arc(e.x,e.y,n,0,Background.TWO_PI),this.ctx.fill(),this.ctx.fillStyle=`rgba(${s}, ${i})`,this.ctx.beginPath(),this.ctx.arc(e.x,e.y,o,0,Background.TWO_PI),this.ctx.fill()}
+  _drawMouseConnections(){const t=this.settings.mouseInteraction.distance,e=`rgb(${this.palette[3%this.palette.length]})`,i=Math.floor(this.mouse.x/this.gridCellSize),s=Math.floor(this.mouse.y/this.gridCellSize);for(let o=-1;o<=1;o++)for(let h=-1;h<=1;h++){const n=`${i+o},${s+h}`;if(this.spatialGrid.has(n))for(const a of this.spatialGrid.get(n)){const r=Math.hypot(this.mouse.x-a.pos.x,this.mouse.y-a.pos.y);if(r<t){const c=Math.pow(1-r/t,3);this.ctx.beginPath(),this.ctx.strokeStyle=`rgba(${e}, ${c})`,this.ctx.lineWidth=this.settings.connection.lineWidth,this.ctx.moveTo(this.mouse.x,this.mouse.y),this.ctx.lineTo(a.pos.x,a.pos.y),this.ctx.stroke()}}}}
+  _drawShootingStar(t){const{length:e,lineWidth:i}=this.settings.shootingStars,s=t.pos.x-Math.cos(t.angle)*e,o=t.pos.y-Math.sin(t.angle)*e,h=this.ctx.createLinearGradient(t.pos.x,t.pos.y,s,o);h.addColorStop(0,`rgba(${t.color}, 1)`),h.addColorStop(1,`rgba(${t.color}, 0)`),this.ctx.beginPath(),this.ctx.strokeStyle=h,this.ctx.lineWidth=i,this.ctx.moveTo(t.pos.x,t.pos.y),this.ctx.lineTo(s,o),this.ctx.stroke()}
+  animate(){this.time+=.01,this.update(),this.draw(),this.animationFrame=requestAnimationFrame(this.animate.bind(this))}
+  destroy(){window.removeEventListener("resize",this.handleResize),this.canvas.removeEventListener("mousemove",this._handleMouseMove),this.canvas.removeEventListener("mouseleave",this._handleMouseLeave),this.animationFrame&&cancelAnimationFrame(this.animationFrame),console.log("Animazione cielo stellato terminata e risorse pulite.")}
+  _debounce(t,e){let i;return(...s)=>{clearTimeout(i),i=setTimeout(()=>t.apply(this,s),e)}}
 }
