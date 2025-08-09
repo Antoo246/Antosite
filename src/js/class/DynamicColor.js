@@ -141,12 +141,14 @@ class DynamicColor {
     const textRgb = textColor.join(", ");
 
     // Role-based colors
-    const primary = this.colorFunctions.averageColor(sortedPalette).map(Math.round);
+    const primary = this.colorFunctions
+      .averageColor(sortedPalette)
+      .map(Math.round);
     const secondary = sortedPalette.length > 1 ? sortedPalette[1] : darkest;
     const accent = [...palette].sort((a, b) => {
-        const satA = this.colorFunctions.rgbToHsl(...a)[1];
-        const satB = this.colorFunctions.rgbToHsl(...b)[1];
-        return satB - satA;
+      const satA = this.colorFunctions.rgbToHsl(...a)[1];
+      const satB = this.colorFunctions.rgbToHsl(...b)[1];
+      return satB - satA;
     })[0];
 
     const primaryRgb = primary.join(", ");
@@ -156,20 +158,25 @@ class DynamicColor {
     const avgBrightness = this.colorFunctions.averageBrightness(sortedPalette);
 
     return {
-      "--text-color": `rgb(${textRgb})`,
-      "--text-color-rgb": textRgb,
-      "--text-color-secondary": `rgba(${textRgb}, 0.82)`,
       "--primary-color": `rgb(${primaryRgb})`,
       "--primary-color-rgb": primaryRgb,
       "--secondary-color": `rgb(${secondaryRgb})`,
       "--secondary-color-rgb": secondaryRgb,
       "--accent-color": `rgb(${accentRgb})`,
       "--accent-color-rgb": accentRgb,
+      "--accent-color-2": `rgb(${accentRgb})`,
+      "--accent-color-2-rgb": accentRgb,
+      "--text-color": `rgb(${textRgb})`,
+      "--text-color-rgb": textRgb,
+      "--text-color-secondary": `rgba(${textRgb}, 0.82)`,
+      "--dark-overlay": `rgba(${darkest.join(", ")}, 0.22)`,
       "--bg-gradient-start": this.colorFunctions.arrayToRgb(darkest),
       "--bg-gradient-end": this.colorFunctions.arrayToRgb(secondary),
-      "--dark-overlay": `rgba(${darkest.join(", ")}, 0.22)`,
       "--glass-bg": `linear-gradient(120deg, rgba(${primaryRgb}, 0.22) 0%, rgba(${secondaryRgb}, 0.13) 100%)`,
       "--glass-border": `rgba(${lightest.join(", ")}, 0.10)`,
+      "--glass-shadow": `0 10px 36px 0 rgba(0,0,0,0.22), 0 1.5px 6px 0 rgba(${accentRgb}, 0.08)`,
+      "--shadow-md": `0 10px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(${accentRgb}, 0.13)`,
+      "--shadow-lg": `0 18px 48px rgba(0,0,0,0.25), 0 6px 18px rgba(${accentRgb}, 0.18)`,
       "color-scheme": avgBrightness < 128 ? "dark" : "light",
     };
   }
@@ -191,13 +198,16 @@ class DynamicColor {
       "--secondary-color-rgb": "90, 24, 154",
       "--accent-color": "#a259ff",
       "--accent-color-rgb": "162, 89, 255",
+      "--accent-color-2": "#f72585",
+      "--accent-color-2-rgb": "247, 37, 133",
       "--text-color": "#f8f8ff",
       "--text-color-rgb": "248, 248, 255",
       "--text-color-secondary": "rgba(248, 248, 255, 0.82)",
       "--dark-overlay": "rgba(20, 0, 40, 0.22)",
       "--bg-gradient-start": "#1a0036",
       "--bg-gradient-end": "#2d006e",
-      "--glass-bg": "linear-gradient(120deg, rgba(33, 0, 94, 0.22) 0%, rgba(90, 24, 154, 0.13) 100%)",
+      "--glass-bg":
+        "linear-gradient(120deg, rgba(33, 0, 94, 0.22) 0%, rgba(90, 24, 154, 0.13) 100%)",
       "--glass-border": "rgba(255, 255, 255, 0.10)",
       "color-scheme": "dark",
     };
