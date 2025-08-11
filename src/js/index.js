@@ -17,12 +17,10 @@ class DOMElements {
 class UIController {
   static showSite(elements, CONFIG) {
     console.log("UIController.showSite called");
-    setTimeout(() => {
-      elements.loading.classList.replace("show", "hide");
-      elements.main.classList.replace("hide", "show");
-      new TextClass().textWriter(CONFIG.ABOUT_TEXT, elements.aboutMe);
-      console.log("Site shown");
-    }, CONFIG.TIMEOUT_MS);
+    // No more timeout - the LoadingController handles the transition
+    elements.main.classList.replace("hide", "show");
+    new TextClass().textWriter(CONFIG.ABOUT_TEXT, elements.aboutMe);
+    console.log("Site shown");
   }
 
   static showError(
@@ -31,12 +29,11 @@ class UIController {
     CONFIG
   ) {
     console.log("UIController.showError called");
-    setTimeout(() => {
-      elements.loading.classList.replace("show", "hide");
-      elements.error.classList.replace("hide", "show");
-      elements.errorMessage.innerHTML = message;
-      console.log("Error shown with message:", message);
-    }, CONFIG.TIMEOUT_MS);
+    // No more timeout - immediate error display
+    elements.loading.classList.replace("show", "hide");
+    elements.error.classList.replace("hide", "show");
+    elements.errorMessage.innerHTML = message;
+    console.log("Error shown with message:", message);
   }
 }
 
@@ -47,6 +44,7 @@ class App {
     this.elements = new DOMElements();
     this.dynamicColor = new DynamicColor();
     this.fetchData = new FetchData();
+    this.loadingController = new LoadingController();
     console.log("App initialized");
   }
 
@@ -415,6 +413,13 @@ class App {
 
   handleError(error) {
     console.log("App.handleError called with error:", error);
+    
+    // Update loading controller to show error
+    if (this.loadingController) {
+      this.loadingController.setText("Error occurred");
+      this.loadingController.forceComplete();
+    }
+    
     new Background("backgroundCanvas", null);
     console.error("Error:", error);
     UIController.showError(this.elements, error.message, this.CONFIG);
@@ -422,18 +427,51 @@ class App {
 
   async init() {
     console.log("App.init called");
+    
+    // Initialize and start loading controller
+    this.loadingController.init();
+    this.loadingController.setText("App.init called");
+    this.loadingController.setProgress(10);
+    
     try {
-      console.log("Fetching data...");
+      console.log("Fetching GitHub data...");
+      this.loadingController.setText("Fetching GitHub data...");
+      this.loadingController.setProgress(25);
+      
       const data = await this.fetchData.fetchGithubData(
         this.CONFIG.GITHUB_USERNAME
       );
+      
+      console.log("Loading repositories...");
+      this.loadingController.setText("Loading repositories...");
+      this.loadingController.setProgress(50);
+      
       data.repo = await this.fetchData.fetchGithubData(
         this.CONFIG.GITHUB_USERNAME + "/repos"
       );
 
-      console.log("Data fetched successfully", data);
+      console.log("Data fetched successfully");
+      this.loadingController.setText("Data fetched successfully");
+      this.loadingController.setProgress(70);
+      
+      console.log("Processing user data...");
+      this.loadingController.setText("Processing user data...");
+      this.loadingController.setProgress(85);
+      
       await this.updateUserInterface(data);
+      
+      console.log("Applying theme...");
+      this.loadingController.setText("Applying theme...");
+      this.loadingController.setProgress(95);
+      
       await this.applyTheme();
+      
+      console.log("Loading complete!");
+      this.loadingController.setText("Loading complete!");
+      
+      // Complete loading
+      this.loadingController.onDataLoaded();
+      
     } catch (error) {
       this.handleError(error);
     }
@@ -442,12 +480,24 @@ class App {
 
 async function loadPage() {
   console.log("loadPage called");
-  const config = await fetch("./src/config/setting.json")
-    .then((response) => response.json())
-    .catch((error) => {
-      console.error("Errore nel caricamento del JSON:", error);
-      return {};
-    });
-  const app = new App(config);
-  app.init();
+  
+  try {
+    const config = await fetch("./src/config/setting.json")
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error("Errore nel caricamento del JSON:", error);
+        return {};
+      });
+    
+    const app = new App(config);
+    await app.init();
+    
+  } catch (error) {
+    console.error("Error in loadPage:", error);
+    
+    // Fallback loading completion if something goes wrong
+    const fallbackLoader = new LoadingController();
+    fallbackLoader.setText("Error loading");
+    fallbackLoader.forceComplete();
+  }
 }

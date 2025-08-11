@@ -25,6 +25,7 @@
     <!--  Color Thief-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.6.0/color-thief.umd.js"></script>
     <!-- JS -->
+    <script src="./src/js/class/LoadingController.js"></script>
     <script src="./src/js/class/Background.js"></script>
     <script src="./src/js/class/DynamicColor.js"></script>
     <script src="./src/js/class/Color.js"></script>
@@ -35,12 +36,43 @@
   <!-- Body -->
   <body onload="loadPage()">
     <main class="main">
-      <!-- Loading -->
+      <!-- Ultra Modern Loading System -->
       <div id="loading" class="loading-container show">
-        <div class="loader-glow"></div>
-        <div class="loader"></div>
-        <div class="loading-progress"></div>
+        <!-- Background Effects -->
+        <div class="loading-backdrop"></div>
         <div class="loading-particles"></div>
+        
+        <!-- Main Loading Content -->
+        <div class="loading-content">
+          <!-- Animated Braces -->
+          <div class="loading-braces">
+            <span class="brace-left animate">{</span>
+            <div class="loading-center">
+              <div class="progress-container">
+                <div class="progress-label">Loading...</div>
+                <div class="progress-bar-wrapper">
+                  <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <div class="progress-glow"></div>
+                  </div>
+                  <div class="progress-percentage" id="progressText">0%</div>
+                </div>
+              </div>
+              
+              <!-- Code-style loader -->
+              <div class="code-loader">
+                <span class="code-text">
+                  <span class="typing-text" id="loadingText">Initializing</span>
+                  <span class="cursor">|</span>
+                </span>
+              </div>
+            </div>
+            <span class="brace-right animate">}</span>
+          </div>
+          
+          <!-- Central Glow Effect -->
+          <div class="loader-glow"></div>
+        </div>
       </div>
       <!-- Error  -->
       <div id="error" class="error-content hide">
