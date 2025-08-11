@@ -5,8 +5,6 @@ class DOMElements {
     this.errorMessage = document.getElementById("message-error");
     this.aboutMe = document.getElementById("aboutme");
     this.loading = document.getElementById("loading");
-    this.github = document.getElementById("github");
-    this.twitter = document.getElementById("twitter");
     this.logo = document.getElementById("logo");
     this.name = document.getElementById("username");
     this.username = document.getElementById("tag");
@@ -263,7 +261,7 @@ class App {
         projectTitleContainer.classList.add("project-title-container");
 
         const bookmarkIcon = document.createElement("i");
-        bookmarkIcon.className = "bi bi-pin-angle-fill project-bookmark";
+        bookmarkIcon.className = "project-bookmark";
         projectTitleContainer.appendChild(bookmarkIcon);
 
         const projectTitle = document.createElement("h5");

@@ -197,19 +197,6 @@ body {
       #2d006e 100%);
   }
 }
-
-/* Page load animation */
-@keyframes pageLoad {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 /* Apply page load animation to main content areas - DISABLED for skills */
 .maincontainer,
 .links {
@@ -1354,25 +1341,6 @@ body {
   transform: translateY(-2px) scale(1.02);
 }
 
-/* Image inside the avatar */
-.logo img {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
-  filter: drop-shadow(0 2px 10px rgba(var(--accent-color-rgb), 0.22));
-  transition: transform var(--transition-medium), filter var(--transition-medium);
-  will-change: transform, filter;
-}
-
-.logo:hover img {
-  transform: scale(1.08) rotate(-6deg);
-  filter: drop-shadow(0 4px 18px rgba(var(--accent-color-rgb), 0.4));
-}
-
 /* Responsive tweaks */
 @media (max-width: 640px) {
   .logocontainer {
@@ -1963,25 +1931,6 @@ body {
   animation: none; /* Disabled by default for visibility */
   opacity: 1; /* Visible by default */
   transform: translateY(0) scale(1); /* Normal state by default */
-}
-
-/* Ensure skills are visible by default, then animate */
-.skill:not(.skill-animated) {
-  opacity: 1 !important;
-  transform: translateY(0) scale(1) !important;
-}
-
-/* Force visibility for all skills as emergency fallback */
-.skill {
-  opacity: 1 !important;
-}
-
-/* Only apply entrance animation when specifically triggered */
-.skill.skill-animated {
-  opacity: 0;
-  transform: translateY(30px) scale(0.9);
-  animation: skillAppear 0.8s var(--bounce) forwards;
-  animation-delay: calc(var(--skill-index, 0) * 0.15s);
 }
 
 @keyframes skillAppear {
@@ -3166,10 +3115,6 @@ button:disabled:hover::after {
   will-change: opacity, filter, visibility;
 }
 
-.hide.animated {
-  display: none;
-}
-
 .show {
   opacity: 1;
   visibility: visible;
@@ -3177,62 +3122,6 @@ button:disabled:hover::after {
   transition: opacity 0.7s var(--bounce), filter 0.7s var(--bounce);
   display: flex; /* Or appropriate display type */
 }
-
-.page-load {
-  animation: pageReveal 0.9s cubic-bezier(0.25, 0.8, 0.5, 1) forwards;
-  will-change: opacity, transform, filter;
-  position: relative;
-  overflow: hidden;
-  transform-origin: center;
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
-
-.page-load::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-   90deg,
-   transparent 0%,
-   rgba(var(--text-color-rgb), 0.12) 50%,
-   transparent 100%
-  );
-  transform: skewX(-25deg);
-  animation: shimmerEffect 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.15s;
-  filter: blur(4px);
-}
-
-.page-load::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-   circle at center,
-   rgba(var(--accent-color-rgb), 0.08) 0%,
-   transparent 68%
-  );
-  opacity: 0;
-  animation: glowPulse 2.2s ease-in-out infinite 0.4s;
-}
-
-@keyframes pageReveal {
-  from {
-   opacity: 0;
-   transform: translateY(25px) scale(0.96);
-   filter: blur(12px) brightness(0.85);
-  }
-  to {
-   opacity: 1;
-   transform: translateY(0) scale(1);
-   filter: blur(0) brightness(1);
-  }
-}
-
-
 
 /* Text Writer Effect - Refined for Cohesion */
 .text-writer {
@@ -4558,21 +4447,6 @@ button:disabled:hover::after {
   }
 }
 
-/* Animazione shimmer per gli effetti di luce */
-@keyframes shimmerEffect {
-  0% { 
-    left: -100%; 
-    opacity: 0; 
-  }
-  50% { 
-    opacity: 1; 
-  }
-  100% { 
-    left: 100%; 
-    opacity: 0; 
-  }
-}
-
 /* ========================================= */
 /* === RESPONSIVE DESIGN MODERNO === */
 /* ========================================= */
@@ -4811,7 +4685,6 @@ button:disabled:hover::after {
 @media (prefers-reduced-motion: reduce) {
   .background,
   .loader,
-  .page-load,
   .carousel,
   .text,
   .project {
@@ -4965,15 +4838,6 @@ button:disabled:hover::after {
   0%, 100% { box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.4); }
   50% { box-shadow: 0 0 0 6px rgba(var(--accent-color-rgb), 0.6); }
 }
-
-/* Performance Optimization Utilities */
-.gpu-accelerated {
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-  will-change: transform;
-}
-
 /* Enhanced Accessibility & Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -5030,16 +4894,6 @@ button:disabled:hover::after {
 /* ========================================
    ADVANCED ANIMATION SYSTEM
    ======================================== */
-
-/* Staggered entrance animations for grid items */
-.links .skill:nth-child(1) { animation-delay: 0.1s; }
-.links .skill:nth-child(2) { animation-delay: 0.2s; }
-.links .skill:nth-child(3) { animation-delay: 0.3s; }
-.links .skill:nth-child(4) { animation-delay: 0.4s; }
-.links .skill:nth-child(5) { animation-delay: 0.5s; }
-.links .skill:nth-child(6) { animation-delay: 0.6s; }
-.links .skill:nth-child(7) { animation-delay: 0.7s; }
-.links .skill:nth-child(8) { animation-delay: 0.8s; }
 
 /* Scroll-triggered animations (CSS-only approach) */
 @keyframes fadeInUp {
