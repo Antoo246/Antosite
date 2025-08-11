@@ -94,6 +94,22 @@ body {
   letter-spacing: 0.01em;
 }
 
+/* Resets tipografici leggeri per coerenza verticale */
+:where(h1, h2, h3, h4, h5, h6, p) {
+  margin: 0;
+}
+
+:where(ul, ol) {
+  margin: 0;
+  padding-inline-start: 1.2rem;
+}
+
+:where(img) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 /* Light theme (auto) */
 @media (prefers-color-scheme: light) {
   :root {
@@ -261,25 +277,13 @@ body {
    var(--glass-bg);
 }
 
+/* Animazione ingresso per i figli dei container principali */
 .maincontainer > *,
 .error-content > * {
   opacity: 0;
-  transform: translateY(16px) scale(0.985);
-  animation: fadeInUp 0.6s cubic-bezier(.77,0,.18,1) forwards;
-  animation-delay: calc(var(--child-nr, 0) * 0.10s);
-}
-
-@media (max-width: 540px) {
-  .maincontainer {
-   width: 98vw;
-   height: 98vh;
-   padding: clamp(1.1rem, 5vw, 1.7rem);
-  }
-  .error-content {
-   width: 96vw;
-   height: 96vh;
-   padding: clamp(0.9rem, 4vw, 1.4rem);
-  }
+  transform: translateY(12px);
+  animation: fadeInUp 0.6s var(--bounce) forwards;
+  animation-delay: calc(var(--child-nr, 0) * 0.1s);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -721,7 +725,8 @@ button {
 }
 
 /* Background Glow Effect */
-.link::before {
+.link::before,
+button::before {
   content: "";
   position: absolute;
   top: 50%;
@@ -741,7 +746,8 @@ button {
 }
 
 /* Shine/Glare Effect */
-.link::after {
+.link::after,
+button::after {
   content: "";
   position: absolute;
   top: 0;
@@ -783,7 +789,8 @@ button:hover {
   opacity: 1;
 }
 
-.link:hover::after {
+.link:hover::after,
+button:hover::after {
   left: 150%;
 }
 
@@ -829,7 +836,9 @@ button:disabled {
 }
 
 .link:disabled:hover::before,
-.link:disabled:hover::after {
+.link:disabled:hover::after,
+button:disabled:hover::before,
+button:disabled:hover::after {
   content: none;
 }
 
@@ -951,7 +960,7 @@ button:disabled {
 }
 
 .programming-animation {
-  font-family: "Source Code Pro", monospace;
+  font-family: "Fira Code", monospace;
   background: rgba(var(--primary-color-rgb), 0.8);
   color: var(--accent-color-2);
   padding: 0.8rem;
@@ -1346,7 +1355,7 @@ button:disabled {
   /* Design coerente con i bottoni */
   background: rgba(var(--accent-color-rgb), 0.1);
   border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-sm);
   
   /* Glassmorphism coerente */
   backdrop-filter: blur(6px);
@@ -1415,9 +1424,7 @@ button:disabled {
   opacity: 0.4;
 }
 
-.skills-container > *:hover::after {
-  left: 150%;
-}
+/* (::after) non utilizzato per le skills - regola rimossa per coerenza */
 
 .skills-container > *:hover > * {
   transform: translateZ(8px) scale(1.1);
@@ -2524,7 +2531,6 @@ button:disabled {
   .loader,
   .page-load,
   .carousel,
-  .item,
   .text,
   .project {
    animation: none !important;
