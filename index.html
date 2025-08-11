@@ -37,7 +37,10 @@
     <main class="main">
       <!-- Loading -->
       <div id="loading" class="loading-container show">
+        <div class="loader-glow"></div>
         <div class="loader"></div>
+        <div class="loading-progress"></div>
+        <div class="loading-particles"></div>
       </div>
       <!-- Error  -->
       <div id="error" class="error-content hide">
@@ -58,11 +61,21 @@
       <!-- Main Container -->
       <div id="home" class="maincontainer hide">
         <div class="logocontainer">
-          <img id="logo" class="logo" alt="Logo" crossorigin="anonymous" />
+          <div class="logo-wrapper">
+            <div class="logo-glow"></div>
+            <img id="logo" class="logo" alt="Logo" crossorigin="anonymous" />
+            <div class="logo-overlay"></div>
+          </div>
           <div class="text-logo">
-            <h3 id="username"></h3>
-            <p id="tag"></p>
-            <i class="weed-icon"></i>
+            <div class="brand-container">
+              <h3 id="username" class="brand-name"></h3>
+              <div class="brand-accent"></div>
+            </div>
+            <p id="tag" class="brand-tagline"></p>
+            <div class="brand-status">
+              <i class="weed-icon status-indicator"></i>
+              <span class="status-text"></span>
+            </div>
           </div>
         </div>
         <div class="othercontainer">
