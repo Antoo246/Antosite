@@ -15,7 +15,6 @@ class DOMElements {
 class UIController {
   static showSite(elements, CONFIG) {
     console.log("UIController.showSite called");
-    // No more timeout - the LoadingController handles the transition
     elements.main.classList.replace("hide", "show");
     new TextClass().textWriter(CONFIG.ABOUT_TEXT, elements.aboutMe);
     console.log("Site shown");
@@ -27,7 +26,6 @@ class UIController {
     CONFIG
   ) {
     console.log("UIController.showError called");
-    // No more timeout - immediate error display
     elements.loading.classList.replace("show", "hide");
     elements.error.classList.replace("hide", "show");
     elements.errorMessage.innerHTML = message;
@@ -54,12 +52,10 @@ class App {
 
     const languagelower = language.toLowerCase().replace(/\s+/g, "");
 
-    // First try exact name matches (most accurate)
     let icon = this.skillIconJSON.find(
       (icon) => icon.name && icon.name.toLowerCase() === languagelower
     );
 
-    // Then try exact altname matches
     if (!icon) {
       icon = this.skillIconJSON.find(
         (icon) =>
@@ -81,7 +77,6 @@ class App {
       );
     }
 
-    // Last resort - exact tag match
     if (!icon) {
       console.warn("Trying with tags...");
       icon = this.skillIconJSON.find(

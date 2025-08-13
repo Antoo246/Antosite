@@ -8,7 +8,7 @@ class Background {
   ];
 
   static DEFAULT_SETTINGS = {
-    starCount: 250,
+    starCount: 200,
     starSize: { min: 0.5, max: 2.8 },
     starGlowOpacity: 0.1,
     moveSpeed: 0.05,
@@ -30,7 +30,7 @@ class Background {
       lineWidth: 1.8,
     },
     mouseInteraction: {
-      enabled: true,
+      enabled: false,
       distance: 150,
     },
   };
