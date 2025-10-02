@@ -1,4 +1,11 @@
-class DynamicColor {
+/**
+ * Dynamic Color Utility
+ * Extracts color palettes from images and applies dynamic themes
+ */
+
+import { ColorFunctions } from './ColorFunctions.js';
+
+export class DynamicColor {
   constructor(options = {}) {
     this.img = null;
     this.threshold = options.threshold ?? 40;
@@ -126,9 +133,25 @@ class DynamicColor {
 
   _setThemeProperties(properties) {
     const root = document.documentElement;
+
+    // Add smooth transitions when applying theme
+    root.style.setProperty('--theme-transition-duration', '0.8s');
+
+    // Apply properties with transition
     for (const [key, value] of Object.entries(properties)) {
-      root.style.setProperty(key, value);
+      const currentValue = getComputedStyle(root).getPropertyValue(key).trim();
+      if (currentValue && currentValue !== value) {
+        // Animate the transition
+        root.style.setProperty(key, value);
+      } else {
+        root.style.setProperty(key, value);
+      }
     }
+
+    // Remove transition after animation completes
+    setTimeout(() => {
+      root.style.setProperty('--theme-transition-duration', '0s');
+    }, 800);
   }
 
   _createThemeProperties(palette) {
@@ -157,26 +180,52 @@ class DynamicColor {
 
     const avgBrightness = this.colorFunctions.averageBrightness(sortedPalette);
 
+    // Generate additional dynamic colors for animations
+    const vibrantColor = [...palette].sort((a, b) => {
+      const satA = this.colorFunctions.rgbToHsl(...a)[1];
+      const satB = this.colorFunctions.rgbToHsl(...b)[1];
+      return satB - satA;
+    })[0];
+
+    const mutedColor = this.colorFunctions.adjustSaturation(vibrantColor, 0.3);
+    const glowColor = this.colorFunctions.adjustLightness(vibrantColor, 0.7);
+
     return {
-      "--primary-color": `rgb(${primaryRgb})`,
-      "--primary-color-rgb": primaryRgb,
-      "--secondary-color": `rgb(${secondaryRgb})`,
-      "--secondary-color-rgb": secondaryRgb,
-      "--accent-color": `rgb(${accentRgb})`,
-      "--accent-color-rgb": accentRgb,
-      "--accent-color-2": `rgb(${accentRgb})`,
-      "--accent-color-2-rgb": accentRgb,
-      "--text-color": `rgb(${textRgb})`,
-      "--text-color-rgb": textRgb,
-      "--text-color-secondary": `rgba(${textRgb}, 0.82)`,
-      "--dark-overlay": `rgba(${darkest.join(", ")}, 0.22)`,
-      "--bg-gradient-start": this.colorFunctions.arrayToRgb(darkest),
-      "--bg-gradient-end": this.colorFunctions.arrayToRgb(secondary),
-      "--glass-bg": `linear-gradient(120deg, rgba(${primaryRgb}, 0.22) 0%, rgba(${secondaryRgb}, 0.13) 100%)`,
-      "--glass-border": `rgba(${lightest.join(", ")}, 0.10)`,
-      "--glass-shadow": `0 10px 36px 0 rgba(0,0,0,0.22), 0 1.5px 6px 0 rgba(${accentRgb}, 0.08)`,
-      "--shadow-md": `0 10px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(${accentRgb}, 0.13)`,
-      "--shadow-lg": `0 18px 48px rgba(0,0,0,0.25), 0 6px 18px rgba(${accentRgb}, 0.18)`,
+      "--color-primary": `rgb(${primaryRgb})`,
+      "--color-primary-rgb": primaryRgb,
+      "--color-secondary": `rgb(${secondaryRgb})`,
+      "--color-secondary-rgb": secondaryRgb,
+      "--color-accent": `rgb(${accentRgb})`,
+      "--color-accent-rgb": accentRgb,
+      "--color-accent-2": `rgb(${vibrantColor.join(", ")})`,
+      "--color-accent-2-rgb": vibrantColor.join(", "),
+      "--color-text-primary": `rgb(${textRgb})`,
+      "--color-text-primary-rgb": textRgb,
+      "--color-text-secondary": `rgba(${textRgb}, 0.82)`,
+      "--color-bg-primary": this.colorFunctions.arrayToRgb(darkest),
+      "--color-bg-secondary": this.colorFunctions.arrayToRgb(secondary),
+      "--color-surface-glass": `linear-gradient(135deg, rgba(${primaryRgb}, 0.15) 0%, rgba(${secondaryRgb}, 0.08) 50%, rgba(${accentRgb}, 0.03) 100%)`,
+      "--color-border-primary": `rgba(${lightest.join(", ")}, 0.2)`,
+      "--color-shadow-primary": `rgba(0, 0, 0, 0.1)`,
+      "--color-shadow-accent": `rgba(${accentRgb}, 0.2)`,
+
+      // Animation colors
+      "--vibrant-color": `rgb(${vibrantColor.join(", ")})`,
+      "--vibrant-color-rgb": vibrantColor.join(", "),
+      "--muted-color": `rgb(${mutedColor.join(", ")})`,
+      "--muted-color-rgb": mutedColor.join(", "),
+      "--glow-color": `rgb(${glowColor.join(", ")})`,
+      "--glow-color-rgb": glowColor.join(", "),
+      "--animation-primary": `rgba(${accentRgb}, 0.8)`,
+      "--animation-secondary": `rgba(${vibrantColor.join(", ")}, 0.6)`,
+      "--hover-glow": `0 0 20px rgba(${vibrantColor.join(", ")}, 0.4)`,
+
+      // Additional colors for UI states (using derived colors)
+      "--color-error": `rgb(${this.colorFunctions.adjustHue(vibrantColor, 0.05).join(", ")})`,
+      "--color-error-rgb": this.colorFunctions.adjustHue(vibrantColor, 0.05).join(", "),
+      "--color-success": `rgb(${this.colorFunctions.adjustHue(accent, 0.3).join(", ")})`,
+      "--color-success-rgb": this.colorFunctions.adjustHue(accent, 0.3).join(", "),
+
       "color-scheme": avgBrightness < 128 ? "dark" : "light",
     };
   }
@@ -192,23 +241,41 @@ class DynamicColor {
 
   applyFallbackTheme() {
     const fallbackProperties = {
-      "--primary-color": "#21005e",
-      "--primary-color-rgb": "33, 0, 94",
-      "--secondary-color": "#5a189a",
-      "--secondary-color-rgb": "90, 24, 154",
-      "--accent-color": "#a259ff",
-      "--accent-color-rgb": "162, 89, 255",
-      "--accent-color-2": "#f72585",
-      "--accent-color-2-rgb": "247, 37, 133",
-      "--text-color": "#f8f8ff",
-      "--text-color-rgb": "248, 248, 255",
-      "--text-color-secondary": "rgba(248, 248, 255, 0.82)",
-      "--dark-overlay": "rgba(20, 0, 40, 0.22)",
-      "--bg-gradient-start": "#1a0036",
-      "--bg-gradient-end": "#2d006e",
-      "--glass-bg":
-        "linear-gradient(120deg, rgba(33, 0, 94, 0.22) 0%, rgba(90, 24, 154, 0.13) 100%)",
-      "--glass-border": "rgba(255, 255, 255, 0.10)",
+      "--color-primary": "#21005e",
+      "--color-primary-rgb": "33, 0, 94",
+      "--color-secondary": "#5a189a",
+      "--color-secondary-rgb": "90, 24, 154",
+      "--color-accent": "#a259ff",
+      "--color-accent-rgb": "162, 89, 255",
+      "--color-accent-2": "#f72585",
+      "--color-accent-2-rgb": "247, 37, 133",
+      "--color-text-primary": "#f8f8ff",
+      "--color-text-primary-rgb": "248, 248, 255",
+      "--color-text-secondary": "rgba(248, 248, 255, 0.82)",
+      "--color-bg-primary": "#1a0036",
+      "--color-bg-secondary": "#2d006e",
+      "--color-surface-glass": "linear-gradient(120deg, rgba(33, 0, 94, 0.22) 0%, rgba(90, 24, 154, 0.13) 100%)",
+      "--color-border-primary": "rgba(255, 255, 255, 0.10)",
+      "--color-shadow-primary": "rgba(0, 0, 0, 0.1)",
+      "--color-shadow-accent": "rgba(162, 89, 255, 0.2)",
+
+      // Enhanced fallback colors for animations
+      "--vibrant-color": "#ff6b6b",
+      "--vibrant-color-rgb": "255, 107, 107",
+      "--muted-color": "#4ecdc4",
+      "--muted-color-rgb": "78, 205, 196",
+      "--glow-color": "#ffeaa7",
+      "--glow-color-rgb": "255, 234, 167",
+      "--animation-primary": "rgba(162, 89, 255, 0.8)",
+      "--animation-secondary": "rgba(247, 37, 133, 0.6)",
+      "--hover-glow": "0 0 20px rgba(255, 107, 107, 0.4)",
+
+      // Additional colors for UI states
+      "--color-error": "#ff006e",
+      "--color-error-rgb": "255, 0, 110",
+      "--color-success": "#00d4aa",
+      "--color-success-rgb": "0, 212, 170",
+
       "color-scheme": "dark",
     };
     this._setThemeProperties(fallbackProperties);

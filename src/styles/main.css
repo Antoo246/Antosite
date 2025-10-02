@@ -1,0 +1,50 @@
+/* =========================
+   Main Stylesheet - Modular CSS
+   =========================
+   This file imports all modular CSS components
+   for the Antosite portfolio website.
+   ========================= */
+
+/* Base styles */
+@import url('./base/variables.css');
+@import url('./base/reset.css');
+@import url('./base/typography.css');
+
+/* Layout styles */
+@import url('./layouts/grid.css');
+
+/* Component styles */
+@import url('./animations.css');
+@import url('./components/hero.css');
+@import url('./components/skills.css');
+@import url('./components/projects.css');
+@import url('./components/sections.css');
+@import url('./components/loading.css');
+@import url('./components/navigation.css');
+@import url('./components/error.css');
+@import url('./components/footer.css');
+
+/* Utility classes */
+@import url('./utilities.css');
+
+/* App-level layout adjustments */
+/* Background canvas - full page */
+.background {
+   position: fixed;
+   inset: 0;
+   width: 100vw;
+   height: 100vh;
+   z-index: 0;
+   pointer-events: none;
+   display: block;
+}
+
+/* Ensure main app content is layered above the background - centered */
+.main {
+   position: relative;
+   z-index: 1;
+   /* Center the visible child (loading/home) */
+   display: grid;
+   min-height: 100vh;
+   place-items: center;
+}

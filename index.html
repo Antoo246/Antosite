@@ -3,14 +3,17 @@
   <head>
     <!-- Meta -->
     <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <meta name="author" content="Anto426" />
     <!-- Title -->
     <title>Anto's Site</title>
     <!-- Icon -->
-    <link rel="icon" href="./src/multimedia/icon.ico" />
+    <link rel="icon" href="./src/assets/images/icon.ico" />
     <!-- CSS -->
-    <link rel="stylesheet" href="./src/css/style.css" />
-    <link rel="stylesheet" href="./src/css/responsive.css" />
+    <link rel="stylesheet" href="./src/styles/main.css" />
     <!-- devicon icon -->
     <link
       rel="stylesheet"
@@ -25,119 +28,154 @@
     <!--  Color Thief-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.6.0/color-thief.umd.js"></script>
     <!-- JS -->
-    <script src="./src/js/class/LoadingController.js"></script>
-    <script src="./src/js/class/Background.js"></script>
-    <script src="./src/js/class/DynamicColor.js"></script>
-    <script src="./src/js/class/Color.js"></script>
-    <script src="./src/js/class/FetchData.js"></script>
-    <script src="./src/js/class/Text.js"></script>
-    <script src="./src/js/index.js"></script>
+    <script type="module" src="./src/scripts/main.js"></script>
   </head>
   <!-- Body -->
-  <body onload="loadPage()">
+  <body>
     <main class="main">
       <!-- Ultra Modern Loading System -->
-      <div id="loading" class="loading-container show">
+      <div id="loading" class="loading-screen show">
         <!-- Background Effects -->
-        <div class="loading-backdrop"></div>
         <div class="loading-particles"></div>
-        
+
         <!-- Main Loading Content -->
-        <div class="loading-content">
-          <!-- Animated Braces -->
-          <div class="loading-braces">
-            <span class="brace-left animate">{</span>
-            <div class="loading-center">
-              <div class="progress-container">
-                <div class="progress-label">Loading...</div>
-                <div class="progress-bar-wrapper">
-                  <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                    <div class="progress-glow"></div>
-                  </div>
-                  <div class="progress-percentage" id="progressText">0%</div>
-                </div>
-              </div>
-              
-              <!-- Code-style loader -->
-              <div class="code-loader">
-                <span class="code-text">
-                  <span class="typing-text" id="loadingText">Initializing</span>
-                  <span class="cursor">|</span>
-                </span>
-              </div>
+        <div class="loading-container">
+          <!-- Brand Section -->
+          <div class="loading-brand">
+            <div class="loading-logo">
+              <img
+                src="./src/assets/images/icon.ico"
+                alt="Logo"
+                style="width: 100%; height: 100%; object-fit: contain"
+              />
             </div>
-            <span class="brace-right animate">}</span>
+            <h1 class="loading-title">Anto's Site</h1>
           </div>
-          
-          <!-- Central Glow Effect -->
-          <div class="loader-glow"></div>
+
+          <!-- Progress Section -->
+          <div class="loading-progress">
+            <div class="loading-bar-container">
+              <div class="loading-bar" id="progressFill"></div>
+            </div>
+            <div class="loading-text" id="loadingText">Initializing...</div>
+            <div class="loading-percentage" id="progressText">0%</div>
+          </div>
+
+          <!-- Loading Steps -->
+          <div class="loading-steps">
+            <div class="loading-step active">
+              <div class="loading-step-icon">1</div>
+              <div class="loading-step-text">Loading assets</div>
+            </div>
+            <div class="loading-step">
+              <div class="loading-step-icon">2</div>
+              <div class="loading-step-text">Fetching data</div>
+            </div>
+            <div class="loading-step">
+              <div class="loading-step-icon">3</div>
+              <div class="loading-step-text">Applying theme</div>
+            </div>
+          </div>
         </div>
       </div>
-      <!-- Error  -->
-      <div id="error" class="error-content hide">
-        <i
-          class="bi-exclamation-triangle-fill error-icon"
-          style="font-size: 3rem"
-        ></i>
-        <h1 id="title-error" class="title">Connection Error</h1>
-        <p id="message-error" class="text">
-          Oops! We couldn't load the data. Please check your internet connection
-          and try again.
-        </p>
-        <button onclick="location.reload()">
-          <i class="bi-arrow-clockwise"></i>
-          Reload Page
-        </button>
+      <!-- Error Section -->
+      <div id="error" class="error-section hide">
+        <div class="error-container">
+          <div class="error-icon">
+            <i class="bi-exclamation-triangle-fill"></i>
+          </div>
+          <h1 id="title-error" class="error-title">Connection Error</h1>
+          <p id="message-error" class="error-message">
+            Oops! We couldn't load the data. Please check your internet
+            connection and try again.
+          </p>
+          <button class="error-retry-btn" onclick="location.reload()">
+            <i class="bi-arrow-clockwise"></i>
+            Reload Page
+          </button>
+        </div>
       </div>
       <!-- Main Container -->
-      <div id="home" class="maincontainer hide">
-        <div class="logocontainer">
-          <div class="logo-wrapper">
-            <div class="logo-glow"></div>
-            <img id="logo" class="logo" alt="Logo" crossorigin="anonymous" />
-            <div class="logo-overlay"></div>
-          </div>
-          <div class="text-logo">
-            <div class="brand-container">
-              <h3 id="username" class="brand-name"></h3>
-              <div class="brand-accent"></div>
+      <div id="home" class="main-content hide">
+        <!-- Hero Section -->
+        <section class="hero-section">
+          <div class="hero-container">
+            <div class="hero-logo">
+              <div class="logo-wrapper">
+                <div class="logo-glow"></div>
+                <img
+                  id="logo"
+                  class="logo-image"
+                  alt="Profile Logo"
+                  crossorigin="anonymous"
+                />
+                <div class="logo-overlay"></div>
+              </div>
             </div>
-            <p id="tag" class="brand-tagline"></p>
-            <div class="brand-status">
-              <i class="weed-icon status-indicator"></i>
+            <div class="hero-content">
+              <div class="brand-container">
+                <h1 id="username" class="brand-name"></h1>
+                <div class="brand-accent"></div>
+              </div>
+              <p id="tag" class="brand-tagline"></p>
+              <i class="weed-icon"></i>
               <span class="status-text"></span>
             </div>
+            <div class="scroll-indicator">
+              <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+              </div>
+              <div class="scroll-arrows">
+                <span class="scroll-arrow"></span>
+                <span class="scroll-arrow"></span>
+                <span class="scroll-arrow"></span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="othercontainer">
-          <h3 id="question" class="title">
-            <i class="bi-person-vcard-fill"> About me</i>
-          </h3>
-          <p id="aboutme" class="text text-writer"></p>
-        </div>
-        <div class="othercontainer">
-          <h3 id="skills" class="title">
-            <i class="bi-braces"> Skills</i>
-          </h3>
-          <div class="carousel-container">
-            <div id="skills-container" class="carousel"></div>
+          <!-- Scroll Indicator -->
+        </section>
+
+        <!-- About Section -->
+        <section class="about-section">
+          <div class="section-container">
+            <h2 class="section-title">
+              <i class="bi-person-vcard-fill"></i> About me
+            </h2>
+            <div class="about-content">
+              <p id="aboutme" class="about-text"></p>
+            </div>
           </div>
-        </div>
-        <div class="othercontainer">
-          <h3 id="projects" class="title">
-            <i class="bi-kanban-fill"></i> Projects
-          </h3>
-          <div class="carousel-container">
-            <div id="projects-container" class="carousel"></div>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="skills-section">
+          <div class="section-container">
+            <h2 class="section-title"><i class="bi-braces"></i> Skills</h2>
+            <div class="skills-container">
+              <div id="skills-container" class="skills-grid"></div>
+            </div>
           </div>
-        </div>
-        <div class="othercontainer">
-          <h3 id="social" class="title">
-            <i class="bi-people-fill"> Social</i>
-          </h3>
-          <div id="social-container" class="links"></div>
-        </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="projects-section">
+          <div class="section-container">
+            <h2 id="projects" class="section-title">
+              <i class="bi-kanban-fill"></i> Projects
+            </h2>
+            <div class="projects-container">
+              <div id="projects-container" class="projects-grid"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Social Section -->
+        <section class="social-section">
+          <div class="section-container">
+            <h2 class="section-title"><i class="bi-people-fill"></i> Social</h2>
+            <div id="social-container" class="social-links"></div>
+          </div>
+        </section>
       </div>
     </main>
     <canvas id="backgroundCanvas" class="background"></canvas>

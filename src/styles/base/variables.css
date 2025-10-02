@@ -1,0 +1,254 @@
+/* =========================
+   CSS Custom Properties - Design System
+   ========================= */
+
+:root {
+  /* === COLOR PALETTE - Dark Theme === */
+  --color-primary: #21005e;
+  --color-primary-rgb: 33, 0, 94;
+  --color-secondary: #5a189a;
+  --color-secondary-rgb: 90, 24, 154;
+  --color-accent: #a259ff;
+  --color-accent-rgb: 162, 89, 255;
+  --color-accent-2: #f72585;
+  --color-accent-2-rgb: 247, 37, 133;
+  --color-success: #00d4aa;
+  --color-success-rgb: 0, 212, 170;
+  --color-warning: #ffba08;
+  --color-warning-rgb: 255, 186, 8;
+  --color-error: #ff006e;
+  --color-error-rgb: 255, 0, 110;
+
+  /* === TEXT COLORS === */
+  --color-text-primary: #f8f8ff;
+  --color-text-primary-rgb: 248, 248, 255;
+  --color-text-secondary: rgba(248, 248, 255, 0.82);
+  --color-text-tertiary: rgba(248, 248, 255, 0.68);
+  --color-text-muted: rgba(248, 248, 255, 0.55);
+  --color-text-subtle: rgba(248, 248, 255, 0.42);
+  --color-text-inverse: #111827;
+  --color-text-accent: var(--color-accent);
+  --color-text-hover: #ffffff;
+  --color-text-active: rgba(var(--color-accent-rgb), 0.9);
+
+  /* === BACKGROUND COLORS === */
+  --color-bg-primary: #1a0036;
+  --color-bg-secondary: #2d006e;
+  --color-bg-tertiary: rgba(20, 0, 40, 0.22);
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* === SURFACE COLORS - Glassmorphism === */
+  --color-surface-glass: linear-gradient(135deg,
+    rgba(var(--color-primary-rgb), 0.15) 0%,
+    rgba(var(--color-secondary-rgb), 0.08) 50%,
+    rgba(var(--color-accent-rgb), 0.03) 100%);
+  --color-surface-glass-hover: linear-gradient(135deg,
+    rgba(var(--color-primary-rgb), 0.25) 0%,
+    rgba(var(--color-secondary-rgb), 0.15) 50%,
+    rgba(var(--color-accent-rgb), 0.08) 100%);
+  --color-surface-glass-active: linear-gradient(135deg,
+    rgba(var(--color-primary-rgb), 0.35) 0%,
+    rgba(var(--color-secondary-rgb), 0.25) 50%,
+    rgba(var(--color-accent-rgb), 0.15) 100%);
+
+  /* === SURFACE SOLID COLORS (for plain backgrounds) === */
+  --color-surface-primary: rgba(255, 255, 255, 0.06);
+  --color-surface-secondary: rgba(255, 255, 255, 0.04);
+  --color-surface-tertiary: rgba(255, 255, 255, 0.025);
+  --color-surface-primary-rgb: 255, 255, 255;
+  --color-surface-secondary-rgb: 255, 255, 255;
+
+  /* === BORDER COLORS === */
+  --color-border-glass: rgba(255, 255, 255, 0.12);
+  --color-border-glass-hover: rgba(var(--color-accent-rgb), 0.25);
+  --color-border-glass-active: rgba(var(--color-accent-rgb), 0.4);
+  --color-border-primary: rgba(255, 255, 255, 0.2);
+  --color-border-secondary: rgba(255, 255, 255, 0.1);
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-accent: var(--color-accent);
+  --color-border-focus: var(--color-primary);
+
+  /* === SHADOW COLORS === */
+  --color-shadow-primary: rgba(0, 0, 0, 0.1);
+  --color-shadow-secondary: rgba(0, 0, 0, 0.05);
+  --color-shadow-accent: rgba(245, 158, 11, 0.2);
+
+  /* === TYPOGRAPHY - Responsive Scale === */
+  --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --font-size-xs: clamp(0.75rem, 1.2vw, 0.85rem);
+  --font-size-sm: clamp(0.85rem, 1.5vw, 0.95rem);
+  --font-size-base: clamp(1rem, 1.8vw, 1.1rem);
+  --font-size-lg: clamp(1.15rem, 2.2vw, 1.3rem);
+  --font-size-xl: clamp(1.35rem, 2.8vw, 1.6rem);
+  --font-size-2xl: clamp(1.6rem, 3.5vw, 2rem);
+  --font-size-3xl: clamp(2rem, 4.5vw, 2.8rem);
+  --font-size-4xl: clamp(2.5rem, 6vw, 3.8rem);
+  --font-size-5xl: clamp(3rem, 7vw, 4.5rem);
+
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  /* Letter spacing utilities */
+  --tracking-tight: -0.01em;
+  --tracking-wide: 0.06em;
+
+  /* === SPACING SCALE - Responsive === */
+  --space-1: clamp(0.6rem, 1vw, 1rem);
+  --space-0-5: clamp(0.3rem, 0.6vw, 0.5rem);
+  --space-2: clamp(1.2rem, 2vw, 1.7rem);
+  --space-1-5: clamp(0.9rem, 1.6vw, 1.25rem);
+  --space-3: clamp(1.8rem, 2.5vw, 2.5rem);
+  --space-4: clamp(2.2rem, 3vw, 3.5rem);
+  --space-5: clamp(2.8rem, 4vw, 4.5rem);
+  --space-6: clamp(3.5rem, 5vw, 5rem);
+  --space-8: clamp(4.5rem, 6vw, 6.5rem);
+  --space-10: clamp(5.5rem, 7vw, 8rem);
+  --space-12: clamp(6.5rem, 8vw, 9.5rem);
+  --space-16: clamp(8rem, 10vw, 12rem);
+  --space-20: clamp(10rem, 12vw, 15rem);
+  --space-24: clamp(12rem, 15vw, 18rem);
+
+  /* === BORDER RADIUS - Responsive === */
+  --radius-sm: clamp(4px, 1vw, 6px);
+  --radius-md: clamp(8px, 1.5vw, 12px);
+  --radius-lg: clamp(16px, 2.5vw, 20px);
+  --radius-xl: clamp(24px, 4vw, 32px);
+  --radius-2xl: clamp(32px, 5vw, 48px);
+  --radius-3xl: clamp(40px, 6vw, 64px);
+  --radius-full: 9999px;
+
+  /* === SHADOWS - Enhanced System === */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.1);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.2), 0 8px 16px rgba(0,0,0,0.12);
+  --shadow-2xl: 0 24px 64px rgba(0,0,0,0.25), 0 12px 24px rgba(0,0,0,0.15);
+
+  /* === GLASSMORPHISM SHADOWS === */
+  --shadow-glass: 0 8px 32px rgba(0,0,0,0.15),
+                  0 2px 8px rgba(var(--color-accent-rgb), 0.08),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-glass-hover: 0 16px 48px rgba(0,0,0,0.2),
+                        0 4px 16px rgba(var(--color-accent-rgb), 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-glass-active: 0 24px 64px rgba(0,0,0,0.25),
+                         0 6px 24px rgba(var(--color-accent-rgb), 0.2),
+                         inset 0 2px 0 rgba(255, 255, 255, 0.15);
+
+  /* === ACCENT SHADOWS === */
+  --shadow-accent-sm: 0 2px 8px rgba(var(--color-accent-rgb), 0.1);
+  --shadow-accent-md: 0 4px 16px rgba(var(--color-accent-rgb), 0.15);
+  --shadow-accent-lg: 0 8px 32px rgba(var(--color-accent-rgb), 0.2);
+
+  /* === ANIMATIONS - Enhanced System === */
+  --animation-duration-instant: 0.1s;
+  --animation-duration-fast: 0.2s;
+  --animation-duration-normal: 0.35s;
+  --animation-duration-slow: 0.5s;
+  --animation-duration-smooth: 0.8s;
+
+  --animation-easing-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-easing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animation-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --animation-easing-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --animation-easing-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* === TRANSITIONS === */
+  --transition-instant: var(--animation-duration-instant) var(--animation-easing-ease);
+  --transition-fast: var(--animation-duration-fast) var(--animation-easing-ease);
+  --transition-medium: var(--animation-duration-normal) var(--animation-easing-ease);
+  --transition-slow: var(--animation-duration-slow) var(--animation-easing-ease);
+  --transition-smooth: var(--animation-duration-smooth) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* === Z-INDEX SCALE === */
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  --z-index-back-to-top: 1080;
+
+  /* === BREAKPOINTS === */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* === CONTAINER SIZES === */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  --container-3xl: 1800px; /* ultra-wide */
+  --container-max-width: var(--container-xl);
+
+  /* === GLASSMORPHISM - Enhanced === */
+  --glass-backdrop-blur: 12px;
+  --glass-backdrop-blur-strong: 18px;
+  --glass-bg-opacity: 0.1;
+  --glass-border-opacity: 0.2;
+  --glass-blur: clamp(18px, 3.5vw, 32px);
+  --glass-bg: var(--color-surface-glass);
+  --glass-bg-hover: var(--color-surface-glass-hover);
+  --glass-bg-active: var(--color-surface-glass-active);
+  --glass-border: var(--color-border-glass);
+  --glass-border-hover: var(--color-border-glass-hover);
+  --glass-border-active: var(--color-border-glass-active);
+  --glass-shadow: var(--shadow-glass);
+  --glass-shadow-hover: var(--shadow-glass-hover);
+  --glass-shadow-active: var(--shadow-glass-active);
+
+  /* === NAVIGATION VISUAL TOKENS === */
+  --color-surface-glass-scrolled: linear-gradient(135deg,
+    rgba(var(--color-primary-rgb), 0.35) 0%,
+    rgba(var(--color-secondary-rgb), 0.2) 50%,
+    rgba(var(--color-accent-rgb), 0.08) 100%);
+  --shadow-navigation: 0 6px 24px rgba(0, 0, 0, 0.2), inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+
+  /* === KEYFRAME ANIMATIONS === */
+  --animation-float: float 6s ease-in-out infinite;
+  --animation-pulse-glow: pulse-glow 2s ease-in-out infinite alternate;
+  --animation-shimmer: shimmer 2.5s linear infinite;
+  --animation-slide-in-bounce: slide-in-bounce 0.8s var(--animation-easing-bounce) forwards;
+  --animation-scale-in: scale-in 0.5s var(--animation-easing-spring) forwards;
+  --animation-rotate-in: rotate-in 0.6s var(--animation-easing-expo-out) forwards;
+
+  /* === LEGACY COMPATIBILITY === */
+  --shadow-normal: var(--shadow-sm);
+  --shadow-hover: var(--shadow-lg);
+  --bounce: var(--animation-easing-bounce);
+  --ease-spring: var(--animation-easing-spring);
+  --ease-out-expo: var(--animation-easing-expo-out);
+  --ease-in-out-back: var(--animation-easing-back);
+
+  /* === GRADIENTS === */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--color-accent) 0%, #f97316 100%);
+  --gradient-surface: linear-gradient(135deg, var(--color-surface-glass) 0%, var(--color-surface-glass-hover) 100%);
+
+  /* === RGB ALIASES === */
+  --color-background-rgb: 26, 0, 54; /* matches --color-bg-primary */
+  --color-text-rgb: var(--color-text-primary-rgb);
+}
+
+/* === REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animation-duration-fast: 0ms;
+    --animation-duration-normal: 0ms;
+    --animation-duration-slow: 0ms;
+  }
+}

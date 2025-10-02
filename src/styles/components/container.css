@@ -1,0 +1,24 @@
+/* =========================
+   Container Components - Utility Classes
+   ========================= */
+
+/* Utility visibility states for JS toggling */
+.hide {
+  opacity: 0;
+  visibility: hidden;
+  filter: blur(12px);
+  transition:
+    opacity var(--transition-smooth),
+    filter var(--transition-smooth),
+    visibility 0s linear 0.7s;
+  will-change: opacity, filter, visibility;
+}
+
+.show {
+  opacity: 1;
+  visibility: visible;
+  filter: blur(0);
+  transition:
+    opacity var(--transition-smooth),
+    filter var(--transition-smooth);
+}

@@ -1,0 +1,185 @@
+/* =========================
+   CSS Reset - Modern Reset
+   ========================= */
+
+/* Box sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove list styles */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Remove default quotes */
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote::before,
+blockquote::after,
+q::before,
+q::after {
+  content: '';
+  content: none;
+}
+
+/* Remove default table spacing */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Remove default button styles */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Remove default input styles */
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Remove default link styles */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Remove default image styles */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Remove default focus outline */
+:focus {
+  outline: none;
+}
+
+/* Remove default fieldset styles */
+fieldset {
+  border: none;
+}
+
+/* Remove default iframe styles */
+iframe {
+  border: none;
+}
+
+/* Remove default hr styles */
+hr {
+  border: none;
+  height: 1px;
+  background: var(--color-border-primary);
+}
+
+/* Remove default mark styles */
+mark {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+/* Remove default progress styles */
+progress {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+progress::-webkit-progress-bar {
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+}
+
+progress::-webkit-progress-value {
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+}
+
+progress::-moz-progress-bar {
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+}
+
+/* Remove default scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-primary);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-secondary);
+}
+
+/* Remove default selection styles */
+::selection {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+/* Remove default tap highlight */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Remove default text size adjust */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  overflow-x: hidden; /* Avoid horizontal scroll on small screens */
+}
+
+/* Prevent flex/grid children overflowing by long content */
+*, *::before, *::after {
+  min-width: 0;
+}
+
+/* Ensure embeddables scale within containers */
+video, canvas, svg, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Wrap long words and URLs to avoid overflow */
+body, p, h1, h2, h3, h4, h5, h6, a, span, div {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Mobile small viewport height support */
+@supports (height: 100svh) {
+  :root { --vh: 1svh; }
+}
+@supports not (height: 100svh) {
+  :root { --vh: 1vh; }
+}

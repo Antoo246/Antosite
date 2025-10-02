@@ -1,4 +1,9 @@
-class ColorFunctions {
+/**
+ * Color Functions Utility
+ * Provides comprehensive color manipulation and conversion functions
+ */
+
+export class ColorFunctions {
   #normalizeRGB(color) {
     return color.map((v) => v / 255);
   }
@@ -174,12 +179,63 @@ class ColorFunctions {
 
     return [h, s, v];
   }
-  
+
   lerpColor(colorA, colorB, t) {
     const r = colorA[0] * (1 - t) + colorB[0] * t;
     const g = colorA[1] * (1 - t) + colorB[1] * t;
     const b = colorA[2] * (1 - t) + colorB[2] * t;
     return [r, g, b];
   }
-}
 
+  /**
+   * Validate RGB color values
+   * @param {number} r - Red component (0-255)
+   * @param {number} g - Green component (0-255)
+   * @param {number} b - Blue component (0-255)
+   * @returns {boolean} - Whether the color is valid
+   */
+  isValidRgb(r, g, b) {
+    return [r, g, b].every(component =>
+      typeof component === 'number' &&
+      component >= 0 &&
+      component <= 255 &&
+      Number.isInteger(component)
+    );
+  }
+
+  /**
+   * Adjust the saturation of an RGB color
+   * @param {Array} rgb - RGB color array [r, g, b]
+   * @param {number} factor - Saturation multiplier (0-1 = desaturate, >1 = saturate)
+   * @returns {Array} - Adjusted RGB color
+   */
+  adjustSaturation(rgb, factor) {
+    const [h, s, l] = this.rgbToHsl(...rgb);
+    const newS = Math.max(0, Math.min(1, s * factor));
+    return this.hslToRgb(h, newS, l);
+  }
+
+  /**
+   * Adjust the hue of an RGB color
+   * @param {Array} rgb - RGB color array [r, g, b]
+   * @param {number} hueShift - Hue shift in turns (0-1, where 0.5 = 180°)
+   * @returns {Array} - Adjusted RGB color
+   */
+  adjustHue(rgb, hueShift) {
+    const [h, s, l] = this.rgbToHsl(...rgb);
+    const newH = (h + hueShift) % 1;
+    return this.hslToRgb(newH, s, l);
+  }
+
+  /**
+   * Adjust the lightness of an RGB color
+   * @param {Array} rgb - RGB color array [r, g, b]
+   * @param {number} factor - Lightness multiplier (0-1 = darken, >1 = lighten)
+   * @returns {Array} - Adjusted RGB color
+   */
+  adjustLightness(rgb, factor) {
+    const [h, s, l] = this.rgbToHsl(...rgb);
+    const newL = Math.max(0, Math.min(1, l * factor));
+    return this.hslToRgb(h, s, newL);
+  }
+}

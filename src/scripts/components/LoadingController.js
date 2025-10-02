@@ -1,5 +1,9 @@
+/**
+ * Loading Controller Component
+ * Manages the loading screen and progress animations
+ */
 
-class LoadingController {
+export class LoadingController {
   constructor() {
     this.progressFill = document.getElementById("progressFill");
     this.progressText = document.getElementById("progressText");
