@@ -106,16 +106,18 @@
 }
 
 .skill-name {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
   margin: 0;
   position: relative;
   z-index: 3;
   transition: var(--transition-colors);
-  white-space: nowrap;
-  max-width: 100%;
+  text-align: center; /* Centrato */
+  width: 100%;
   line-height: 1.4;
+  word-wrap: break-word; /* Permette wrapping se necessario */
+  overflow-wrap: break-word;
 }
 
 .skill-card:hover .skill-name {
@@ -130,10 +132,12 @@
   position: relative;
   z-index: 3;
   transition: var(--transition-colors);
-  white-space: nowrap;
-  max-width: 100%;
+  text-align: center; /* Centrato */
+  width: 100%;
   line-height: 1.4;
   margin-top: var(--space-1);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .skill-card:hover .skill-category {
@@ -177,10 +181,40 @@
 /* Skill card grid */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 25vw, 200px), 1fr));
-  gap: clamp(var(--space-3), 3vw, var(--space-5));
+  grid-template-columns: repeat(auto-fit, minmax(clamp(280px, 35vw, 380px), 1fr));
+  gap: clamp(var(--space-5), 5vw, var(--space-8));
   margin-top: var(--space-8);
   width: 100%;
+}
+
+/* Text scrolling for long skill names */
+.skill-card .text-scrolling-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.skill-card .text-scrolling {
+  white-space: nowrap;
+  animation: scroll-left 15s linear infinite;
+  will-change: transform;
+  animation-delay: 2s;
+}
+
+.skill-card .text-scrolling:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 /* Staggered entrance animations for skill cards */

@@ -207,10 +207,22 @@ export class App {
 
       const nameEl = document.createElement("h4");
       nameEl.className = "skill-name";
-      nameEl.textContent = skill.name;
+      const skillName = skill.name;
+      nameEl.textContent = skillName;
 
-      skillCard.appendChild(iconWrap);
-      skillCard.appendChild(nameEl);
+      // Long skill name marquee (same logic as projects)
+      if (skillName.length > 4) {
+        const scrollWrap = document.createElement("div");
+        scrollWrap.className = "text-scrolling-container";
+        nameEl.classList.add("text-scrolling");
+        scrollWrap.appendChild(nameEl);
+        skillCard.appendChild(iconWrap);
+        skillCard.appendChild(scrollWrap);
+      } else {
+        skillCard.appendChild(iconWrap);
+        skillCard.appendChild(nameEl);
+      }
+      
       skillsContainer.appendChild(skillCard);
     });
   }
