@@ -1,0 +1,91 @@
+/* =========================
+   GPU Performance Optimizations
+   ========================= */
+
+/* Base GPU acceleration for animated elements */
+.gpu-accelerated {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.gpu-accelerated-opacity {
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.gpu-accelerated-filters {
+  will-change: transform, filter, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Composite layers for better performance */
+.composite-layer {
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
+/* 3D context for hardware acceleration */
+.hardware-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Optimized backdrop filter */
+.backdrop-blur-light {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.backdrop-blur-medium {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.backdrop-blur-heavy {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Reset will-change after animations complete */
+.animation-complete {
+  will-change: auto;
+}
+
+/* Performance utilities */
+.contain-layout {
+  contain: layout;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-size {
+  contain: size;
+}
+
+.contain-style {
+  contain: style;
+}
+
+/* Smooth text rendering */
+.smooth-text {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+}
+
+/* Optimized transforms */
+.transform-gpu {
+  transform: translate3d(0, 0, 0);
+}
+
+/* Layer promotion for specific elements */
+.promote-layer {
+  will-change: transform;
+  transform: translateZ(0) scale(1);
+}

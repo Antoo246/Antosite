@@ -1,0 +1,173 @@
+/* =========================
+   Optimized Animations - GPU Accelerated
+   ========================= */
+
+/* Performance base for all animated elements */
+[class*="animate-"],
+[class*="hover-"],
+.section,
+.btn-elegant,
+.btn-primary,
+.btn-minimal,
+.project-link,
+.social-link {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Core Keyframes - Optimized for 60fps */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes sectionSlideIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(-30px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes sectionSlideInRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(30px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes section-entrance {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 50px, 0) rotateX(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotateX(0);
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes textRevealLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(-30px, 0, 0);
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes pulse-line {
+  0%, 100% {
+    opacity: 0.8;
+    box-shadow: 0 0 12px rgba(var(--color-accent-rgb), 0.5);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.8);
+  }
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Optimized hover effects with GPU acceleration */
+.btn-elegant:hover,
+.btn-primary:hover,
+.btn-minimal:hover {
+  transform: translate3d(0, -5px, 0) scale(1.08);
+}
+
+.project-link:hover {
+  transform: translate3d(0, -3px, 0) scale(1.05);
+}
+
+.social-link:hover {
+  transform: translate3d(0, -6px, 0) scale(1.08);
+}
+
+.section-title:hover {
+  transform: translate3d(0, -3px, 0) scale(1.02);
+}
+
+/* Reset will-change after animations */
+.animate-in,
+.animate-in * {
+  animation-fill-mode: forwards;
+}
+
+.animate-in:not(:hover),
+.animate-in *:not(:hover) {
+  will-change: auto;
+}
+
+/* Contain layout for performance */
+.section {
+  contain: layout style;
+}
+
+.projects-grid,
+.skills-grid,
+.about-highlights {
+  contain: layout;
+}
+
+/* High refresh rate optimization */
+@media (min-resolution: 120dpi) {
+  .section,
+  .btn-elegant,
+  .btn-primary,
+  .btn-minimal,
+  .project-link,
+  .social-link {
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Viewport-based animations for modern browsers */
+@supports (animation-timeline: scroll()) {
+  .section {
+    animation: section-entrance linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+}

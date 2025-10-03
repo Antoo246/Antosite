@@ -1,0 +1,128 @@
+/* =========================
+   Optimized Core Styles
+   ========================= */
+
+/* Apply GPU optimizations to interactive elements */
+.section,
+.btn-elegant,
+.btn-primary, 
+.btn-minimal,
+.project-link,
+.social-link,
+.section-title {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Buttons with backdrop blur */
+.btn-elegant,
+.btn-primary,
+.btn-minimal {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Performance-critical animations */
+.section {
+  contain: layout style;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Optimize text rendering for better performance */
+.section-title,
+.section-subtitle,
+.about-text {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+}
+
+/* Composite layers for complex animations */
+.social-link::before,
+.project-link::before,
+.project-link::after {
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
+/* Hardware acceleration for 3D transforms */
+.section-title:hover {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Reset will-change after animations complete */
+.section.animate-in,
+.animate-in .section-title,
+.animate-in .about-content,
+.animate-in .skills-container,
+.animate-in .projects-container,
+.animate-in .social-links,
+.animate-in .skills-grid,
+.animate-in .projects-grid,
+.animate-in .skill-item,
+.animate-in .project-card {
+  animation-fill-mode: forwards;
+}
+
+.section.animate-in:after,
+.animate-in .section-title:after,
+.animate-in .about-content:after,
+.animate-in .skills-container:after,
+.animate-in .projects-container:after,
+.animate-in .social-links:after,
+.animate-in .skills-grid:after,
+.animate-in .projects-grid:after,
+.animate-in .skill-item:after,
+.animate-in .project-card:after {
+  will-change: auto;
+}
+
+/* Layout containment for better performance */
+.main-content {
+  contain: layout style;
+}
+
+.projects-grid,
+.skills-grid,
+.social-links {
+  contain: layout;
+}
+
+/* Optimized media queries with performance hints */
+@media (max-width: 768px) {
+  .section {
+    contain: layout;
+  }
+  
+  .main-content > * {
+    contain: layout style;
+  }
+}
+
+/* High-DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .section-title,
+  .btn-elegant,
+  .btn-primary,
+  .btn-minimal,
+  .project-link,
+  .social-link {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Reduce paint events on scroll */
+.main-content {
+  transform: translateZ(0);
+}
+
+/* Optimize animations for 60fps */
+@supports (animation-timeline: scroll()) {
+  .section {
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+}

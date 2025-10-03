@@ -9,12 +9,14 @@
 @import url('./base/variables.css');
 @import url('./base/reset.css');
 @import url('./base/typography.css');
+@import url('./base/gpu-optimizations.css');
+@import url('./base/performance.css');
 
 /* Layout styles */
 @import url('./layouts/grid.css');
 
 /* Component styles */
-@import url('./animations.css');
+@import url('./base/optimized-animations.css');
 @import url('./components/hero.css');
 @import url('./components/skills.css');
 @import url('./components/projects.css');
@@ -26,7 +28,7 @@
 @import url('./components/scroll-progress.css');
 
 /* Utility classes */
-@import url('./utilities.css');
+@import url('./base/optimized-utilities.css');
 
 /* App-level layout adjustments */
 /* Background canvas - full page */

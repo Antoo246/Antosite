@@ -9,9 +9,6 @@
   opacity: 0;
   transform: translateY(50px) rotateX(5deg);
   animation: section-entrance 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-  perspective: 1000px;
 }
 
 /* Staggered section animations */
@@ -82,11 +79,6 @@
     0 2px 8px rgba(var(--color-primary-rgb), 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   min-height: 44px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  will-change: transform, background-position;
-  backface-visibility: hidden;
-  transform: translateZ(0);
   
   /* Enhanced button animations */
   animation: 
@@ -203,8 +195,6 @@
   position: relative;
   overflow: hidden;
   min-height: 44px;
-  will-change: transform;
-  backface-visibility: hidden;
 }
 
 .project-link::before {
@@ -275,20 +265,13 @@
 
 /* Main content wrapper - full page layout */
 .main-content {
-  display: block; /* Change from grid to block for normal document flow */
+  display: block;
   position: relative;
   width: 100%;
-  min-height: 100vh; /* Ensure minimum full viewport height */
-  max-width: var(--container-2xl); /* Aumentato da xl a 2xl */
+  min-height: 100vh;
+  max-width: var(--container-2xl);
   margin: 0 auto;
-
-  /* Remove centering and fixed dimensions */
   padding: 0 var(--space-4);
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
   background: transparent;
   overflow: visible;
 }
@@ -299,24 +282,13 @@
 .skills-section, 
 .projects-section,
 .social-section {
-  margin: 0 !important;
+  margin: 0;
   padding-top: 0;
   padding-bottom: 0;
-  border: 0;
-  outline: 0;
-}
-
-/* Align grid content to top and center horizontally */
-.main-content {
-  align-content: start; /* stack from the top */
-  justify-items: center; /* center each child horizontally */
 }
 
 /* Hide scrollbar for webkit browsers */
 .main-content::-webkit-scrollbar {
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
   display: none;
 }
 
@@ -373,12 +345,11 @@
 
 /* Constrain direct children inside the container and center them */
 .main-content > * {
-  max-width: min(96%, 1600px); /* Aumentato da 1200px a 1600px */
+  max-width: min(96%, 1600px);
   width: 100%;
-  box-sizing: border-box; /* include padding in width to avoid overflow */
-  justify-self: center; /* ensure grid child is centered */
+  box-sizing: border-box;
   margin-inline: auto;
-  overflow-wrap: anywhere; /* prevent long words from overflowing */
+  overflow-wrap: anywhere;
 }
 
 /* Ensure media never overflow the container */
@@ -396,12 +367,12 @@
   padding: clamp(1.6rem, 3vw, 2.4rem);
 }
 
-/* Add gap between sections after hero - REMOVED TO ELIMINATE VISIBLE MARGINS */
+/* Remove gaps between sections */
 .main-content > .hero-section ~ .about-section,
 .main-content > .hero-section ~ .skills-section,
 .main-content > .hero-section ~ .projects-section,
 .main-content > .hero-section ~ .social-section {
-  margin-top: 0; /* Rimuovere i margini che creano spazi visibili */
+  margin-top: 0;
 }
 
 /* Subtle floating animation */
@@ -417,10 +388,9 @@
   }
 }
 
-/* When shown, keep grid (override utility .show that sets display:flex) */
+/* When shown, keep block layout */
 .main-content.show {
-  display: grid !important;
-  /* Centered by parent .main */
+  display: block;
 }
 
 /* Fade-in animations for section children */
@@ -449,44 +419,17 @@
   background: transparent;
 }
 
-/* Add a subtle inner panel for About and Projects */
+/* Section container styling */
 .about-section .section-container,
 .projects-section .section-container {
   position: relative;
   background: transparent;
-  border: none;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
   padding: clamp(1rem, 3vw, var(--space-6));
   max-width: min(92%, 1100px);
   margin-inline: auto;
 }
 
-/* Accent gradient stripe on top */
-.about-section .section-container::before,
-.projects-section .section-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--gradient-primary);
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
-}
 
-/* Soft vignette edges */
-.about-section .section-container::after,
-.projects-section .section-container::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
-  pointer-events: none;
-}
 
 /* Section header */
 .section-header {
@@ -522,18 +465,13 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   
-  /* Text shadow for depth (visible on hover) */
+  /* Text shadow for depth */
   filter: drop-shadow(0 2px 8px rgba(var(--color-accent-rgb), 0));
   
   /* Smooth transitions */
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
               filter 0.4s ease,
               background-position 0.6s ease;
-  
-  /* Performance optimization */
-  will-change: transform, filter;
-  backface-visibility: hidden;
-  transform: translateZ(0);
 }
 
 /* Animated gradient on hover */
@@ -705,7 +643,6 @@
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: visible;
-  will-change: transform;
 }
 
 .social-link::before {
@@ -824,38 +761,14 @@
   margin-top: var(--space-6);
 }
 
-/* Subtle animated separators between sections */
-.section::after {
-  content: '';
-  display: block;
-  height: 1px;
-  margin: var(--space-12) auto 0;
-  max-width: var(--container-lg);
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-  opacity: 0.5;
+/* Transparent sections */
+.section { 
+  background: transparent; 
 }
-
-.section:last-child::after { display: none; }
-
-/* --- Overrides: remove any background for About and Projects sections --- */
-.section { background: transparent; }
 
 .about-section .section-container,
 .projects-section .section-container {
   background: transparent;
-  border: none;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.about-section .section-container::before,
-.projects-section .section-container::before,
-.about-section .section-container::after,
-.projects-section .section-container::after,
-.section::after {
-  display: none !important;
-  content: none !important;
 }
 
 
@@ -968,7 +881,6 @@
   opacity: 0;
   transform: translateY(60px);
   transition: all var(--animation-duration-slow) var(--animation-easing-expo-out);
-  will-change: transform, opacity;
 }
 
 .about-section.animate-in,
@@ -996,11 +908,11 @@
   transition-delay: 0.4s;
 }
 
-/* Enhanced animations for section titles */
+/* Simplified animations */
 .section-title {
   opacity: 0;
   transform: translateY(30px);
-  transition: all var(--animation-duration-normal) var(--animation-easing-expo-out);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .animate-in .section-title {
@@ -1009,14 +921,15 @@
   transition-delay: 0.2s;
 }
 
-/* Content animations within sections */
 .about-content,
 .skills-container,
 .projects-container,
-.social-links {
+.social-links,
+.skills-grid,
+.projects-grid {
   opacity: 0;
-  transform: translateY(40px);
-  transition: all var(--animation-duration-slow) var(--animation-easing-expo-out);
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
 .animate-in .about-content,
@@ -1028,14 +941,6 @@
   transition-delay: 0.4s;
 }
 
-/* Grid items animations */
-.skills-grid,
-.projects-grid {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: all var(--animation-duration-smooth) var(--animation-easing-expo-out);
-}
-
 .animate-in .skills-grid,
 .animate-in .projects-grid {
   opacity: 1;
@@ -1043,46 +948,20 @@
   transition-delay: 0.6s;
 }
 
-/* Individual skill/project card animations */
 .skill-item,
 .project-card {
-  transform: translateY(30px) scale(0.95);
-  transition: all var(--animation-duration-medium) var(--animation-easing-expo-out);
-}
-
-.animate-in .skill-item:nth-child(1),
-.animate-in .project-card:nth-child(1) {
-  transition-delay: 0.7s;
-}
-
-.animate-in .skill-item:nth-child(2),
-.animate-in .project-card:nth-child(2) {
-  transition-delay: 0.75s;
-}
-
-.animate-in .skill-item:nth-child(3),
-.animate-in .project-card:nth-child(3) {
-  transition-delay: 0.8s;
-}
-
-.animate-in .skill-item:nth-child(4),
-.animate-in .project-card:nth-child(4) {
-  transition-delay: 0.85s;
-}
-
-.animate-in .skill-item:nth-child(5),
-.animate-in .project-card:nth-child(5) {
-  transition-delay: 0.9s;
-}
-
-.animate-in .skill-item:nth-child(n+6),
-.animate-in .project-card:nth-child(n+6) {
-  transition-delay: 0.95s;
+  transform: translateY(20px);
+  transition: transform 0.6s ease;
 }
 
 .animate-in .skill-item,
 .animate-in .project-card {
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
+}
+
+.animate-in .skill-item:nth-child(n),
+.animate-in .project-card:nth-child(n) {
+  transition-delay: calc(0.1s * var(--i, 1));
 }
 
 /* Reduced motion preferences */
@@ -1176,13 +1055,3 @@
   }
 }
 
-/* Disable border animation for specific sections - HIGHEST PRIORITY */
-#projects.section-title:hover::after,
-.about-section .section-title:hover::after,
-.skills-section .section-title:hover::after,
-.social-section .section-title:hover::after {
-  width: 0 !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  display: none !important;
-}
