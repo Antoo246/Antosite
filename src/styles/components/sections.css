@@ -779,11 +779,29 @@
 }
 
 /* Projects section */
+.projects-section {
+  overflow: visible !important;
+}
+
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 22vw, 360px), 1fr));
   gap: clamp(1rem, 3vw, var(--space-8));
   margin-top: var(--space-8);
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* Assicura visibilità per tutti i progetti */
+.projects-grid > .project-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.project-card {
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Improve container max width for hero */
@@ -993,13 +1011,21 @@
 
 .skill-item,
 .project-card {
+  opacity: 1; /* Assicura che siano sempre visibili */
   transform: translateY(20px);
-  transition: transform 0.6s ease;
+  transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
 .animate-in .skill-item,
 .animate-in .project-card {
+  opacity: 1;
   transform: translateY(0);
+}
+
+/* Fallback per progetti che non ricevono animate-in */
+.project-card:not(.animate-in) {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
 }
 
 .animate-in .skill-item:nth-child(n),
@@ -1046,6 +1072,25 @@
     grid-template-columns: 1fr; /* Single column on very small devices */
     gap: var(--space-3);
   }
+  
+  .project-card {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+
+/* Debug e fix per progetti invisibili */
+.project-card[style*="opacity: 0"],
+.project-card[hidden],
+.project-card.hidden {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}
+
+/* Previene problemi con troppi elementi nella griglia */
+.projects-grid {
+  grid-auto-rows: minmax(300px, auto);
 }
 
 /* Ultra-wide tuning */

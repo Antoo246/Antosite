@@ -14,7 +14,7 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  display: flex;
+  display: flex !important; /* Forza sempre la visualizzazione */
   flex-direction: column;
   gap: var(--space-5);
   min-height: clamp(300px, 38vh, 380px);
@@ -24,6 +24,8 @@
   transform: translateZ(0);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  opacity: 1 !important; /* Assicura sempre visibilità */
+  visibility: visible !important; /* Previene nascondimento */
   
   /* Enhanced project card animations */
   animation: 
