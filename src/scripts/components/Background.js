@@ -38,6 +38,12 @@ export class Background {
       enabled: false,
       distance: 150,
     },
+    performanceMode: {
+      enabled: false,
+      reducedStars: 100,
+      reducedConnections: 50,
+      disabledShootingStars: false,
+    },
   };
 
   static TWO_PI = Math.PI * 2;
@@ -48,22 +54,25 @@ export class Background {
       throw new Error(`Canvas with id '${canvasId}' not found.`);
 
     this.ctx = this.canvas.getContext("2d");
-    this.settings = { ...Background.DEFAULT_SETTINGS, ...userSettings };
-    this.palette = Array.isArray(palette) && palette.length
-      ? palette
-      : Background.DEFAULT_PALETTE;
 
+    // Performance optimization variables
+    this.lastUpdateTime = 0;
+    this.resizeTimeout = null;
+
+    // Merge settings with defaults
+    this.settings = { ...Background.DEFAULT_SETTINGS, ...userSettings };
+    this.palette = palette || Background.DEFAULT_PALETTE;
+
+    // Initialize other properties
+    this.time = 0;
+    this.animationFrame = null;
+    this.mouse = { x: 0, y: 0, active: false };
     this.stars = [];
     this.shootingStars = [];
-    this.animationFrame = null;
-    this.time = 0;
     this.spatialGrid = new Map();
-    this.gridCellSize = Math.max(
-      this.settings.connection.distance,
-      this.settings.mouseInteraction.distance
-    );
-    this.mouse = { x: null, y: null, active: false };
+    this.gridCellSize = 50;
 
+    console.log("Starfield background initialized with performance optimizations");
     this._initialize();
   }
 
@@ -91,7 +100,23 @@ export class Background {
   }
 
   _generateStars() {
-    this.stars = Array.from({ length: this.settings.starCount }, () => {
+    // Adjust star count based on performance mode and screen size
+    let starCount = this.settings.starCount;
+
+    if (this.settings.performanceMode.enabled) {
+      starCount = Math.min(starCount, this.settings.performanceMode.reducedStars);
+    } else {
+      // Responsive star count based on screen size
+      const screenArea = this.canvas.width * this.canvas.height;
+      if (screenArea < 768 * 1024) { // Mobile/tablet
+        starCount = Math.min(starCount, 150);
+      } else if (screenArea < 1920 * 1080) { // Desktop
+        starCount = Math.min(starCount, 200);
+      }
+      // Keep full count for larger screens
+    }
+
+    this.stars = Array.from({ length: starCount }, () => {
       const depth = Math.pow(Math.random(), 2);
       const origin = {
         x: Math.random() * this.canvas.width,
@@ -139,16 +164,25 @@ export class Background {
     this.ctx.lineWidth = lineWidth;
     const connectionColor = this.palette[3 % this.palette.length];
 
+    // Performance optimization: limit connections in performance mode
+    const maxConnections = this.settings.performanceMode.enabled ?
+      this.settings.performanceMode.reducedConnections : Infinity;
+    let connectionCount = 0;
+
     for (const star1 of this.stars) {
+      if (connectionCount >= maxConnections) break;
+
       const gridX = Math.floor(star1.pos.x / this.gridCellSize);
       const gridY = Math.floor(star1.pos.y / this.gridCellSize);
 
       for (let dx = -1; dx <= 1; dx++) {
         for (let dy = -1; dy <= 1; dy++) {
+          if (connectionCount >= maxConnections) break;
+
           const key = `${gridX + dx},${gridY + dy}`;
           if (this.spatialGrid.has(key)) {
             for (const star2 of this.spatialGrid.get(key)) {
-              if (star1 === star2) continue;
+              if (star1 === star2 || connectionCount >= maxConnections) continue;
               const dist = Math.hypot(star1.pos.x - star2.pos.x, star1.pos.y - star2.pos.y);
               if (dist < distance) {
                 const opacity = Math.pow(1 - dist / distance, 2) * 0.7;
@@ -157,6 +191,7 @@ export class Background {
                 this.ctx.moveTo(star1.pos.x, star1.pos.y);
                 this.ctx.lineTo(star2.pos.x, star2.pos.y);
                 this.ctx.stroke();
+                connectionCount++;
               }
             }
           }
@@ -168,6 +203,20 @@ export class Background {
   _setupCanvas() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
+
+    // Dynamic star count based on screen size and performance mode
+    const area = this.canvas.width * this.canvas.height;
+    let baseStarCount = Math.max(50, Math.min(500, Math.floor(area / 8000)));
+
+    if (this.settings.performanceMode.enabled) {
+      baseStarCount = Math.min(baseStarCount, this.settings.performanceMode.reducedStars);
+    }
+
+    this.settings.starCount = baseStarCount;
+
+    // Dynamic connection distance for performance
+    this.settings.connection.distance = Math.max(60, Math.min(150, Math.floor(Math.sqrt(area) / 10)));
+
     this._generateStars();
   }
 
@@ -343,7 +392,14 @@ export class Background {
 
   animate() {
     this.time += 0.01;
-    this.update();
+
+    // Performance optimization: reduce update frequency on slower devices
+    const now = performance.now();
+    if (!this.lastUpdateTime || now - this.lastUpdateTime > (this.settings.performanceMode.enabled ? 32 : 16)) { // ~30fps or ~60fps
+      this.update();
+      this.lastUpdateTime = now;
+    }
+
     this.draw();
     this.animationFrame = requestAnimationFrame(this.animate.bind(this));
   }
@@ -352,16 +408,34 @@ export class Background {
     window.removeEventListener("resize", this.handleResize);
     this.canvas.removeEventListener("mousemove", this._handleMouseMove);
     this.canvas.removeEventListener("mouseleave", this._handleMouseLeave);
-    if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+
+    // Clean up performance optimization resources
+    if (this.resizeTimeout) {
+      cancelAnimationFrame(this.resizeTimeout);
+    }
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+    }
+
     console.log("Starfield animation stopped and resources cleaned up.");
   }
 
   // Debounce function to limit the rate of resizing
   _debounce(func, wait) {
     let timeout;
+    let lastCall = 0;
     return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
+      const now = performance.now();
+      if (now - lastCall >= wait) {
+        lastCall = now;
+        func.apply(this, args);
+      } else {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          lastCall = performance.now();
+          func.apply(this, args);
+        }, wait - (now - lastCall));
+      }
     };
   }
 }

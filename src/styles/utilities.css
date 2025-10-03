@@ -2,6 +2,53 @@
    Utility Classes
    ========================= */
 
+/* Enhanced responsive utilities */
+.container-center {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .container-center {
+    padding: 0 var(--space-6);
+  }
+}
+
+@media (min-width: 1200px) {
+  .container-center {
+    padding: 0 var(--space-8);
+  }
+}
+
+/* Improved text utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* Enhanced spacing utilities */
+.space-y-0 > * + * { margin-top: 0 !important; }
+.space-y-1 > * + * { margin-top: var(--space-1) !important; }
+.space-y-2 > * + * { margin-top: var(--space-2) !important; }
+.space-y-3 > * + * { margin-top: var(--space-3) !important; }
+.space-y-4 > * + * { margin-top: var(--space-4) !important; }
+.space-y-5 > * + * { margin-top: var(--space-5) !important; }
+.space-y-6 > * + * { margin-top: var(--space-6) !important; }
+
+/* Focus and interaction improvements */
+.focus-ring {
+  transition: outline 0.2s ease;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* Display utilities */
 .display-none { display: none !important; }
 .display-block { display: block !important; }

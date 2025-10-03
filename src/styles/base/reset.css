@@ -121,23 +121,28 @@ progress::-moz-progress-bar {
   border-radius: var(--radius-full);
 }
 
-/* Remove default scrollbar styles */
+/* Hide scrollbar completely - Always */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
+  display: none;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border-primary);
-  border-radius: var(--radius-full);
+  display: none;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-border-secondary);
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Remove default selection styles */
@@ -156,6 +161,33 @@ html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   overflow-x: hidden; /* Avoid horizontal scroll on small screens */
+}
+
+/* Hide scrollbar always */
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Block scroll during loading */
+body.loading-active {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+body.loading-active::-webkit-scrollbar {
+  display: none;
+}
+
+body.loading-active {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Prevent flex/grid children overflowing by long content */

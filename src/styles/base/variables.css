@@ -39,22 +39,22 @@
 
   /* === SURFACE COLORS - Glassmorphism === */
   --color-surface-glass: linear-gradient(135deg,
-    rgba(var(--color-primary-rgb), 0.15) 0%,
-    rgba(var(--color-secondary-rgb), 0.08) 50%,
-    rgba(var(--color-accent-rgb), 0.03) 100%);
+    rgba(var(--color-primary-rgb), 0.08) 0%,
+    rgba(var(--color-secondary-rgb), 0.05) 50%,
+    rgba(var(--color-accent-rgb), 0.02) 100%);
   --color-surface-glass-hover: linear-gradient(135deg,
-    rgba(var(--color-primary-rgb), 0.25) 0%,
+    rgba(var(--color-primary-rgb), 0.15) 0%,
+    rgba(var(--color-secondary-rgb), 0.10) 50%,
+    rgba(var(--color-accent-rgb), 0.05) 100%);
+  --color-surface-glass-active: linear-gradient(135deg,
+    rgba(var(--color-primary-rgb), 0.20) 0%,
     rgba(var(--color-secondary-rgb), 0.15) 50%,
     rgba(var(--color-accent-rgb), 0.08) 100%);
-  --color-surface-glass-active: linear-gradient(135deg,
-    rgba(var(--color-primary-rgb), 0.35) 0%,
-    rgba(var(--color-secondary-rgb), 0.25) 50%,
-    rgba(var(--color-accent-rgb), 0.15) 100%);
 
-  /* === SURFACE SOLID COLORS (for plain backgrounds) === */
-  --color-surface-primary: rgba(255, 255, 255, 0.06);
-  --color-surface-secondary: rgba(255, 255, 255, 0.04);
-  --color-surface-tertiary: rgba(255, 255, 255, 0.025);
+  /* === SURFACE SOLID COLORS (more transparent) === */
+  --color-surface-primary: rgba(255, 255, 255, 0.03);
+  --color-surface-secondary: rgba(255, 255, 255, 0.02);
+  --color-surface-tertiary: rgba(255, 255, 255, 0.01);
   --color-surface-primary-rgb: 255, 255, 255;
   --color-surface-secondary-rgb: 255, 255, 255;
 
@@ -101,17 +101,20 @@
   --tracking-wide: 0.06em;
 
   /* === SPACING SCALE - Responsive === */
-  --space-1: clamp(0.6rem, 1vw, 1rem);
   --space-0-5: clamp(0.3rem, 0.6vw, 0.5rem);
-  --space-2: clamp(1.2rem, 2vw, 1.7rem);
+  --space-1: clamp(0.6rem, 1vw, 1rem);
   --space-1-5: clamp(0.9rem, 1.6vw, 1.25rem);
+  --space-2: clamp(1.2rem, 2vw, 1.7rem);
+  --space-2-5: clamp(1.5rem, 2.2vw, 2rem);
   --space-3: clamp(1.8rem, 2.5vw, 2.5rem);
   --space-4: clamp(2.2rem, 3vw, 3.5rem);
   --space-5: clamp(2.8rem, 4vw, 4.5rem);
   --space-6: clamp(3.5rem, 5vw, 5rem);
+  --space-7: clamp(4rem, 5.5vw, 5.8rem);
   --space-8: clamp(4.5rem, 6vw, 6.5rem);
   --space-10: clamp(5.5rem, 7vw, 8rem);
   --space-12: clamp(6.5rem, 8vw, 9.5rem);
+  --space-14: clamp(7.5rem, 9vw, 11rem);
   --space-16: clamp(8rem, 10vw, 12rem);
   --space-20: clamp(10rem, 12vw, 15rem);
   --space-24: clamp(12rem, 15vw, 18rem);
@@ -190,10 +193,11 @@
   --container-sm: 640px;
   --container-md: 768px;
   --container-lg: 1024px;
-  --container-xl: 1280px;
-  --container-2xl: 1536px;
-  --container-3xl: 1800px; /* ultra-wide */
-  --container-max-width: var(--container-xl);
+  --container-xl: 1400px;
+  --container-2xl: 1680px;
+  --container-3xl: 1920px; /* ultra-wide */
+  --container-4xl: 2200px; /* 2K+ screens */
+  --container-max-width: var(--container-3xl);
 
   /* === GLASSMORPHISM - Enhanced === */
   --glass-backdrop-blur: 12px;

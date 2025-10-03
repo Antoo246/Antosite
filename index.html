@@ -31,7 +31,7 @@
     <script type="module" src="./src/scripts/main.js"></script>
   </head>
   <!-- Body -->
-  <body>
+  <body class="loading-active">
     <main class="main">
       <!-- Ultra Modern Loading System -->
       <div id="loading" class="loading-screen show">
@@ -46,7 +46,6 @@
               <img
                 src="./src/assets/images/icon.ico"
                 alt="Logo"
-                style="width: 100%; height: 100%; object-fit: contain"
               />
             </div>
             <h1 class="loading-title">Anto's Site</h1>
@@ -59,22 +58,6 @@
             </div>
             <div class="loading-text" id="loadingText">Initializing...</div>
             <div class="loading-percentage" id="progressText">0%</div>
-          </div>
-
-          <!-- Loading Steps -->
-          <div class="loading-steps">
-            <div class="loading-step active">
-              <div class="loading-step-icon">1</div>
-              <div class="loading-step-text">Loading assets</div>
-            </div>
-            <div class="loading-step">
-              <div class="loading-step-icon">2</div>
-              <div class="loading-step-text">Fetching data</div>
-            </div>
-            <div class="loading-step">
-              <div class="loading-step-icon">3</div>
-              <div class="loading-step-text">Applying theme</div>
-            </div>
           </div>
         </div>
       </div>
@@ -121,22 +104,21 @@
               <i class="weed-icon"></i>
               <span class="status-text"></span>
             </div>
-            <div class="scroll-indicator">
-              <div class="scroll-mouse">
-                <div class="scroll-wheel"></div>
-              </div>
+          </div>
+          <!-- Scroll Indicator -->
+          <div class="scroll-indicator-container">
+            <a class="scroll-indicator" href="#about" aria-label="Scopri">
               <div class="scroll-arrows">
                 <span class="scroll-arrow"></span>
                 <span class="scroll-arrow"></span>
                 <span class="scroll-arrow"></span>
               </div>
-            </div>
+            </a>
           </div>
-          <!-- Scroll Indicator -->
         </section>
 
         <!-- About Section -->
-        <section class="about-section">
+        <section id="about" class="about-section">
           <div class="section-container">
             <h2 class="section-title">
               <i class="bi-person-vcard-fill"></i> About me

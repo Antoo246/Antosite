@@ -1,7 +1,3 @@
-/**
- * Dynamic Color Utility
- * Extracts color palettes from images and applies dynamic themes
- */
 
 import { ColorFunctions } from './ColorFunctions.js';
 
@@ -12,12 +8,15 @@ export class DynamicColor {
     this.numColors = options.numColors ?? 5;
     this.colorFunctions = new ColorFunctions();
     this.colorThief = new ColorThief();
+    this.transitionDuration = options.transitionDuration ?? 800;
+    this.useSmoothing = options.useSmoothing ?? true;
   }
 
-  setConfig({ img, threshold, numColors } = {}) {
+  setConfig({ img, threshold, numColors, transitionDuration } = {}) {
     if (img instanceof HTMLImageElement) this.img = img;
     if (threshold !== undefined) this.threshold = threshold;
     if (numColors !== undefined) this.numColors = numColors;
+    if (transitionDuration !== undefined) this.transitionDuration = transitionDuration;
   }
 
   extractPalette() {
@@ -134,82 +133,127 @@ export class DynamicColor {
   _setThemeProperties(properties) {
     const root = document.documentElement;
 
-    // Add smooth transitions when applying theme
-    root.style.setProperty('--theme-transition-duration', '0.8s');
+    // Add CSS transition variables for smooth color changes
+    const cssTransitions = `
+      background-color var(--theme-transition-duration, 0.8s) cubic-bezier(0.4, 0, 0.2, 1),
+      color var(--theme-transition-duration, 0.8s) cubic-bezier(0.4, 0, 0.2, 1),
+      border-color var(--theme-transition-duration, 0.8s) cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow var(--theme-transition-duration, 0.8s) cubic-bezier(0.4, 0, 0.2, 1)
+    `;
 
-    // Apply properties with transition
-    for (const [key, value] of Object.entries(properties)) {
-      const currentValue = getComputedStyle(root).getPropertyValue(key).trim();
-      if (currentValue && currentValue !== value) {
-        // Animate the transition
-        root.style.setProperty(key, value);
-      } else {
+    // Set transition duration
+    root.style.setProperty('--theme-transition-duration', `${this.transitionDuration}ms`);
+
+    // Apply properties with smooth interpolation
+    requestAnimationFrame(() => {
+      for (const [key, value] of Object.entries(properties)) {
         root.style.setProperty(key, value);
       }
-    }
+      
+      // Dispatch custom event for theme change
+      window.dispatchEvent(new CustomEvent('themechange', {
+        detail: { properties, timestamp: Date.now() }
+      }));
+    });
 
-    // Remove transition after animation completes
-    setTimeout(() => {
-      root.style.setProperty('--theme-transition-duration', '0s');
-    }, 800);
+    // Reset transition duration after animation
+    if (this.useSmoothing) {
+      setTimeout(() => {
+        root.style.setProperty('--theme-transition-duration', '0.3s');
+      }, this.transitionDuration);
+    }
   }
 
   _createThemeProperties(palette) {
     const sortedPalette = this.sortPaletteByBrightness(palette);
     const darkest = sortedPalette[0];
     const lightest = sortedPalette[sortedPalette.length - 1];
+    const midTone = sortedPalette[Math.floor(sortedPalette.length / 2)];
 
-    // Text Color
+    // Text Color with enhanced contrast
     const textColor = this.calculateTextColor(sortedPalette);
     const textRgb = textColor.join(", ");
 
-    // Role-based colors
-    const primary = this.colorFunctions
-      .averageColor(sortedPalette)
-      .map(Math.round);
+    // Enhanced role-based colors with better color theory
+    const primary = this.colorFunctions.averageColor(sortedPalette).map(Math.round);
     const secondary = sortedPalette.length > 1 ? sortedPalette[1] : darkest;
+    
+    // Find most saturated color for accent
     const accent = [...palette].sort((a, b) => {
       const satA = this.colorFunctions.rgbToHsl(...a)[1];
       const satB = this.colorFunctions.rgbToHsl(...b)[1];
       return satB - satA;
     })[0];
 
+    // Generate complementary accent color
+    const accentHsl = this.colorFunctions.rgbToHsl(...accent);
+    const complementaryAccent = this.colorFunctions.hslToRgb(
+      (accentHsl[0] + 0.5) % 1, // Complementary hue
+      Math.min(accentHsl[1] * 1.2, 1), // Boost saturation
+      accentHsl[2]
+    ).map(Math.round);
+
     const primaryRgb = primary.join(", ");
     const secondaryRgb = secondary.join(", ");
     const accentRgb = accent.join(", ");
+    const accent2Rgb = complementaryAccent.join(", ");
 
     const avgBrightness = this.colorFunctions.averageBrightness(sortedPalette);
+    const isDark = avgBrightness < 128;
 
-    // Generate additional dynamic colors for animations
-    const vibrantColor = [...palette].sort((a, b) => {
-      const satA = this.colorFunctions.rgbToHsl(...a)[1];
-      const satB = this.colorFunctions.rgbToHsl(...b)[1];
-      return satB - satA;
-    })[0];
+    // Generate triadic color scheme for richer palette
+    const triadicColors = this._generateTriadicColors(accent);
+    
+    // Enhanced vibrant and muted variations
+    const vibrantColor = this.colorFunctions.adjustSaturation(accent, 1.3);
+    const mutedColor = this.colorFunctions.adjustSaturation(accent, 0.4);
+    const glowColor = this.colorFunctions.adjustLightness(vibrantColor, isDark ? 0.75 : 0.65);
 
-    const mutedColor = this.colorFunctions.adjustSaturation(vibrantColor, 0.3);
-    const glowColor = this.colorFunctions.adjustLightness(vibrantColor, 0.7);
+    // Generate gradient variations
+    const gradientStart = this.interpolateColor(primary, accent, 0.2);
+    const gradientMid = this.interpolateColor(primary, accent, 0.5);
+    const gradientEnd = this.interpolateColor(primary, complementaryAccent, 0.8);
 
     return {
+      // Base colors with RGB variants
       "--color-primary": `rgb(${primaryRgb})`,
       "--color-primary-rgb": primaryRgb,
       "--color-secondary": `rgb(${secondaryRgb})`,
       "--color-secondary-rgb": secondaryRgb,
       "--color-accent": `rgb(${accentRgb})`,
       "--color-accent-rgb": accentRgb,
-      "--color-accent-2": `rgb(${vibrantColor.join(", ")})`,
-      "--color-accent-2-rgb": vibrantColor.join(", "),
+      "--color-accent-2": `rgb(${accent2Rgb})`,
+      "--color-accent-2-rgb": accent2Rgb,
+      
+      // Text colors with improved contrast
       "--color-text-primary": `rgb(${textRgb})`,
       "--color-text-primary-rgb": textRgb,
       "--color-text-secondary": `rgba(${textRgb}, 0.82)`,
+      "--color-text-tertiary": `rgba(${textRgb}, 0.65)`,
+      "--color-text-inverse": isDark ? "rgb(20, 20, 20)" : "rgb(250, 250, 250)",
+      
+      // Background colors
       "--color-bg-primary": this.colorFunctions.arrayToRgb(darkest),
       "--color-bg-secondary": this.colorFunctions.arrayToRgb(secondary),
+      "--color-bg-tertiary": this.colorFunctions.arrayToRgb(midTone),
+      
+      // Surface colors with glassmorphism
+      "--color-surface-primary": `rgba(${primaryRgb}, ${isDark ? 0.15 : 0.25})`,
+      "--color-surface-secondary": `rgba(${secondaryRgb}, ${isDark ? 0.12 : 0.18})`,
+      "--color-surface-tertiary": `rgba(${accentRgb}, ${isDark ? 0.08 : 0.12})`,
       "--color-surface-glass": `linear-gradient(135deg, rgba(${primaryRgb}, 0.15) 0%, rgba(${secondaryRgb}, 0.08) 50%, rgba(${accentRgb}, 0.03) 100%)`,
-      "--color-border-primary": `rgba(${lightest.join(", ")}, 0.2)`,
-      "--color-shadow-primary": `rgba(0, 0, 0, 0.1)`,
-      "--color-shadow-accent": `rgba(${accentRgb}, 0.2)`,
+      
+      // Border colors
+      "--color-border-primary": `rgba(${lightest.join(", ")}, ${isDark ? 0.2 : 0.3})`,
+      "--color-border-secondary": `rgba(${lightest.join(", ")}, ${isDark ? 0.12 : 0.18})`,
+      "--color-border-subtle": `rgba(${lightest.join(", ")}, ${isDark ? 0.08 : 0.12})`,
+      
+      // Shadow colors
+      "--color-shadow-primary": `rgba(0, 0, 0, ${isDark ? 0.3 : 0.15})`,
+      "--color-shadow-accent": `rgba(${accentRgb}, 0.25)`,
+      "--color-shadow-glow": `rgba(${vibrantColor.join(", ")}, 0.35)`,
 
-      // Animation colors
+      // Animation and interaction colors
       "--vibrant-color": `rgb(${vibrantColor.join(", ")})`,
       "--vibrant-color-rgb": vibrantColor.join(", "),
       "--muted-color": `rgb(${mutedColor.join(", ")})`,
@@ -219,15 +263,40 @@ export class DynamicColor {
       "--animation-primary": `rgba(${accentRgb}, 0.8)`,
       "--animation-secondary": `rgba(${vibrantColor.join(", ")}, 0.6)`,
       "--hover-glow": `0 0 20px rgba(${vibrantColor.join(", ")}, 0.4)`,
+      
+      // Triadic colors for advanced animations
+      "--triadic-1": `rgb(${triadicColors[0].join(", ")})`,
+      "--triadic-1-rgb": triadicColors[0].join(", "),
+      "--triadic-2": `rgb(${triadicColors[1].join(", ")})`,
+      "--triadic-2-rgb": triadicColors[1].join(", "),
 
-      // Additional colors for UI states (using derived colors)
+      // Gradient colors
+      "--gradient-primary": `linear-gradient(135deg, rgb(${primaryRgb}) 0%, rgb(${accentRgb}) 100%)`,
+      "--gradient-secondary": `linear-gradient(135deg, rgb(${secondaryRgb}) 0%, rgb(${accent2Rgb}) 100%)`,
+      "--gradient-vibrant": `linear-gradient(135deg, rgb(${gradientStart.join(", ")}) 0%, rgb(${gradientMid.join(", ")}) 50%, rgb(${gradientEnd.join(", ")}) 100%)`,
+      "--gradient-surface": `linear-gradient(135deg, rgba(${primaryRgb}, 0.2) 0%, rgba(${accentRgb}, 0.1) 100%)`,
+
+      // UI state colors (using color theory)
       "--color-error": `rgb(${this.colorFunctions.adjustHue(vibrantColor, 0.05).join(", ")})`,
       "--color-error-rgb": this.colorFunctions.adjustHue(vibrantColor, 0.05).join(", "),
       "--color-success": `rgb(${this.colorFunctions.adjustHue(accent, 0.3).join(", ")})`,
       "--color-success-rgb": this.colorFunctions.adjustHue(accent, 0.3).join(", "),
+      "--color-warning": `rgb(${this.colorFunctions.adjustHue(accent, 0.15).join(", ")})`,
+      "--color-warning-rgb": this.colorFunctions.adjustHue(accent, 0.15).join(", "),
+      "--color-info": `rgb(${this.colorFunctions.adjustHue(accent, 0.6).join(", ")})`,
+      "--color-info-rgb": this.colorFunctions.adjustHue(accent, 0.6).join(", "),
 
-      "color-scheme": avgBrightness < 128 ? "dark" : "light",
+      "color-scheme": isDark ? "dark" : "light",
     };
+  }
+
+  // Generate triadic color harmony (120° apart on color wheel)
+  _generateTriadicColors(baseColor) {
+    const [h, s, l] = this.colorFunctions.rgbToHsl(...baseColor);
+    return [
+      this.colorFunctions.hslToRgb((h + 0.333) % 1, s, l).map(Math.round),
+      this.colorFunctions.hslToRgb((h + 0.666) % 1, s, l).map(Math.round)
+    ];
   }
 
   updateTheme(palette) {

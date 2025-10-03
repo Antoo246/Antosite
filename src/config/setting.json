@@ -1,8 +1,19 @@
 {
     "GITHUB_USERNAME": "anto426",
-    "ABOUT_TEXT": "I'm a passionate software developer 💻✨",
+    "ABOUT_TEXT": "I'm a university student passionate about programming, technology, and gaming. I love creating projects that combine these interests and challenge my skills.",
     "TIMEOUT_MS": 5000,
     "NUM_COLORS": 10,
+    "PERFORMANCE_MODE": true,
+    "REDUCED_MOTION": false,
+    "DYNAMIC_BACKGROUND": true,
+    "ANIMATION_DURATION": 300,
+    "RESPONSIVE_BREAKPOINTS": {
+        "mobile": 480,
+        "tablet": 768,
+        "desktop": 1024,
+        "large": 1200,
+        "xlarge": 1400
+    },
     "skills": [
         {
             "name": "JavaScript",

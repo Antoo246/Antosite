@@ -47,4 +47,46 @@
    display: grid;
    min-height: 100vh;
    place-items: center;
+   width: 100%;
+   max-width: 100vw;
+}
+
+.main-content {
+   width: 100%;
+   max-width: 100vw;
+   overflow-x: hidden;
+}
+
+/* General layout improvements for better spacing and centering */
+body {
+   line-height: 1.6;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   margin: 0;
+   padding: 0;
+   width: 100%;
+   min-height: 100vh;
+   overflow-x: hidden;
+   position: relative;
+}
+
+html {
+   overflow-x: hidden;
+   scroll-behavior: smooth;
+}
+
+/* Improve overall section spacing and readability */
+section {
+   margin-bottom: var(--space-6);
+}
+
+section:last-of-type {
+   margin-bottom: var(--space-4);
+}
+
+/* Enhanced focus states for accessibility */
+*:focus-visible {
+   outline: 2px solid var(--color-primary);
+   outline-offset: 2px;
+   border-radius: var(--border-radius-sm);
 }

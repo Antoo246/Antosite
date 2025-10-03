@@ -17,7 +17,86 @@ export class App {
     this.dynamicColor = new DynamicColor();
     this.fetchData = new FetchData();
     this.loadingController = new LoadingController();
-    console.log("App initialized");
+
+    // Performance optimizations
+    this.isPerformanceMode = CONFIG.PERFORMANCE_MODE || false;
+    this.animationFrameId = null;
+    this.resizeTimeout = null;
+    this.intersectionObserver = null;
+
+    // Initialize performance monitoring
+    this.initPerformanceOptimizations();
+
+    console.log("App initialized with performance optimizations");
+  }
+
+  initPerformanceOptimizations() {
+    // Throttle resize events
+    window.addEventListener('resize', this.throttledResize.bind(this), { passive: true });
+
+    // Use Intersection Observer for lazy loading if supported
+    if ('IntersectionObserver' in window) {
+      this.intersectionObserver = new IntersectionObserver(this.handleIntersection.bind(this), {
+        threshold: 0.1,
+        rootMargin: '50px'
+      });
+    }
+
+    // Optimize scroll events
+    this.optimizeScrollEvents();
+  }
+
+  throttledResize() {
+    if (this.resizeTimeout) {
+      cancelAnimationFrame(this.resizeTimeout);
+    }
+    this.resizeTimeout = requestAnimationFrame(() => {
+      this.handleResize();
+    });
+  }
+
+  handleResize() {
+    // Update background and UI on resize
+    if (this.background) {
+      this.background.handleResize();
+    }
+    if (this.uiController) {
+      this.uiController.handleResize();
+    }
+  }
+
+  handleIntersection(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const target = entry.target;
+        // Add animation classes when elements come into view
+        if (!target.classList.contains('animate-in')) {
+          target.classList.add('animate-in');
+        }
+      }
+    });
+  }
+
+  optimizeScrollEvents() {
+    let ticking = false;
+    const scrollHandler = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          this.handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+  }
+
+  handleScroll() {
+    // Handle scroll-based animations and updates
+    if (this.uiController) {
+      this.uiController.handleScroll();
+    }
   }
 
   findLanguageIcon(language) {

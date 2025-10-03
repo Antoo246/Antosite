@@ -1,201 +1,188 @@
 /**
- * Loading Controller Component
- * Manages the loading screen and progress animations
+ * Loading Controller Component - Redesigned
+ * Manages the loading screen with smooth progress tracking synced to data fetching
  */
 
 export class LoadingController {
-  constructor() {
+  constructor(options = {}) {
     this.progressFill = document.getElementById("progressFill");
     this.progressText = document.getElementById("progressText");
     this.loadingText = document.getElementById("loadingText");
-    this.loadingContainer = document.getElementById("loading");
+    this.loadingScreen = document.getElementById("loading");
+    
     this.currentProgress = 0;
     this.targetProgress = 0;
     this.isComplete = false;
     this.isInitialized = false;
+    
+    // Configuration
+    this.smoothFactor = options.smoothFactor ?? 0.15;
+    this.rafId = null;
 
-    this.loadingSteps = [
-      { text: "Initializing", duration: 800 },
-      { text: "Loading assets", duration: 1200 },
-      { text: "Fetching data", duration: 1000 },
-      { text: "Processing", duration: 800 },
-      { text: "Almost ready", duration: 600 },
-      { text: "Complete!", duration: 400 },
-    ];
-
-    this.currentStep = 0;
-    this.intervals = [];
-
-    console.log("LoadingController initialized");
+    console.log("✨ LoadingController initialized");
   }
 
   init() {
     if (this.isInitialized) return;
     this.isInitialized = true;
 
-    console.log("Starting loading sequence");
-    this.startLoadingSequence();
+    console.log("� Starting loading sequence");
+    
+    // Create particles
+    this.createParticles();
+    
+    // Start RAF animation loop
+    this.startProgressAnimation();
   }
 
-  startLoadingSequence() {
-    // Start the progress animation
-    this.animateProgress();
+  createParticles() {
+    // Remove existing particles if any
+    const existing = this.loadingScreen?.querySelector('.loading-particles');
+    if (existing) existing.remove();
 
-    // Start text sequence
-    this.animateLoadingText();
+    const particlesContainer = document.createElement('div');
+    particlesContainer.className = 'loading-particles';
+    
+    for (let i = 0; i < 5; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'loading-particle';
+      particlesContainer.appendChild(particle);
+    }
+    
+    if (this.loadingScreen) {
+      this.loadingScreen.appendChild(particlesContainer);
+    }
   }
 
-  animateProgress() {
-    const progressInterval = setInterval(() => {
-      if (this.currentProgress < 100 && !this.isComplete) {
-        // Simulate realistic loading progress with varying speed
-        const increment = Math.random() * 2.5 + 0.3;
-        this.targetProgress = Math.min(95, this.targetProgress + increment);
-
-        // Smooth animation to target progress
-        this.smoothProgressUpdate();
-      } else if (this.currentProgress >= 95 && !this.isComplete) {
-        // Hold at 95% until manually completed
-        this.targetProgress = 95;
+  startProgressAnimation() {
+    const animate = () => {
+      if (this.isComplete) {
+        cancelAnimationFrame(this.rafId);
+        return;
       }
-    }, 120);
 
-    this.intervals.push(progressInterval);
-  }
-
-  smoothProgressUpdate() {
-    const progressUpdateInterval = setInterval(() => {
+      // Smooth interpolation toward target
       const diff = this.targetProgress - this.currentProgress;
-
-      if (Math.abs(diff) < 0.1) {
-        this.currentProgress = this.targetProgress;
-        clearInterval(progressUpdateInterval);
+      
+      if (Math.abs(diff) > 0.01) {
+        this.currentProgress += diff * this.smoothFactor;
       } else {
-        this.currentProgress += diff * 0.08;
+        this.currentProgress = this.targetProgress;
       }
 
       // Update UI
-      if (this.progressFill) {
-        this.progressFill.style.width = `${this.currentProgress}%`;
-      }
-      if (this.progressText) {
-        this.progressText.textContent = `${Math.round(this.currentProgress)}%`;
-      }
-    }, 16); // ~60fps
+      this.updateProgressUI();
 
-    // Clean up after 3 seconds max
-    setTimeout(() => clearInterval(progressUpdateInterval), 3000);
+      // Continue loop
+      this.rafId = requestAnimationFrame(animate);
+    };
+
+    this.rafId = requestAnimationFrame(animate);
   }
 
-  animateLoadingText() {
-    if (this.currentStep < this.loadingSteps.length && !this.isComplete) {
-      const step = this.loadingSteps[this.currentStep];
-
-      if (this.loadingText) {
-        // Fade out current text
-        this.loadingText.style.transition = "opacity 0.2s ease";
-        this.loadingText.style.opacity = "0";
-
-        setTimeout(() => {
-          // Change text and fade in
-          this.loadingText.textContent = step.text;
-          this.loadingText.style.opacity = "1";
-
-          // Schedule next step
-          const nextStepTimeout = setTimeout(() => {
-            this.currentStep++;
-            this.animateLoadingText();
-          }, step.duration);
-
-          this.intervals.push(nextStepTimeout);
-        }, 200);
-      }
-    }
-  }
-
-  completeLoading() {
-    if (this.isComplete) return;
-
-    this.isComplete = true;
-    console.log("Loading completed!");
-
-    // Clear all intervals
-    this.intervals.forEach((interval) => clearInterval(interval));
-    this.intervals = [];
-
-    // Force 100% progress
-    this.targetProgress = 100;
-    this.currentProgress = 100;
-
-    // Stop all animations by adding the complete class
-    if (this.loadingContainer) {
-      this.loadingContainer.classList.add("loading-complete");
-    }
-
-    // Update UI immediately
+  updateProgressUI() {
+    const roundedProgress = Math.min(100, Math.round(this.currentProgress));
+    
     if (this.progressFill) {
-      this.progressFill.style.width = "100%";
+      this.progressFill.style.width = `${this.currentProgress}%`;
     }
+    
     if (this.progressText) {
-      this.progressText.textContent = "100%";
-    }
-    if (this.loadingText) {
-      this.loadingText.textContent = "Complete!";
-    }
-
-    // Wait a moment then trigger the fade out
-    setTimeout(() => {
-      this.hideLoading();
-    }, 800);
-  }
-
-  hideLoading() {
-    if (this.loadingContainer) {
-      this.loadingContainer.classList.replace("show", "hide");
-
-      // Remove from DOM after animation
-      setTimeout(() => {
-        if (this.loadingContainer) {
-          this.loadingContainer.style.display = "none";
-        }
-        console.log("Loading UI hidden");
-      }, 800);
+      this.progressText.textContent = `${roundedProgress}%`;
     }
   }
 
-  // Manual control methods
+  // Public API - Set progress (called from App.js during data loading)
   setProgress(progress) {
-    this.targetProgress = Math.max(0, Math.min(100, progress));
-    console.log(`Progress set to: ${progress}%`);
+    const clamped = Math.max(0, Math.min(100, progress));
+    this.targetProgress = clamped;
+    console.log(`📊 Progress: ${clamped}%`);
   }
 
+  // Public API - Set text (called from App.js during data loading)
   setText(text) {
     if (this.loadingText) {
-      this.loadingText.textContent = text;
+      this.loadingText.style.opacity = "0";
+      
+      setTimeout(() => {
+        this.loadingText.textContent = text;
+        this.loadingText.style.opacity = "1";
+      }, 150);
+    }
+    console.log(`💬 ${text}`);
+  }
+
+  // Public API - Complete and hide loading screen
+  onDataLoaded() {
+    console.log("✅ Data loaded - completing...");
+    
+    // Set to 100%
+    this.setProgress(100);
+    this.setText("✅ Complete!");
+
+    // Wait for animation to reach 100%
+    const checkComplete = () => {
+      if (this.currentProgress >= 99.5) {
+        this.complete();
+      } else {
+        requestAnimationFrame(checkComplete);
+      }
+    };
+    
+    setTimeout(() => checkComplete(), 300);
+  }
+
+  complete() {
+    if (this.isComplete) return;
+    
+    this.isComplete = true;
+    console.log("🎉 Loading complete!");
+
+    // Cancel RAF
+    if (this.rafId) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+
+    // Force 100%
+    this.currentProgress = 100;
+    this.updateProgressUI();
+
+    // Hide after delay
+    setTimeout(() => {
+      this.hide();
+    }, 600);
+  }
+
+  hide() {
+    if (this.loadingScreen) {
+      this.loadingScreen.classList.add("fade-out");
+
+      setTimeout(() => {
+        if (this.loadingScreen) {
+          this.loadingScreen.style.display = "none";
+        }
+        // Re-enable scrolling
+        document.body.classList.remove("loading-active");
+        console.log("👋 Loading screen hidden");
+      }, 1000);
     }
   }
 
+  // Fallback - force complete if something goes wrong
   forceComplete() {
-    console.log("Force completing loading...");
-    this.completeLoading();
-  }
-
-  // Integration method for main app
-  onDataLoaded() {
-    // Move to final step
-    this.setProgress(100);
-    this.setText("Complete!");
-
-    setTimeout(() => {
-      this.completeLoading();
-    }, 300);
+    console.log("⚠️ Force completing...");
+    this.targetProgress = 100;
+    this.currentProgress = 100;
+    this.complete();
   }
 
   destroy() {
-    // Clean up resources
-    this.intervals.forEach((interval) => clearInterval(interval));
-    this.intervals = [];
+    if (this.rafId) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
     this.isComplete = true;
-    console.log("LoadingController destroyed");
+    console.log("🧹 LoadingController destroyed");
   }
 }
