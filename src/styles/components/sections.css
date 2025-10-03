@@ -778,30 +778,38 @@
   transform: translateX(2px);
 }
 
-/* Projects section */
+/* Projects section - FIX per progetti invisibili */
 .projects-section {
   overflow: visible !important;
+  min-height: auto !important;
 }
 
 .projects-grid {
-  display: grid;
+  display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 22vw, 360px), 1fr));
   gap: clamp(1rem, 3vw, var(--space-8));
   margin-top: var(--space-8);
   width: 100%;
   max-width: 100%;
-  overflow: visible;
-}
-
-/* Assicura visibilità per tutti i progetti */
-.projects-grid > .project-card {
+  overflow: visible !important;
   opacity: 1 !important;
   visibility: visible !important;
+  transform: none !important;
 }
 
+/* FORZA la visibilità di TUTTI i progetti */
+.projects-grid > *,
+.projects-grid > .project-card,
 .project-card {
   opacity: 1 !important;
   visibility: visible !important;
+  display: flex !important;
+}
+
+/* Assicura che nessun contenitore nasconda i progetti */
+.projects-container {
+  overflow: visible !important;
+  opacity: 1 !important;
 }
 
 /* Improve container max width for hero */
@@ -986,11 +994,17 @@
 .skills-container,
 .projects-container,
 .social-links,
-.skills-grid,
-.projects-grid {
+.skills-grid {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Projects grid sempre visibile - risolve il bug delle card invisibili */
+.projects-grid {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: none;
 }
 
 .animate-in .about-content,
@@ -1002,12 +1016,13 @@
   transition-delay: 0.4s;
 }
 
-.animate-in .skills-grid,
-.animate-in .projects-grid {
+.animate-in .skills-grid {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.6s;
 }
+
+/* Projects grid già sempre visibile sopra */
 
 .skill-item,
 .project-card {
@@ -1071,18 +1086,44 @@
   .projects-grid {
     grid-template-columns: 1fr; /* Single column on very small devices */
     gap: var(--space-3);
+    opacity: 1 !important;
+    visibility: visible !important;
   }
   
   .project-card {
     opacity: 1 !important;
     visibility: visible !important;
+    display: flex !important;
   }
 }
 
-/* Debug e fix per progetti invisibili */
+/* FIX per schermi con molte card */
+@media (min-height: 800px) {
+  .projects-grid {
+    grid-auto-rows: minmax(350px, auto);
+  }
+  
+  .projects-section {
+    min-height: 100vh;
+    padding-bottom: var(--space-12);
+  }
+}
+
+/* DEBUG e FIX per progetti invisibili - MASSIMA PRIORITÀ */
 .project-card[style*="opacity: 0"],
+.project-card[style*="display: none"],
 .project-card[hidden],
-.project-card.hidden {
+.project-card.hidden,
+.project-card.invisible,
+*[style*="display: none"] .project-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}
+
+/* Forza visibilità indipendentemente da classi JavaScript */
+[data-visible="false"] .project-card,
+[data-hidden="true"] .project-card {
   opacity: 1 !important;
   visibility: visible !important;
   display: flex !important;
@@ -1091,6 +1132,17 @@
 /* Previene problemi con troppi elementi nella griglia */
 .projects-grid {
   grid-auto-rows: minmax(300px, auto);
+  min-height: 400px; /* Minima altezza per contenere progetti */
+  height: auto !important; /* Non limita l'altezza */
+}
+
+/* Assicura che containers non tronchino il contenuto */
+.main-content,
+.projects-section,
+.section-container {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
 }
 
 /* Ultra-wide tuning */
