@@ -117,12 +117,30 @@
   transform: translate3d(0, -5px, 0) scale(1.08);
 }
 
+.btn-elegant:hover > *,
+.btn-primary:hover > *,
+.btn-minimal:hover > * {
+  transform: scale(1.02);
+}
+
 .project-link:hover {
   transform: translate3d(0, -3px, 0) scale(1.05);
 }
 
+.project-link:hover > * {
+  transform: scale(1.05);
+}
+
 .social-link:hover {
   transform: translate3d(0, -6px, 0) scale(1.08);
+}
+
+.social-link:hover .social-icon {
+  transform: scale(1.3) rotate(360deg);
+}
+
+.social-link:hover .social-text {
+  transform: translateX(2px);
 }
 
 .section-title:hover {
