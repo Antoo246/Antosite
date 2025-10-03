@@ -26,6 +26,10 @@
   transform: translateZ(0);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  
+  /* Enhanced skill card animations */
+  animation: bounceIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  /* Individual cards get staggered delays via existing selectors */
 }
 
 .skill-card::before {

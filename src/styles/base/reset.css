@@ -2,6 +2,7 @@
    CSS Reset - Modern Reset
    ========================= */
 
+
 /* Box sizing */
 *,
 *::before,
@@ -160,13 +161,21 @@ progress::-moz-progress-bar {
 html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
-  overflow-x: hidden; /* Avoid horizontal scroll on small screens */
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
 }
 
 /* Hide scrollbar always */
 body {
   -ms-overflow-style: none;
   scrollbar-width: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
 }
 
 body::-webkit-scrollbar {

@@ -9,6 +9,7 @@ import { LoadingController } from '../components/LoadingController.js';
 import { DynamicColor } from '../utils/DynamicColor.js';
 import { FetchData } from '../utils/FetchData.js';
 import { Background } from '../components/Background.js';
+import { AnimationController } from '../utils/AnimationController.js';
 
 export class App {
   constructor(CONFIG) {
@@ -17,6 +18,8 @@ export class App {
     this.dynamicColor = new DynamicColor();
     this.fetchData = new FetchData();
     this.loadingController = new LoadingController();
+    this.animationController = new AnimationController();
+    this.background = null; // Store background instance for color updates
 
     // Performance optimizations
     this.isPerformanceMode = CONFIG.PERFORMANCE_MODE || false;
@@ -416,7 +419,7 @@ export class App {
     repoLink.href = repo.html_url;
     repoLink.target = "_blank";
     repoLink.rel = "noopener noreferrer";
-    repoLink.className = "project-link";
+    repoLink.className = "social-link";
     repoLink.innerHTML = `<i class="bi bi-box-arrow-up-right"></i> View Project`;
 
     actions.appendChild(repoLink);
@@ -453,8 +456,28 @@ export class App {
       console.log("Applying theme...");
       const palette = await this.dynamicColor.applyTheme();
       console.log("Theme applied successfully", palette);
-      new Background("backgroundCanvas", palette);
+      
+      // Create or update background with enhanced color management
+      if (this.background) {
+        this.background.updateColors(palette);
+      } else {
+        this.background = new Background("backgroundCanvas", palette, {
+          colorMode: {
+            dynamicColors: true,
+            backgroundIntensity: 0.12,
+            starColorVariation: true,
+            connectionColorSync: true,
+          }
+        });
+      }
+      
       UIController.showSite(this.elements, this.CONFIG);
+
+      // Initialize advanced animations after site is shown
+      this.animationController.init();
+      
+      // Add data-animate attributes to elements for scroll animations
+      this.setupScrollAnimationTriggers();
 
       // Initialize scroll animations after theme is applied
       this.initScrollAnimations();
@@ -463,6 +486,37 @@ export class App {
       console.error("Failed to apply theme:", error);
       this.handleError(error);
     }
+  }
+
+  /**
+   * Setup data-animate attributes for scroll-triggered animations
+   */
+  setupScrollAnimationTriggers() {
+    // Add animation attributes to sections
+    const sections = document.querySelectorAll('.about-section, .skills-section, .projects-section, .social-section');
+    sections.forEach((section, index) => {
+      section.setAttribute('data-animate', index % 2 === 0 ? 'fadeInUp' : 'slideInLeft');
+      section.setAttribute('data-delay', (index * 200).toString());
+    });
+
+    // Add animation attributes to cards
+    const skillCards = document.querySelectorAll('.skill-card');
+    skillCards.forEach((card, index) => {
+      card.setAttribute('data-animate', 'bounceIn');
+      card.setAttribute('data-delay', (index * 100).toString());
+    });
+
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach((card, index) => {
+      card.setAttribute('data-animate', 'slideInRight');
+      card.setAttribute('data-delay', (index * 150).toString());
+    });
+
+    // Add parallax attributes to background elements
+    const backgroundElements = document.querySelectorAll('.hero-section, .logo-wrapper');
+    backgroundElements.forEach(element => {
+      element.setAttribute('data-parallax', '0.2');
+    });
   }
 
   /**

@@ -32,6 +32,11 @@
   </head>
   <!-- Body -->
   <body class="loading-active">
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress-container">
+      <div class="scroll-progress"></div>
+    </div>
+    
     <main class="main">
       <!-- Ultra Modern Loading System -->
       <div id="loading" class="loading-screen show">
@@ -64,18 +69,24 @@
       <!-- Error Section -->
       <div id="error" class="error-section hide">
         <div class="error-container">
-          <div class="error-icon">
-            <i class="bi-exclamation-triangle-fill"></i>
+          <!-- Error Brand Section -->
+          <div class="error-brand">
+            <div class="error-logo">
+              <i class="bi-exclamation-triangle-fill"></i>
+            </div>
+            <h1 id="title-error" class="error-title">Connection Error</h1>
           </div>
-          <h1 id="title-error" class="error-title">Connection Error</h1>
-          <p id="message-error" class="error-message">
-            Oops! We couldn't load the data. Please check your internet
-            connection and try again.
-          </p>
-          <button class="error-retry-btn" onclick="location.reload()">
-            <i class="bi-arrow-clockwise"></i>
-            Reload Page
-          </button>
+
+          <!-- Error Actions Section -->
+          <div class="error-actions">
+            <p id="message-error" class="error-message">
+              We're sorry, an error occurred while loading the site.
+            </p>
+            <button class="error-retry-btn" onclick="location.reload()">
+              <i class="bi-arrow-clockwise"></i>
+              Reload Page
+            </button>
+          </div>
         </div>
       </div>
       <!-- Main Container -->

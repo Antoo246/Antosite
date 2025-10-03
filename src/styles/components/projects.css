@@ -24,6 +24,11 @@
   transform: translateZ(0);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  
+  /* Enhanced project card animations */
+  animation: 
+    sectionSlideIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both,
+    gentleFloat 8s ease-in-out infinite 2s;
 }
 
 /* remove sweeping glass highlight to avoid perceived background */
@@ -268,64 +273,8 @@
   gap: var(--space-3);
   justify-content: center; /* Center actions for better layout */
   flex-wrap: wrap;
-}
-
-.project-link {
-  display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-5);
-  background: linear-gradient(135deg,
-    var(--color-primary) 0%,
-    var(--color-accent) 50%,
-    var(--color-accent-2) 100%);
-  color: var(--color-text-inverse);
-  text-decoration: none;
-  border: 1px solid rgba(var(--color-accent-rgb), 0.3);
-  border-radius: var(--radius-lg);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-sm);
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: relative;
-  overflow: hidden;
-  box-shadow:
-    0 4px 15px rgba(0, 0, 0, 0.1),
-    0 2px 8px rgba(var(--color-accent-rgb), 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  min-height: 44px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.project-link::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg,
-    rgba(var(--color-accent-rgb), 0.2) 0%,
-    rgba(var(--color-primary-rgb), 0.1) 50%,
-    rgba(var(--color-accent-2-rgb), 0.2) 100%);
-  opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border-radius: inherit;
-}
-
-.project-link:hover::before {
-  opacity: 1;
-}
-
-.project-link:hover {
-  transform: translate3d(0, -3px, 0) scale(1.02);
-  border-color: rgba(var(--color-accent-rgb), 0.5);
-  box-shadow:
-    0 8px 24px rgba(var(--color-accent-rgb), 0.15),
-    0 4px 12px rgba(var(--color-primary-rgb), 0.1),
-    0 0 20px rgba(var(--color-accent-rgb), 0.08);
-  text-shadow: 0 0 8px rgba(var(--color-accent-rgb), 0.3);
-}
-
-.project-link i {
-  font-size: var(--font-size-base);
+  width: 100%;
 }
 
 /* Project card variants */
@@ -473,12 +422,6 @@
     gap: var(--space-2);
     flex-direction: column;
   }
-  
-  .project-link {
-    width: 100%;
-    padding: var(--space-2-5) var(--space-3);
-    font-size: var(--font-size-sm);
-  }
 }
 
 @media (max-width: 360px) {
@@ -507,11 +450,6 @@
     font-size: 0.65rem;
     padding: 0.2rem 0.4rem;
   }
-  
-  .project-link {
-    padding: var(--space-2) var(--space-2-5);
-    font-size: 0.8rem;
-  }
 }
 
 /* Touch device optimizations */
@@ -534,10 +472,6 @@
   }
   
   /* Ensure links are easily tappable */
-  .project-link {
-    min-height: 44px;
-    min-width: 44px;
-  }
   
   .project-bookmark {
     min-width: 44px;

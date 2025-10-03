@@ -4,6 +4,7 @@
  */
 
 import { App } from './core/App.js';
+import { Background } from './components/Background.js';
 
 // Global error handler
 window.addEventListener('error', (event) => {
@@ -36,23 +37,45 @@ async function loadPage() {
   } catch (error) {
     console.error("Error in loadPage:", error);
 
-    // Fallback loading completion if something goes wrong
+    // Hide loading screen
     const fallbackLoader = document.getElementById("loading");
     if (fallbackLoader) {
       fallbackLoader.classList.replace("show", "hide");
     }
 
-    // Show error in main content
-    const main = document.getElementById("home");
-    if (main) {
-      main.classList.replace("hide", "show");
-      main.innerHTML = `
-        <div style="text-align: center; padding: 2rem;">
-          <h1>Errore di caricamento</h1>
-          <p>Siamo spiacenti, si è verificato un errore durante il caricamento del sito.</p>
-          <p>Ricarica la pagina per riprovare.</p>
-        </div>
-      `;
+    // Show the dedicated error screen instead of inline error
+    const errorSection = document.getElementById("error");
+    const errorTitle = document.getElementById("title-error");
+    const errorMessage = document.getElementById("message-error");
+
+    if (errorSection) {
+      // Update error content
+      if (errorTitle) {
+        errorTitle.textContent = "Loading Error";
+      }
+      if (errorMessage) {
+        errorMessage.textContent = "We're sorry, an error occurred while loading the site.";
+      }
+
+      // Show error screen with proper styling
+      errorSection.classList.replace("hide", "show");
+      errorSection.classList.add("error-appear");
+
+      // Initialize background for error screen
+      new Background("backgroundCanvas", null);
+
+      // Add staggered animations
+      setTimeout(() => {
+        if (errorTitle) {
+          errorTitle.classList.add("error-title-animate");
+        }
+      }, 200);
+
+      setTimeout(() => {
+        if (errorMessage) {
+          errorMessage.classList.add("error-message-animate");
+        }
+      }, 400);
     }
   }
 }

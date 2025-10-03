@@ -24,10 +24,52 @@ export class UIController {
    */
   static showError(elements, message = "An error occurred while loading the page", CONFIG) {
     console.log("UIController.showError called");
+    
+    // Hide loading screen
     elements.loading.classList.replace("show", "hide");
+    
+    // Determine error message based on error type and language
+    let errorTitle = "Connection Error";
+    let errorMessage = message;
+    
+    // Check if it's a common error and provide better messaging
+    if (message.includes("fetch") || message.includes("network") || message.includes("Failed to fetch")) {
+      errorTitle = "🌐 Connection Problem";
+      errorMessage = "Unable to connect to GitHub. Please check your internet connection and try again.";
+    } else if (message.includes("createRadialGradient") || message.includes("canvas")) {
+      errorTitle = "⚠️ Display Issue";
+      errorMessage = "There was a problem with the graphics display. Please refresh the page.";
+    } else if (message.includes("API") || message.includes("rate limit")) {
+      errorTitle = "🔄 Service Unavailable";
+      errorMessage = "The GitHub service is temporarily unavailable. Please try again in a few minutes.";
+    }
+    
+    // Update error content
+    if (elements.errorTitle) {
+      elements.errorTitle.textContent = errorTitle;
+    }
+    if (elements.errorMessage) {
+      elements.errorMessage.innerHTML = errorMessage;
+    }
+    
+    // Show error with enhanced animations
     elements.error.classList.replace("hide", "show");
-    elements.errorMessage.innerHTML = message;
-    console.log("Error shown with message:", message);
+    elements.error.classList.add("error-appear");
+    
+    // Add staggered animations to error content
+    setTimeout(() => {
+      if (elements.errorTitle) {
+        elements.errorTitle.classList.add("error-title-animate");
+      }
+    }, 200);
+    
+    setTimeout(() => {
+      if (elements.errorMessage) {
+        elements.errorMessage.classList.add("error-message-animate");
+      }
+    }, 400);
+    
+    console.log("Error shown:", { title: errorTitle, message: errorMessage });
   }
 
   /**

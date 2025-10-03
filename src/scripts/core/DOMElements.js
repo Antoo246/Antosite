@@ -7,6 +7,7 @@ export class DOMElements {
   constructor() {
     this.main = document.getElementById("home");
     this.error = document.getElementById("error");
+    this.errorTitle = document.getElementById("title-error");
     this.errorMessage = document.getElementById("message-error");
     this.aboutMe = document.getElementById("aboutme");
     this.loading = document.getElementById("loading");
