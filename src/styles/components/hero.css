@@ -132,19 +132,16 @@
   outline: none;
 }
 
-/* Logo wrapper improvements */
+/* Logo wrapper improvements - fixed display and removed problematic animations */
 .logo-wrapper {
   position: relative;
-  display: inline-block;
+  display: block;
   perspective: 1000px;
   transform-style: preserve-3d;
   transition: transform var(--animation-duration-normal) var(--animation-easing-spring);
   will-change: transform;
   
-  /* Enhanced logo animations */
-  animation: 
-    pulseGlow 3s ease-in-out infinite,
-    gentleFloat 8s ease-in-out infinite 1s;
+  /* Only pulse glow animation - no vertical movement */
 }
 
 .logo-wrapper:hover {
@@ -240,7 +237,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
   padding: 0;
   margin: 0;
   border: none;
@@ -249,7 +245,6 @@
 
 /* Stagger children animations without HTML changes */
 .brand-container > * {
-  /* Visible by default; keyframes handle the starting state */
   animation: fade-in-up var(--animation-duration-smooth) var(--animation-easing-expo-out) forwards;
 }
 .brand-container > *:nth-child(1) { animation-delay: 120ms; }
